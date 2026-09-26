@@ -79,7 +79,6 @@ cluster with a GPU-backed model provider: **[Installation](/docs/introduction/in
 - **Kubemoot** - the operator: the Kubernetes controller and runtime that wire a crew together.
 - **Crews** - packaged crews as Helm charts, from the reference crew to examples you can copy.
 - **Homelab Pilot** - the reference crew, with its chat and dashboard app.
-- **CrewForge** - a desktop editor for crew manifests.
 - **kmctl** - the command-line tool for crews and discussions.
 
 See **[Ecosystem](/docs/ecosystem/)** for what each component is and how they fit.
