@@ -1,0 +1,119 @@
+# kubemoot.org: build the site on a GitHub-hosted runner from this shell plus the
+# component docs, prove it renders, and (once SITE_DEPLOY is "true") publish it as a
+# Cloudflare Worker serving static assets. Nothing here touches the homelab.
+name: Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.toml'
+      - '**.html'
+      - '**.md'
+      - 'content/**'
+      - 'layouts/**'
+      - 'static/**'
+      - 'assets/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/site.yaml'
+      - '!**/CLAUDE.md'
+  workflow_dispatch:
+
+concurrency:
+  group: site
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  HUGO_VERSION: "0.156.0"
+  SITE_URL: https://kubemoot.org/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the site shell
+        uses: actions/checkout@v5
+        with:
+          path: site
+
+      # hugo.toml mounts the operator docs from ../kubemoot/docs, so the component
+      # checkout sits beside the site directory. Sparse: only docs/ is fetched.
+      - name: Checkout kubemoot docs (sparse)
+        uses: actions/checkout@v5
+        with:
+          repository: javajon-homelab/kubemoot
+          token: ${{ secrets.KUBEMOOT_READ_TOKEN }}
+          sparse-checkout: docs
+          sparse-checkout-cone-mode: true
+          path: kubemoot
+
+      - name: Set up Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: ${{ env.HUGO_VERSION }}
+          extended: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Build
+        working-directory: site
+        run: |
+          npm ci
+          # No `hugo mod get`: it upgrades Docsy past the go.mod pin. The build
+          # downloads the pinned module versions itself.
+          hugo --gc --minify --baseURL "$SITE_URL"
+
+      - name: Prove the site rendered
+        working-directory: site
+        run: |
+          pages=$(find public -name index.html | wc -l)
+          echo "pages=$pages"
+          test -f public/index.html
+          test -f public/docs/index.html
+          test -f public/docs/introduction/quickstart/index.html
+          [ "$pages" -ge 60 ] || { echo "only $pages pages rendered; the component docs mount is probably empty" >&2; exit 1; }
+          echo "### Site build" >> "$GITHUB_STEP_SUMMARY"
+          echo "$pages pages rendered for $SITE_URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the built site
+        uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site/public
+          retention-days: 7
+
+  deploy:
+    needs: build
+    if: vars.SITE_DEPLOY == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the site shell (for wrangler.toml)
+        uses: actions/checkout@v5
+
+      - name: Download the built site
+        uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: public
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy

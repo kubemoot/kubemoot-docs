@@ -1,0 +1,15 @@
+{{- /* List the documentation pages on the /docs/ landing so they are visible in the
+       main content, not only the sidebar. Lists direct children of the section.
+       Inline style guards against the raw-HTML links inheriting an invisible color. */ -}}
+<style>
+  ul.docs-index { margin: 0.5rem 0 1rem; }
+  ul.docs-index li { margin: 0.2rem 0; }
+  ul.docs-index a { color: var(--bs-link-color); text-decoration: none; }
+  ul.docs-index a:hover { text-decoration: underline; }
+  ul.docs-index .desc { color: var(--bs-secondary-color); }
+</style>
+<ul class="docs-index">
+{{- range .Page.Pages }}
+  <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ with .Description }} <span class="desc">— {{ . }}</span>{{ end }}</li>
+{{- end }}
+</ul>

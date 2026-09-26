@@ -1,0 +1,6 @@
+/public/
+/resources/
+/node_modules/
+.hugo_build.lock
+# Component docs checked out by CI (and by local setup script) - never committed
+/_docs/

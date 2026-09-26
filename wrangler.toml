@@ -1,0 +1,15 @@
+# kubemoot.org: the built Hugo site served as static assets by one Cloudflare Worker.
+# Deployed by .github/workflows/site.yaml with `wrangler deploy` once the repository
+# variable SITE_DEPLOY is "true" (set at the open-source flip). The custom domain is
+# attached by Cloudflare on first deploy; no DNS record is managed by hand.
+name = "kubemoot-org"
+compatibility_date = "2026-09-24"
+workers_dev = false
+
+[assets]
+directory = "./public"
+not_found_handling = "404-page"
+
+[[routes]]
+pattern = "kubemoot.org"
+custom_domain = true

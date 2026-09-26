@@ -1,0 +1,13 @@
+{{- /* Two page links instead of Docsy's four: edit, and report. A page mounted from the
+       operator repository edits there (its path already starts with docs/); a page owned
+       by this site edits here under content/en/. */ -}}
+{{- with .File -}}
+{{- $shell := strings.Contains .Filename "/content/en/" -}}
+{{- $repo := cond $shell "https://github.com/kubemoot/kubemoot-docs" ($.Site.Params.github_repo | default "https://github.com/kubemoot/kubemoot") -}}
+{{- $file := cond $shell (printf "content/en/%s" .Path) .Path -}}
+{{- $branch := $.Site.Params.github_branch | default "main" -}}
+<div class="td-page-meta ms-2 pb-1 pt-2 mb-0">
+  <a class="td-page-meta__edit" href="{{ $repo }}/edit/{{ $branch }}/{{ $file }}" target="_blank" rel="noopener"><i class="fa-solid fa-pen-to-square fa-fw"></i> Edit this page</a>
+  <a class="td-page-meta__issue" href="{{ $repo }}/issues/new?title={{ printf "Docs: %s" $.Title | urlquery }}&amp;body={{ printf "Page: %s" $.Permalink | urlquery }}" target="_blank" rel="noopener"><i class="fa-solid fa-list-check fa-fw"></i> Report a problem with this page</a>
+</div>
+{{- end -}}

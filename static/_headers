@@ -1,0 +1,12 @@
+# Cloudflare Workers static assets: HTML revalidates on every visit; fingerprinted
+# assets and the mark cache for a year; favicons for a day.
+/*
+  Cache-Control: no-cache
+/scss/*
+  Cache-Control: public, max-age=31536000, immutable
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+/favicons/*
+  Cache-Control: public, max-age=86400

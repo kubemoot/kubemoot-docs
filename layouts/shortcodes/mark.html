@@ -1,0 +1,3 @@
+{{- /* The brand mark with a content hash in its URL, so a changed mark is never served from a stale cache. */ -}}
+{{- $m := resources.Get "img/kubemoot-mark.svg" | fingerprint -}}
+<img src="{{ $m.RelPermalink }}" width="{{ .Get "width" | default 140 }}" height="{{ .Get "width" | default 140 }}" alt="Kubemoot: a round table with seven water drops gathered around it" class="{{ .Get "class" | default "mb-3" }}">
