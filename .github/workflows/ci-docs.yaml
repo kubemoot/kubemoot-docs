@@ -38,11 +38,11 @@ jobs:
       - name: Checkout kubemoot docs (sparse)
         uses: actions/checkout@v5
         with:
-          repository: javajon-homelab/kubemoot
+          repository: kubemoot/kubemoot
           # GITHUB_TOKEN is scoped to this repo only and cannot read the private
           # kubemoot repo; a fine-grained PAT with read:contents on kubemoot is
           # required (repo secret KUBEMOOT_READ_TOKEN).
-          token: ${{ secrets.KUBEMOOT_READ_TOKEN }}
+          token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
           path: _docs/kubemoot

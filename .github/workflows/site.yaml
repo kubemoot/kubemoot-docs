@@ -48,8 +48,8 @@ jobs:
       - name: Checkout kubemoot docs (sparse)
         uses: actions/checkout@v5
         with:
-          repository: javajon-homelab/kubemoot
-          token: ${{ secrets.KUBEMOOT_READ_TOKEN }}
+          repository: kubemoot/kubemoot
+          token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
           path: kubemoot

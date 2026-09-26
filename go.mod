@@ -1,4 +1,4 @@
-module github.com/javajon-homelab/kubemoot-docs
+module github.com/kubemoot/kubemoot-docs
 
 go 1.25.0
 

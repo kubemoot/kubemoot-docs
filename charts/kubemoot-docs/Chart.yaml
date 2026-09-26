@@ -12,9 +12,9 @@ keywords:
   - docs
   - documentation
 
-home: https://github.com/javajon-homelab/kubemoot-docs
+home: https://github.com/kubemoot/kubemoot-docs
 sources:
-  - https://github.com/javajon-homelab/kubemoot-docs
+  - https://github.com/kubemoot/kubemoot-docs
 
 maintainers:
   - name: Kubemoot maintainers
