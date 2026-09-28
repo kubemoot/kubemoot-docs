@@ -17,7 +17,9 @@ defaultContentLanguage = "en"
   [markup.goldmark.renderer]
     unsafe = true           # allow raw HTML in markdown
   [markup.highlight]
-    style = "tango"
+    # CSS classes, not inline colors: Docsy's code styles (assets/scss) then color
+    # code for light and dark mode.
+    noClasses = false
     lineNos = false
 
 # Module config: imports and mounts.
