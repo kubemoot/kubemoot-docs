@@ -1,1 +1,1 @@
-Last component-docs sync: kubemoot@8ac9b5c240f7125243597d7c8498a5cb97dfdf32 at 2026-09-29T02:23:55Z
+Last component-docs sync: kubemoot@900db7d3d5a61d03637a981ae9865141c69d4cb4 at 2026-09-29T21:47:00Z
