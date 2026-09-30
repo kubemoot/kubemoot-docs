@@ -10,6 +10,6 @@
 </style>
 <ul class="docs-index">
 {{- range .Page.Pages }}
-  <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ with .Description }} <span class="desc">— {{ . }}</span>{{ end }}</li>
+  <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ with .Description }} <span class="desc">: {{ . }}</span>{{ end }}</li>
 {{- end }}
 </ul>
