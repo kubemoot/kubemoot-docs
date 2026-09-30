@@ -1,6 +1,11 @@
 # kubemoot.org: build the site on a GitHub-hosted runner from this shell plus the
-# component docs, prove it renders, and (once SITE_DEPLOY is "true") publish it as a
-# Cloudflare Worker serving static assets. Nothing here touches the homelab.
+# component docs, prove it renders, and publish it as a Cloudflare Worker serving
+# static assets. Nothing here touches the homelab.
+#
+# A push to main (or a dispatch) only builds and checks the site. Promote Release calls
+# this workflow with the promoted commit, the Kubemoot release whose docs it carries,
+# and deploy: true; the deploy then runs once SITE_DEPLOY is "true". The private
+# preview (release-docs.yaml) keeps tracking main.
 name: Site
 
 on:
@@ -21,10 +26,26 @@ on:
       - '.github/workflows/site.yaml'
       - '!**/CLAUDE.md'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: 'Commit of this repository to build'
+        required: true
+        type: string
+      kubemoot_ref:
+        description: 'Tag or commit of kubemoot/kubemoot whose docs/ to build with'
+        required: true
+        type: string
+      deploy:
+        description: 'Publish to kubemoot.org (when SITE_DEPLOY is "true")'
+        required: false
+        default: false
+        type: boolean
 
+# Builds from main replace each other; a deploy is never cancelled.
 concurrency:
-  group: site
-  cancel-in-progress: true
+  group: site-${{ inputs.deploy && 'deploy' || 'build' }}
+  cancel-in-progress: ${{ !inputs.deploy }}
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -41,6 +62,7 @@ jobs:
       - name: Checkout the site shell
         uses: actions/checkout@v5
         with:
+          ref: ${{ inputs.ref }}
           path: site
 
       # hugo.toml mounts the operator docs from ../kubemoot/docs, so the component
@@ -50,6 +72,7 @@ jobs:
         with:
           repository: kubemoot/kubemoot
           token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
+          ref: ${{ inputs.kubemoot_ref }}
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
           path: kubemoot
@@ -96,7 +119,7 @@ jobs:
 
   deploy:
     needs: build
-    if: vars.SITE_DEPLOY == 'true'
+    if: inputs.deploy && vars.SITE_DEPLOY == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -104,6 +127,8 @@ jobs:
     steps:
       - name: Checkout the site shell (for wrangler.toml)
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Download the built site
         uses: actions/download-artifact@v4
