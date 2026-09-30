@@ -183,8 +183,7 @@ jobs:
           body: |
             Kubemoot Docs Site v${{ steps.version.outputs.version }}
 
-            Hugo/Docsy documentation site for the Kubemoot ecosystem,
-            served at https://homelab.dijure.com/docs/
+            Hugo/Docsy documentation site for the Kubemoot ecosystem.
 
             ## Container Image
             ```
