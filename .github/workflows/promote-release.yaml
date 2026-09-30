@@ -1,0 +1,122 @@
+# Promote Release: publish the tested docs release candidate to kubemoot.org.
+#
+# Every push to main builds a docs release candidate (docs-vX.Y.Z-rc.N) into Harbor,
+# and the private preview runs it. A maintainer runs this workflow (Actions tab, Run
+# workflow; dispatch needs write access) to tag the candidate's commit docs-vX.Y.Z,
+# build the public site from that commit with the Kubemoot docs of the latest
+# promoted Kubemoot release, deploy it to kubemoot.org (when SITE_DEPLOY is "true"),
+# and write the GitHub Release. The default is a dry run: the site is built and
+# checked, the notes are in the run summary, and nothing is tagged or deployed.
+name: Promote Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      rc_tag:
+        description: '"latest", or a docs-vX.Y.Z-rc.N tag on main'
+        required: true
+        default: latest
+        type: string
+      dry_run:
+        description: 'Dry run: build the site and show the notes, publish nothing'
+        required: true
+        default: true
+        type: boolean
+
+concurrency:
+  group: promote-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    # The same runners as every release in the ecosystem, and only from main.
+    if: github.ref == 'refs/heads/main'
+    runs-on: homelab-runners
+    permissions:
+      contents: write
+    outputs:
+      commit: ${{ steps.promote.outputs.commit }}
+      kubemoot_ref: ${{ steps.kubemoot.outputs.ref }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Test the release helpers
+        run: bash .github/scripts/test-release-lib.sh
+
+      - name: Tag the final version
+        id: promote
+        env:
+          RC_TAG: ${{ inputs.rc_tag }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          OUT_DIR: promotion
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          source .github/scripts/release-lib.sh
+          rl_promote_single docs-v "Kubemoot docs" "${OUT_DIR}" >> "$GITHUB_OUTPUT"
+          cat "${OUT_DIR}/notes.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # The public site documents released Kubemoot: its docs/ come from the latest
+      # promoted Kubemoot release (operator-chart-vA.B.C, or before the first promotion
+      # the latest vX.Y.Z operator release), not from Kubemoot's main.
+      - name: Find the latest Kubemoot release
+        id: kubemoot
+        env:
+          TOKEN: ${{ secrets.KUBEMOOT_READ_TOKEN }}
+        run: |
+          tags=$(git ls-remote --tags --refs "https://${TOKEN:+x-access-token:${TOKEN}@}github.com/kubemoot/kubemoot.git" \
+            | awk '{sub("refs/tags/", "", $2); print $2}')
+          ref=$(grep -E '^operator-chart-v[0-9]+\.[0-9]+\.[0-9]+$' <<<"$tags" | sort -V | tail -n 1 || true)
+          [ -n "$ref" ] || ref=$(grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' <<<"$tags" | sort -V | tail -n 1 || true)
+          [ -n "$ref" ] || { echo "no Kubemoot release tag found"; exit 1; }
+          echo "Kubemoot docs from ${ref}" | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+
+      - name: Keep the promotion output
+        uses: actions/upload-artifact@v4
+        with:
+          name: promotion
+          path: promotion/
+          retention-days: 30
+
+  site:
+    needs: promote
+    uses: ./.github/workflows/site.yaml
+    with:
+      ref: ${{ needs.promote.outputs.commit }}
+      kubemoot_ref: ${{ needs.promote.outputs.kubemoot_ref }}
+      deploy: ${{ !inputs.dry_run }}
+    secrets: inherit
+
+  release:
+    needs: [promote, site]
+    if: ${{ !inputs.dry_run }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download the promotion output
+        uses: actions/download-artifact@v4
+        with:
+          name: promotion
+          path: promotion
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # promotion/releases.tsv: tag, title, notes file (one release per line).
+          while IFS=$'\t' read -r tag title notes; do
+            if gh release view "${tag}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+              echo "${tag} already has a release"
+              continue
+            fi
+            gh release create "${tag}" --repo "${GITHUB_REPOSITORY}" --verify-tag \
+              --title "${title}" --notes-file "promotion/${notes}"
+          done < promotion/releases.tsv
