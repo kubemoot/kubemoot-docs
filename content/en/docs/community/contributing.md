@@ -111,20 +111,20 @@ Kubemoot repositories are licensed under the Apache License 2.0. By submitting a
 contribution you agree it is licensed under the same terms as the repository you are
 contributing to. There is no contributor license agreement (CLA).
 
-Every commit requires a Developer Certificate of Origin (DCO) sign-off, which certifies
+Every commit in a pull request requires a Developer Certificate of Origin (DCO) sign-off, which certifies
 that you have the right to submit the change. Read the certificate at
 [developercertificate.org](https://developercertificate.org/). Add the sign-off with
 `git commit -s`, which appends a `Signed-off-by: Name <email>` line matching the commit
-author. A pull request check verifies the sign-off on each commit.
+author. A pull request check named "DCO" verifies the sign-off.
 
 To fix a missing sign-off:
 
 ```bash
-git commit --amend -s          # the last commit
-git rebase --signoff <base>    # several commits since <base>
+git commit --amend -s --no-edit      # the last commit
+git rebase --signoff <base-branch>   # several commits
 ```
 
-Then force-push your branch.
+Then force-push the pull request branch.
 
 ## Response time
 
