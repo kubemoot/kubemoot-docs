@@ -1,0 +1,7 @@
+# Overrides for Docsy default strings.
+# The footer reads "(c) year The Kubemoot Authors <all_rights_reserved> <License link>".
+[footer_all_rights_reserved]
+other = "Licensed under the Apache License 2.0."
+
+[footer_privacy_policy]
+other = "License"

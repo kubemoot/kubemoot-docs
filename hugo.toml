@@ -55,6 +55,8 @@ defaultContentLanguage = "en"
 
 [params]
   copyright = "The Kubemoot Authors"
+  # Rendered in the footer as the "License" link (label set in i18n/en.toml).
+  privacy_policy = "https://github.com/kubemoot/kubemoot-docs/blob/main/LICENSE"
   github_repo = "https://github.com/kubemoot/kubemoot"
   github_subdir = "docs"
   offlineSearch = true

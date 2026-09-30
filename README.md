@@ -1,6 +1,7 @@
 # Kubemoot Docs Site (Hugo + Docsy)
 
-The documentation site for the Kubemoot ecosystem. Built with Hugo and the
+The documentation site for the Kubemoot ecosystem, published at
+[kubemoot.org](https://kubemoot.org). Built with Hugo and the
 [Docsy](https://www.docsy.dev/) theme. This repo holds the site shell and the
 cross-cutting chapters; each component's reference docs live in its own repo and
 are aggregated at build time via Hugo module mounts.
@@ -11,21 +12,28 @@ are aggregated at build time via Hugo module mounts.
 |---|---|
 | `/docs/` | `kubemoot/docs/` (operator, agent runtime, reference, the kmctl CLI) |
 
-Additional component chapters (CrewForge, Homelab Pilot, crews) are added as
-those repos publish their own `docs/` directories.
+Additional component chapters are added as those repos publish their own `docs/`
+directories.
 
-## Local preview
+## Build the site
 
-The `hugo.toml` mount points at `../kubemoot/docs`, so the site builds against a
-sibling `kubemoot` checkout. From inside the `homelab-ecosystem` umbrella, where
-`kubemoot` is a sibling submodule, just run:
+The `hugo.toml` mount points at `../kubemoot/docs`, so the site needs a `kubemoot`
+checkout next to this one. Fetch just its `docs/` directory with a sparse checkout,
+then build:
 
 ```bash
-cd kubemoot-docs
-npm install           # one-time: the PostCSS toolchain Docsy needs
-hugo server
-# visit http://localhost:1313
+git clone --filter=blob:none --sparse https://github.com/kubemoot/kubemoot.git ../kubemoot
+git -C ../kubemoot sparse-checkout set docs
+npm ci                 # the PostCSS toolchain Docsy needs
+hugo --gc --minify --baseURL https://kubemoot.org/   # output in ./public/
 ```
+
+Without `../kubemoot/docs`, Hugo still exits 0 and builds a site of about 15 pages with
+no component docs and no error. If the page count is far below 100, check the mount
+path first.
+
+For a live preview, run `hugo server` from this directory instead of the last command
+and open http://localhost:1313. Node must be on your `PATH` for the Docsy PostCSS step.
 
 ## kubemoot.org (CI build and deploy)
 
@@ -37,15 +45,6 @@ variable `SITE_DEPLOY` is `true`, a second job publishes that artifact as the
 Cloudflare Worker `kubemoot-org` (static assets, `wrangler.toml`) with
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The custom domain `kubemoot.org`
 is declared in `wrangler.toml` and attached by Cloudflare on the first deploy.
-
-Outside CI, the same build is:
-
-```bash
-git clone --filter=blob:none --sparse https://github.com/kubemoot/kubemoot.git ../kubemoot
-cd ../kubemoot && git sparse-checkout set docs && cd -
-npm ci
-hugo --gc --minify --baseURL https://kubemoot.org/   # output in ./public/
-```
 
 ## How aggregation works
 
@@ -59,48 +58,36 @@ The `hugo.toml` `[module]` section mounts each component's `docs/` tree under
 `CLAUDE.md` files from component repos are excluded from the build output by the
 mount's file filter.
 
+## Republishing when component docs change
+
+The site aggregates each component's docs at build time, so a change to
+`kubemoot/docs` reaches the site only when this repo builds again. The workflow
+`trigger-docs-rebuild.yaml` in the `kubemoot` repo does that: when `docs/**` changes on
+`main`, it writes the current commit SHA into `component-sync.md` here, which matches
+the path filters of the build workflows and starts a new build. To republish by hand,
+commit a change to any tracked file under those filters (an empty commit matches
+nothing and does not build).
+
 ## Docker image
 
 The Dockerfile builds the site in a `golang:1.26-bookworm` stage (Go for Hugo
-modules, Node for the Docsy PostCSS step), placing the CI-checked-out component
-docs at the mount path, then serves the static output from `nginx:1.27-alpine`.
-The production `baseURL` is set in the Dockerfile and the site serves at its host
-root.
+modules, Node for the Docsy PostCSS step), placing the checked-out component docs at
+the mount path, then serves the static output from `nginx:1.27-alpine`. The site base
+URL is the `SITE_URL` build argument (default `https://kubemoot.org/`), and the site
+serves at its host root.
 
 ## Helm chart
 
 `charts/kubemoot-docs/` - Deployment + Service + HTTPRoute (Gateway API),
 mirroring the `kubemoot-dashboard` chart conventions. See the chart's
-`values.yaml` for the image and gateway settings.
+`values.yaml` for the image, pull-secret, and gateway settings.
 
-## CI / Release
+## Contributing
 
-- `.github/workflows/ci-docs.yaml` - build and container-image push on every push
-  to `main` (non-PR); also callable via `workflow_call` from the release workflow.
-- `.github/workflows/release-docs.yaml` - SemVer release (tag prefix `docs-v`):
-  retags the built image, updates `Chart.yaml`, pushes the chart to the project's
-  OCI registry, commits the chart bump, tags, and creates a GitHub Release.
+Edit a component's chapter in that component's repo (for example `kubemoot/docs`).
+Edit the site shell, landing page, and cross-cutting chapters here. See
+[CONTRIBUTING](CONTRIBUTING.md).
 
-The workflows expect registry credentials and a read token for the component
-repos, configured as repository secrets.
+## License
 
-## Publishing content changes
-
-The site aggregates each component's docs (e.g. `kubemoot/docs`) at **build time**
-via a sparse checkout of that repo's `main`. The release pipeline lives in THIS
-repo, so a push to a component repo does NOT rebuild the site on its own, and a
-no-op `workflow_dispatch` does NOT bump the version (so nothing redeploys).
-
-To publish a component-docs change: merge it to the component repo's `main`, then
-make a commit in this repo that **changes a tracked file under the release
-`paths:` filter** (`**.md`, `content/**`, `layouts/**`, `Dockerfile`, `charts/**`,
-and the rest in `release-docs.yaml`). That bumps the SemVer tag, builds a fresh
-image (picking up the component's current `main`), pushes a new chart version, and
-the GitOps pipeline rolls it out to the live site. (A cross-repo auto-trigger from
-the component repos is a future improvement.)
-
-IMPORTANT: an **empty** commit does NOT work. `Release Docs Site` triggers on
-push only when changed paths match the filter, so `git commit --allow-empty`
-matches nothing and never fires. A one-line README edit is the simplest reliable
-trigger. A cross-repo auto-trigger (a component push to `docs/**` dispatches this
-repo's release) would remove the manual step; tracked as a backlog improvement.
+Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
