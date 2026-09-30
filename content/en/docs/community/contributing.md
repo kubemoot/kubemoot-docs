@@ -41,14 +41,18 @@ layout and how to build and test each component.
 4. Commit with a conventional-commit message (below).
 5. Open a pull request against `main` using the template, and say what changed and why.
 
+Once merged, a pull request builds a release candidate from `main` and ships in the
+next promoted release; see [Releases](../releases/). Install final releases, not
+`main`.
+
 Small, focused pull requests review faster: one concern per pull request. A maintainer
 review and approval is required to merge. The [Governance](../governance/) page
 describes how public pull requests are handled.
 
 ## Commit messages
 
-Versions come from git tags, and the release pipeline computes each tag from the
-conventional-commit prefixes since the previous one. Never type a version number by
+Versions come from git tags, and the release pipeline computes each version from the
+conventional-commit prefixes since the previous release. Never type a version number by
 hand. Use a [Conventional Commits](https://www.conventionalcommits.org/) prefix:
 
 | Prefix | Version bump |
