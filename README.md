@@ -28,8 +28,8 @@ npm ci                 # the PostCSS toolchain Docsy needs
 hugo --gc --minify --baseURL https://kubemoot.org/   # output in ./public/
 ```
 
-Without `../kubemoot/docs`, Hugo still exits 0 and builds a site of about 15 pages with
-no component docs and no error. If the page count is far below 100, check the mount
+Without `../kubemoot/docs`, Hugo still exits 0 and builds a site with only the shell pages,
+no component docs, and no error. If the page count is far below 100, check the mount
 path first.
 
 For a live preview, run `hugo server` from this directory instead of the last command
@@ -72,7 +72,7 @@ nothing and does not build).
 
 The Dockerfile builds the site in a `golang:1.26-bookworm` stage (Go for Hugo
 modules, Node for the Docsy PostCSS step), placing the checked-out component docs at
-the mount path, then serves the static output from `nginx:1.27-alpine`. The site base
+the mount path, then serves the static output from `nginxinc/nginx-unprivileged:1.27-alpine`. The site base
 URL is the `SITE_URL` build argument (default `https://kubemoot.org/`), and the site
 serves at its host root.
 
