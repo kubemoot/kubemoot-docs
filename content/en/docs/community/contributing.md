@@ -105,12 +105,26 @@ you. A significant contribution, such as an architectural change or a notable fe
 is credited with a `Co-authored-by` trailer on the commit. Smaller ideas are
 acknowledged in the issue or pull request discussion.
 
-## Licensing
+## Licensing and sign-off
 
 Kubemoot repositories are licensed under the Apache License 2.0. By submitting a
 contribution you agree it is licensed under the same terms as the repository you are
-contributing to. There is no contributor license agreement and no sign-off (DCO)
-requirement.
+contributing to. There is no contributor license agreement (CLA).
+
+Every commit requires a Developer Certificate of Origin (DCO) sign-off, which certifies
+that you have the right to submit the change. Read the certificate at
+[developercertificate.org](https://developercertificate.org/). Add the sign-off with
+`git commit -s`, which appends a `Signed-off-by: Name <email>` line matching the commit
+author. A pull request check verifies the sign-off on each commit.
+
+To fix a missing sign-off:
+
+```bash
+git commit --amend -s          # the last commit
+git rebase --signoff <base>    # several commits since <base>
+```
+
+Then force-push your branch.
 
 ## Response time
 
