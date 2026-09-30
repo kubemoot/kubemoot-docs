@@ -98,6 +98,13 @@ Agent-authored commits are identifiable:
 If an AI assistant helped with your contribution, you are welcome to note it in the pull
 request; it is not required.
 
+## Credit
+
+A contribution the maintainers rework to fit the project's design is still credited to
+you. A significant contribution, such as an architectural change or a notable feature,
+is credited with a `Co-authored-by` trailer on the commit. Smaller ideas are
+acknowledged in the issue or pull request discussion.
+
 ## Licensing
 
 Kubemoot repositories are licensed under the Apache License 2.0. By submitting a

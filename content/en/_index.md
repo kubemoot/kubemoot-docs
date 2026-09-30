@@ -92,5 +92,5 @@ Start with the **[Community](/docs/community/)** section and the
 **[Contributing](/docs/community/contributing/)** page, the
 **[kubemoot organization](https://github.com/kubemoot)** on GitHub, and
 **[Discussions](https://github.com/orgs/kubemoot/discussions)**. For anything else,
-write to **moot@kubemoot.org**; report vulnerabilities to **security@kubemoot.org**.
+write to **moot@kubemoot.org**. **security@kubemoot.org** is only for vulnerability reports.
 {{% /blocks/section %}}

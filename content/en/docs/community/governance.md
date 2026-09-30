@@ -47,17 +47,16 @@ review all of them.
   required to merge.
 - A good idea does not have to arrive in a mergeable form. Accepted ideas may be merged
   as submitted or reworked by the maintainers to fit the project's design. When the
-  maintainers rework a contribution, the contributor is credited, for example with a
-  `Co-authored-by` trailer on the commit.
+  maintainers rework a significant contribution, such as an architectural change or a
+  notable feature, the contributor is credited with a `Co-authored-by` trailer on the
+  commit. Smaller ideas are acknowledged in the issue or pull request discussion.
 - A change can also be declined. The maintainer says why.
 - With a single maintainer, response time is best effort.
 
 ## Becoming a maintainer
 
-The project expects to add maintainers as it grows. Someone who has made sustained,
-good contributions, understands the design, and reviews others' work with care can be
-invited by the existing maintainers to take on review and write access. There is no
-formal ladder yet; when there is one, it will be described here.
+The maintainers are not adding maintainers yet while the project's direction is moving
+quickly; this may change as the project matures.
 
 ## Code of conduct and security
 

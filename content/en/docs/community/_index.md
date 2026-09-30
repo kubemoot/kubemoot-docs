@@ -18,9 +18,12 @@ links here instead of repeating it.
 |-------------|-------|
 | Ask a question, share an idea, or show what you built | [GitHub Discussions](https://github.com/orgs/kubemoot/discussions) |
 | Report a defect or request a feature on a specific repo | An issue on that repo, using its template |
-| Reach us about anything else: speaking, press, teaching, partnerships | [moot@kubemoot.org](mailto:moot@kubemoot.org) |
-| Report a vulnerability | [security@kubemoot.org](mailto:security@kubemoot.org), never a public issue. See [Security](security/) |
+| Reach us about anything else: questions, speaking, press, teaching, partnerships | [moot@kubemoot.org](mailto:moot@kubemoot.org) |
+| Report a vulnerability (only) | [security@kubemoot.org](mailto:security@kubemoot.org), never a public issue. See [Security](security/) |
 | Report a conduct concern | [conduct@kubemoot.org](mailto:conduct@kubemoot.org). See [Code of Conduct](code-of-conduct/) |
+
+The security address is only for vulnerability reports. Every other question goes to
+[moot@kubemoot.org](mailto:moot@kubemoot.org) or GitHub Discussions.
 
 Use Discussions when you are not sure whether something is a bug. A Discussion can
 become an issue once it is clear what is broken; an issue opened too early usually

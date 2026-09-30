@@ -7,8 +7,10 @@ description: "How to report a vulnerability, which versions get fixes, and where
 ## Reporting a vulnerability
 
 Report vulnerabilities privately to
-[security@kubemoot.org](mailto:security@kubemoot.org). Do not open a public issue,
-Discussion, or pull request for a security report. Where a repository's **Security**
+[security@kubemoot.org](mailto:security@kubemoot.org). That address is only for vulnerability
+reports; send every other question to [moot@kubemoot.org](mailto:moot@kubemoot.org) or
+[GitHub Discussions](https://github.com/orgs/kubemoot/discussions). Do not open a public
+issue, Discussion, or pull request for a security report. Where a repository's **Security**
 tab offers **Report a vulnerability**, GitHub's private reporting works too.
 
 Include what is affected (repository and version), the steps to reproduce, and what an
@@ -18,9 +20,9 @@ maintainer, that is best effort, not a guaranteed response time.
 
 ## Supported versions
 
-Every merge to `main` that changes a component releases it (see [Releases](../releases/)). Security fixes land
-on `main` and ship as the next release of the affected component. Older releases do not
-receive backported fixes.
+Every merge to `main` that changes a component releases it (see [Releases](../releases/)). Kubemoot is a young project and does not backport fixes.
+A security fix lands on `main` and ships in the next release of the affected component;
+to receive it, move to that release.
 
 ## Security model and known limitations
 
