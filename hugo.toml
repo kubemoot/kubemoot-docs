@@ -74,6 +74,11 @@ defaultContentLanguage = "en"
       icon = "fa fa-envelope"
       desc = "Questions, speaking, press: everything that is not a bug or a vulnerability"
     [[params.links.user]]
+      name = "Community"
+      url = "/docs/community/"
+      icon = "fa fa-users"
+      desc = "Contributing, governance, conduct, security, and releases"
+    [[params.links.user]]
       name = "Discussions"
       url = "https://github.com/orgs/kubemoot/discussions"
       icon = "fa fa-comments"
@@ -120,3 +125,7 @@ defaultContentLanguage = "en"
     name = "API"
     weight = 70
     url = "/docs/reference/"
+  [[menu.main]]
+    name = "Community"
+    weight = 80
+    url = "/docs/community/"

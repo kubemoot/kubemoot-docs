@@ -88,7 +88,8 @@ See **[Ecosystem](/docs/ecosystem/)** for what each component is and how they fi
 ## Community
 
 Kubemoot is an independent open-source project under the Apache 2.0 license.
-Start with the **[Contributor Guide](/docs/contributing/contributor-guide/)**, the
+Start with the **[Community](/docs/community/)** section and the
+**[Contributing](/docs/community/contributing/)** page, the
 **[kubemoot organization](https://github.com/kubemoot)** on GitHub, and
 **[Discussions](https://github.com/orgs/kubemoot/discussions)**. For anything else,
 write to **moot@kubemoot.org**; report vulnerabilities to **security@kubemoot.org**.

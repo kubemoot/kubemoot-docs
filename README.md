@@ -82,11 +82,14 @@ serves at its host root.
 mirroring the `kubemoot-dashboard` chart conventions. See the chart's
 `values.yaml` for the image, pull-secret, and gateway settings.
 
-## Contributing
+## Community and contributing
 
-Edit a component's chapter in that component's repo (for example `kubemoot/docs`).
-Edit the site shell, landing page, and cross-cutting chapters here. See
-[CONTRIBUTING](CONTRIBUTING.md).
+Kubemoot is an independent open-source project under the Apache License 2.0. Contributing, support, governance, the code of conduct, security reporting, and releases are documented in one place: the [Community section of kubemoot.org](https://kubemoot.org/docs/community/). Ask questions and share ideas in [GitHub Discussions](https://github.com/orgs/kubemoot/discussions). For anything else write to moot@kubemoot.org, and report vulnerabilities privately to security@kubemoot.org.
+
+Documentation for each component lives in that component's repo: edit `docs/` in
+[kubemoot/kubemoot](https://github.com/kubemoot/kubemoot) for the operator chapter.
+Edit the site shell, landing page, and cross-cutting chapters (including the Community
+section) here. See [CONTRIBUTING](CONTRIBUTING.md).
 
 ## License
 

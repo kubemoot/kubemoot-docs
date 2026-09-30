@@ -1,0 +1,65 @@
+---
+title: "Governance"
+weight: 20
+description: "Who maintains Kubemoot, how decisions are made, and how public issues and pull requests are handled."
+---
+
+Kubemoot is an independent open-source project. Its governance is small and
+deliberately simple, and this page states how it works today.
+
+## Maintainers
+
+| Maintainer | Role |
+|------------|------|
+| Jonathan Johnson | Maintainer |
+
+Write access to the repositories in the `kubemoot` organization is limited to the
+maintainers. Everyone else contributes through forks and pull requests.
+
+## How decisions are made
+
+The maintainer decides. Day-to-day changes are decided in the pull request or issue
+where they come up. Changes that affect the API (the CRDs), the consensus protocol, or
+how components fit together are discussed in the open first, so the reasoning is on
+record:
+
+- **Proposals.** Larger or cross-cutting changes start as an issue titled
+  `Proposal: <summary>` that describes the problem, the proposed approach, the
+  alternatives considered, and what it touches. A maintainer labels it `proposal`, and
+  the discussion happens in the issue.
+- **Architecture decisions.** Accepted proposals are implemented, and significant ones
+  also land as an ADR under `docs/adr/` in the `kubemoot` repository (see the
+  [decision records](../adr/)).
+- **Direction.** The [Roadmap](../introduction/roadmap/) lists the major directions
+  under consideration. Items on it move when someone makes the case in
+  [Discussions](https://github.com/orgs/kubemoot/discussions).
+
+A formal enhancement-proposal process may be adopted if the number of contributors
+warrants one.
+
+## How public issues and pull requests are handled
+
+Anyone can open an issue, start a Discussion, or send a pull request. Maintainers
+review all of them.
+
+- A pull request is reviewed against the [Contributing](../contributing/) standards:
+  tests, conventional commits, and the project's conventions. A maintainer approval is
+  required to merge.
+- A good idea does not have to arrive in a mergeable form. Accepted ideas may be merged
+  as submitted or reworked by the maintainers to fit the project's design. When the
+  maintainers rework a contribution, the contributor is credited, for example with a
+  `Co-authored-by` trailer on the commit.
+- A change can also be declined. The maintainer says why.
+- With a single maintainer, response time is best effort.
+
+## Becoming a maintainer
+
+The project expects to add maintainers as it grows. Someone who has made sustained,
+good contributions, understands the design, and reviews others' work with care can be
+invited by the existing maintainers to take on review and write access. There is no
+formal ladder yet; when there is one, it will be described here.
+
+## Code of conduct and security
+
+All participation is covered by the [Code of Conduct](../code-of-conduct/).
+Vulnerabilities follow the [Security](../security/) policy.
