@@ -35,10 +35,10 @@ COPY . .
 # CI-checked-out component docs there.
 RUN mkdir -p /kubemoot && cp -r _docs/kubemoot/docs /kubemoot/docs
 
-# Build for the kubemoot-docs.dijure.com subdomain ROOT (docs.dijure.com is the
-# owner's Google Workspace). Docsy serves cleanly at a host root: assets at /css
+# Build for the site host ROOT. Docsy serves cleanly at a host root: assets at /css
 # and the docs section at /docs/<page> both resolve, with no /docs/docs/ doubling.
-RUN hugo --gc --minify --baseURL "https://kubemoot-docs.dijure.com/"
+ARG SITE_URL=https://kubemoot.org/
+RUN hugo --gc --minify --baseURL "${SITE_URL}"
 
 # Serve stage: nginx serving the static output, fully non-root.
 # nginx-unprivileged runs as uid 101 and listens on 8080, so the container needs

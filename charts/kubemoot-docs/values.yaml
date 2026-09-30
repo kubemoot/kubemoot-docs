@@ -9,9 +9,9 @@ image:
   tag: ""  # defaults to .Chart.AppVersion
   pullPolicy: IfNotPresent
 
-# Image pull secrets for Harbor registry
-imagePullSecrets:
-  - name: harbor-registry-secret
+# Pull secrets for image.registry. Empty for a public registry; a private
+# mirror sets its own secret name here.
+imagePullSecrets: []
 
 # Number of replicas — one is sufficient for a static site
 replicaCount: 1
