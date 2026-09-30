@@ -90,6 +90,7 @@ jobs:
                   "args": [
                     "--context=tar://stdin",
                     "--dockerfile=Dockerfile",
+                    "--build-arg=SITE_URL=${{ vars.PREVIEW_SITE_URL || 'https://kubemoot.org/' }}",
                     "--destination=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:'"${SHA}"'",
                     "--destination=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
                     "--insecure",
