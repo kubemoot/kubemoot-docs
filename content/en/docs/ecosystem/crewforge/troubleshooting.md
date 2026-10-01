@@ -69,8 +69,8 @@ render fails is listed with the error as an item; click it to open the file and 
 
 | You see | Cause and fix |
 |---|---|
-| Creating a crew needs kmctl 0.12.0 or later on your PATH, and none was found. | Install [kmctl](../../../user-guides/kmctl/#install) and make sure it is on the PATH of the VS Code that runs CrewForge. In a remote window, that is the remote machine's PATH. |
-| Creating a crew needs kmctl 0.12.0 or later (for create --chart); found kmctl X. | `kmctl create --chart` arrived in 0.12.0. Upgrade kmctl. |
+| Creating a crew needs kmctl 0.14.0 or later on your PATH, and none was found. | Install [kmctl](../../../user-guides/kmctl/#install) and make sure it is on the PATH of the VS Code that runs CrewForge. In a remote window, that is the remote machine's PATH. |
+| Creating a crew needs kmctl 0.14.0 or later (for the starter crew); found kmctl X. | The starter crew scaffold arrived in kmctl 0.14.0. Upgrade kmctl. |
 | Lint needs helm on your PATH to lint a Helm chart, and none was found. | Install [Helm](https://helm.sh/docs/intro/install/). A bundle of plain manifests lints without it. |
 | Deploying a chart or a bundle fails to start. | `helm` and `kubectl` must be on the PATH of the VS Code window. Start VS Code from a shell where `helm version` and `kubectl version --client` work, then check the **CrewForge** output channel. |
 

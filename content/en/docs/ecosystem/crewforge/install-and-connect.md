@@ -16,7 +16,7 @@ and what it tells you when it cannot reach one.
 | A kubeconfig with access to a cluster that runs the [Kubemoot operator](../../../introduction/installation/) | Everything. CrewForge lists the crews your account can read. |
 | `kubectl` on your PATH | Deploying a bundle of plain manifests (`kubectl apply --server-side`). |
 | `helm` on your PATH | Deploying a crew chart, and Lint. Without it, Lint says where to get it. |
-| [`kmctl`](../../../user-guides/kmctl/#install) 0.12.0 or later on your PATH | **New Kubemoot Crew Here** and **Create Crew**, which run `kmctl create --chart`. CrewForge checks the version before it asks you anything. |
+| [`kmctl`](../../../user-guides/kmctl/#install) 0.14.0 or later on your PATH | **New Kubemoot Crew Here** and **Create Crew**, which run `kmctl create --chart` to scaffold the starter crew (0.14.0 is the first version with it). CrewForge checks the version before it asks you anything. |
 | `git` on your PATH (optional) | Recording the revision a crew was deployed from, and deploying an earlier commit. |
 
 Browsing crews and chatting need only the kubeconfig. Developing a crew needs the rest.
