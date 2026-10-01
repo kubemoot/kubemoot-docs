@@ -121,7 +121,10 @@ The view follows the file system, so adding, renaming, or deleting a crew folder
 of its files updates it by itself. **Refresh** stays on the title bar as a fallback. A
 source whose render fails shows the error as an item.
 
-The title bar has **Create Crew** (the **+**) and **Refresh Crew Sources**. In the
+The title bar has **Create Crew** (the **+**) and **Refresh Crew Sources**. **Create
+Crew** asks for a name, a size from 1 to 5 (the number of specialists beside the
+coordinator: `workloads`, then `events`, `networking`, `config`, and a `reviewer`), and a
+model family, and needs `kmctl` 0.14.0 or later. In the
 Explorer, **New Kubemoot Crew Here** is on folders outside crew sources and **View in
 CrewForge** is on files and folders inside one.
 
@@ -271,7 +274,7 @@ menu button.
 
 | Action | When to use it | What it changes |
 |---|---|---|
-| **Create Crew** / **New Kubemoot Crew Here** | Start a new crew | A new chart folder on disk, written by `kmctl create --chart`. Nothing on the cluster. |
+| **Create Crew** / **New Kubemoot Crew Here** | Start a new crew | A new chart folder on disk, written by `kmctl create --chart`: the starter crew, a read-only guide to its namespace, with 1 to 5 specialists as you choose. Nothing on the cluster. |
 | **Deploy to Namespace...** | Deploy a crew, here or to one more namespace | `helm upgrade --install` (a bundle: `kubectl apply --server-side`) into the namespace you pick. The last one, else `crew-<name>`, is offered, and Redeploy then uses it. Records the source on the Crew and waits until it is ready. |
 | **Redeploy** (on a source) | After editing a deployed crew | The same release in the namespace you last deployed to, upgraded from the source. Waits for the agents again. |
 | **Redeploy** (on a deployment or a deployed crew) | A deployment is behind its source | That deployment, through the channel it came by. A bundle applies only the objects that differ. |

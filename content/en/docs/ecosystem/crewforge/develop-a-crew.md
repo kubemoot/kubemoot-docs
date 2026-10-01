@@ -6,14 +6,14 @@ aliases:
   - /docs/user-guides/develop-crews-in-vscode/
 ---
 
-This guide walks the whole loop on one small example: a `helpdesk` crew that answers
-staff questions about accounts, devices, and the VPN. You create it, change it, deploy
-it to a namespace, ask it something, and redeploy after an edit. Everything happens in
+This guide walks the whole loop on one small example: a `helpdesk` crew scaffolded from
+the starter crew, a read-only guide to its own Kubernetes namespace. You create it, change
+it, deploy it to a namespace, ask it something, and redeploy after an edit. Everything happens in
 the editor, without GitOps: CrewForge deploys with Helm straight to a namespace, and
 never commits or pushes. Flux rollouts stay the outer loop.
 
 You need CrewForge connected to a cluster that runs the Kubemoot operator, with `helm`
-and `kmctl` 0.12.0 or later on your PATH. See [Install and connect](../install-and-connect/).
+and `kmctl` 0.14.0 or later on your PATH. See [Install and connect](../install-and-connect/).
 
 ## 1. Create the crew
 
@@ -27,8 +27,17 @@ first.
 CrewForge asks for three things:
 
 1. **A name**, for example `helpdesk`.
-2. **How many specialists** to start with. The scaffold adds a coordinator and that many
-   specialists, so `2` gives three agents.
+2. **How many specialists** to start with, 1 to 5. The scaffold adds a coordinator and that
+   many specialists, so `2` gives three agents. Each size is a working crew; it adds the
+   next specialist in this order:
+
+   | Size | Adds |
+   |---|---|
+   | 1 | `workloads`: Pods, Deployments, ReplicaSets, StatefulSets, Jobs |
+   | 2 | `events`: Warning events, restarts, recent failures |
+   | 3 | `networking`: Services, endpoints, routes, NetworkPolicies |
+   | 4 | `config`: ConfigMaps, ServiceAccounts, Secret references |
+   | 5 | `reviewer`: checks the answer against the gathered data |
 3. **A model family**: `qwen`, `gemma`, `llama`, or `mistral`.
 
 CrewForge then runs `kmctl create helpdesk --chart` and writes the crew as a Helm chart
@@ -49,9 +58,16 @@ helpdesk/
     agents.yaml          the coordinator and the specialists
     promptmodules.yaml   what each agent is told
     models.yaml          the Models the scheduler can bind agents to
+    tools.yaml           the read-only Kubernetes MCP server and its gateway
+    rbac.yaml            the Role the tool server runs with
   fitness/
     fitness.yaml         a starter fitness suite
 ```
+
+The crew works as scaffolded. The tool server is read-only and its `Role` allows only
+`get`, `list`, and `watch` in the crew's namespace, with no Secret access. The fitness
+suite has 3 scenarios at size 1 and up to 7 at size 5, and they pass on a fresh install.
+The [starter crew](../../../user-guides/starter-crew/) guide describes it in full.
 
 The fitness suite sits outside `templates/` on purpose, so installing the chart does not
 start a run.
@@ -90,9 +106,12 @@ dashboard.
 ## 3. Edit it
 
 Open `templates/crew.yaml` and give the crew a real description. Then open
-`templates/agents.yaml` and replace the placeholder description of each specialist with
-its responsibility, and rewrite its system PromptModule in `templates/promptmodules.yaml`
-to match.
+`templates/promptmodules.yaml` and change one rule in a specialist's PromptModule, or in
+the coordinator's `synthesis-prompt`, which shapes the final answer. For example, add
+`ALWAYS end with a one-line summary that starts "In short:"` to `synthesis-prompt`. Deploy
+it (step 5), ask the crew `List the pods in this namespace`, and the answer ends with that
+line. To point the crew at a domain of your own, rewrite each specialist's resume in
+`templates/agents.yaml` and its tools in `templates/tools.yaml`.
 
 To add a part, use **Add <Kind>...** on its group in Crew Sources, for example **Add
 Agent...** on Agents. CrewForge asks for the agent's name, role, capabilities,
