@@ -11,7 +11,8 @@ This page is the reference. For a guided tour, see
 
 CrewForge applies only Kubemoot custom resources and Helm releases of them. It never
 deletes a namespace or any other kind of object; the operator owns cleanup through
-finalizers and owner references. Anything that deletes files, such as **Delete Source...**,
+finalizers and owner references. **Add <Kind>...** and **Remove from Source...** change
+only files of a source. Anything that deletes files, such as **Delete Source...**,
 moves them to your trash. Actions that only read are marked "nothing" in the
 [action reference](#action-reference) below.
 
@@ -19,7 +20,7 @@ moves them to your trash. Actions that only read are marked "nothing" in the
 
 Click the Kubemoot mark in the activity bar. Two views share the side bar.
 
-![The Kubemoot view in VS Code's side bar. Deployed Crews lists the helpdesk crew expanded to its agents and prompt modules; Crew Sources lists the helpdesk chart, deployed in crew-helpdesk and in sync, expanded to what it declares.](../views.png)
+![The Kubemoot view in VS Code's side bar. Deployed Crews lists the helpdesk crew expanded to its groups, with Models open: three Models and the shared ollama ModelProvider. Crew Sources lists the helpdesk chart, deployed in crew-helpdesk and in sync, expanded to the same groups.](../views.png)
 
 ### Deployed Crews
 
@@ -30,17 +31,42 @@ A crew's line shows its phase, agent count, chart version, and whether its sourc
 in the workspace (*source open* or *no local source*). Hover for its namespace, labels,
 creation time, archetype, and status conditions.
 
-Expand a crew to see what it is made of, read from the cluster:
+Expand a crew to see every part of it, read from the cluster, in this order. A group with
+nothing in it says *none*; hover a group for the rule that puts an object in it.
 
-- **Agents**: each with its discussion role, the capabilities it asks the scheduler for
-  (never a model name), and whether it is ready.
-- **PromptModules**: in composition order, each marked ADL or prose, with the agents that
-  use it. A module an agent names that the cluster lacks shows as missing.
-- **Skills**, in order.
-- **MCP Servers** its agents or skills name, and the **Tools** its agents may call.
+- **Agents**: the Agents labeled `kubemoot.ai/crew` with the crew, each with its
+  discussion role, the capabilities it asks the scheduler for (never a model name), and
+  whether it is ready.
+- **Prompts**: the PromptModules the agents name in `promptRefs`, in composition order,
+  each marked ADL or prose, with the agents that use it. A module an agent names that the
+  cluster lacks shows as missing.
+- **Skills** labeled with the crew, in order.
+- **Models**: every Model in the crew's namespace, since the scheduler may bind the agents
+  to any of them by capability label, then the ModelProviders they run on (looked up in
+  the crew's namespace, then `kubemoot`). Hover a Model for its model name, capability
+  tier (its `latencyClass`), capability labels, and context length.
+- **RAG Sources** the agents or skills name, or were matched to by keyword, and the
+  crew's own, then the **EmbeddingModels** they embed with. Hover one for what it
+  indexes, its chunking, its embedding model, and when it was last indexed.
+- **MCP Servers** the agents or skills name, installed with the crew, or registered with
+  its gateway, then the namespace's **MCPGateway** (the agents use the first one), and the
+  **MCPQualityPolicy**, **MCPCatalog**, and **MCPServerReport** objects they use.
+- **Tools** the agents enable. Each says which MCP server offers it and which agents
+  enable it. The description and input schema come from the gateway's tool catalog, read
+  through the Kubernetes service proxy; when it cannot be read, the item says so. Click a
+  tool for a read-only page with all of it.
+- **Policies**: the CrewSchedulingPolicy whose `crewRef` names the crew, and the
+  MootArchetype it runs. Hover a policy for what it governs.
+- **Notifications**: the NotificationSinks in the namespace that fire for the crew's
+  agents. The tooltip shows only the webhook's host.
+- **Fitness**: the CrewFitnessSuites and CrewFitness runs whose `crewRef` names the crew.
 - **Deployment**: the channel (Helm, Flux, or a kubectl bundle), the chart and version,
-  the release, the Flux object, and what a CrewForge deploy recorded: source, revision,
-  who, and when.
+  the release, the Flux object, what a CrewForge deploy recorded (source, revision, who,
+  and when), and the operator's KubemootConfig.
+
+An object that is not the crew's own (a ModelProvider in `kubemoot`, another crew's
+Model, the cluster's archetype) is marked **shared**, and its tooltip says who owns it.
+CrewForge only shows it.
 
 Click any item for its live YAML in a read-only editor. The title bar has **Create Crew**,
 **Open Crews Overview**, **Refresh Deployed Crews**, **Continue a Conversation**, and
@@ -61,10 +87,28 @@ folders of plain manifests that include one (a bundle). Each source reads as its
 name, with where it stands on its line: *deployed in crew-helpdesk, changed*, *deployed in
 crew-helpdesk, in sync*, or *not deployed*.
 
-Each source expands to what it declares: the Crew, **Agents**, **PromptModules**,
-**Skills**, **MCP Servers**, and **Fitness Scenarios**; click one to open its file at
-that object. After that come its deployments, one per namespace. A source can be deployed
-to many namespaces.
+Each source expands to what it declares, in the same groups as Deployed Crews: the Crew,
+**Agents**, **Prompts**, **Skills**, **Models**, **RAG Sources**, **MCP Servers**,
+**Tools**, **Policies**, **Notifications**, and **Fitness Scenarios**. Click an object to
+open its file at that object. Something the source names but does not declare, such as
+the ModelProvider its Models run on, shows as *shared, installed elsewhere*, or as *not in
+this source* when it should be there. After the groups come its deployments, one per
+namespace. A source can be deployed to many namespaces.
+
+To define more of the crew, use **Add <Kind>...** on a group (the **+** on its line):
+**Add Agent...** (name, role, capabilities, PromptModules, tools), **Add PromptModule...**
+(ADL or prose, and its order), **Add Skill...**, **Add Model...**, **Add RAGSource...**,
+**Add EmbeddingModel...**, **Add MCPServer...**, **Add CrewSchedulingPolicy...**, and
+**Add NotificationSink...**. CrewForge writes the new object in the shape of the source's
+own: in a chart, a file under `templates/` labeled with the crew (with the chart's
+common-labels helper when it has one); in a bundle, a YAML file beside the Crew in its
+namespace. The file opens, the object appears in the tree, and Lint checks it.
+
+**Remove from Source...** on a declared object moves its file to the trash, or takes its
+document out of a file that holds others, after a confirmation that names anything that
+still refers to it. An object a template loop makes, such as a Model from `values.yaml`,
+is refused: change the values instead. Nothing in the cluster changes until the next
+deploy; the operator cleans up after a removed object.
 
 Under each deployment:
 
@@ -110,6 +154,8 @@ not apply is disabled, with the reason in its tooltip. Four tabs sit under the b
 - the **source**: path, chart name, chart version, and app version;
 - the **deployment**: namespace and context, channel, Helm release, deployed chart and app
   version, first deploy and last redeploy, and what a CrewForge deploy recorded;
+- the **contents**: how many objects each group holds, from the cluster when the crew is
+  deployed, else from the source. Click a group to select it in the tree;
 - the **agents**, counted by role, with the capabilities each declares and whether each is
   ready, followed by the Models the source declares;
 - the Crew's **phase**, message, and status conditions;
@@ -119,7 +165,7 @@ not apply is disabled, with the reason in its tooltip. Four tabs sit under the b
 
 A banner says when the source's chart version differs from the deployed one.
 
-![The crew dashboard's Overview tab for the helpdesk crew: source, deployment, agents, and live status sections.](../crew-overview.png)
+![The crew dashboard's Overview tab for the helpdesk crew: source, deployment, a Contents line counting each group, agents, and live status sections.](../crew-overview.png)
 
 **Source** lists the objects the local source renders, grouped by kind. Click one to open
 its file at the object.
@@ -145,8 +191,10 @@ and the selected one in detail, with **Pause**, **Resume**, and **Stop**. See
 
 ### Where the numbers come from
 
-The Kubernetes API supplies Crews, Agents, fitness runs and their iterations, the
-operator Deployment, the server version, and the CRD schema. `helm status` supplies
+The Kubernetes API supplies Crews, Agents, and every other Kubemoot object of a crew,
+fitness runs and their iterations, the operator Deployment, the server version, and the
+CRD schema. The MCP gateway's tool list, read through the Kubernetes service proxy,
+supplies each tool's description and input schema. `helm status` supplies
 release times. CrewForge's saved conversations supply the conversation counts. The
 optional Kubemoot dashboard, read through the Kubernetes service proxy, supplies
 discussion threads, agent failures, and a suite's scores and iterations. Without it,
@@ -237,6 +285,9 @@ menu button.
 | **Compare Source with Live (normalized diff)** | See how a deployed object differs from its source | Nothing. |
 | **Show Source YAML** / **Show Live YAML** / **Show Live YAML (raw)** | Look at one side alone | Nothing. |
 | **Lint (helm lint and schema check)** | Before deploying, or any time | Nothing. Findings go to the Problems panel. |
+| **Add <Kind>...** | Define another part of a crew: an Agent, a PromptModule, a Model, a RAG source, and so on | A new file in the source, opened in the editor and linted. Nothing on the cluster until you deploy. |
+| **Remove from Source...** | Take a part out of a crew's source | Its file moves to the trash, or its document leaves a file that holds others, after a confirmation. Nothing on the cluster until you deploy. |
+| **Show Tool Details** | See where a tool comes from and what it takes | Nothing. A read-only page. |
 | **Ask** | Try a deployed crew | Nothing on the cluster. The chat is a discussion turn. |
 | **Run Fitness** | Measure a deployed crew | Creates a fitness run (a Kubemoot object) in the crew's namespace. |
 | **Run This Scenario Only** | Try one scenario after changing a prompt | One fitness run of one scenario, one iteration, marked so its dashboard offers Stop. |

@@ -59,14 +59,22 @@ start a run.
 ## 2. Understand what it declares
 
 Expand `helpdesk` in **Crew Sources**. CrewForge renders the chart and lists what it
-declares:
+declares, group by group:
 
 - the **Crew**,
 - its **Agents**, each with its role and capabilities,
-- the **PromptModules** the agents compose, in order, marked ADL or prose,
-- **Skills** and **MCP Servers**, when it has any,
+- the **Prompts** (PromptModules) the agents compose, in order, marked ADL or prose,
+- **Skills**,
+- the **Models** the scheduler can bind the agents to, and the ModelProvider they run on,
+  marked *shared, installed elsewhere* because the cluster provides it,
+- **RAG Sources**, **MCP Servers**, and the **Tools** the agents enable,
+- **Policies**: the scheduling policy and the archetype it runs,
+- **Notifications**,
 - **Fitness Scenarios**, from the `fitness/` folder,
 - then its deployments. A new crew shows **not deployed**.
+
+A group with nothing in it says *none*. Hover a Model for its model name, capability tier,
+and context length, or a policy for what it governs.
 
 Click any of them to open its file at that object. The view follows the file system:
 adding, renaming, or deleting a file updates it without a refresh. When the chart does
@@ -85,6 +93,12 @@ Open `templates/crew.yaml` and give the crew a real description. Then open
 `templates/agents.yaml` and replace the placeholder description of each specialist with
 its responsibility, and rewrite its system PromptModule in `templates/promptmodules.yaml`
 to match.
+
+To add a part, use **Add <Kind>...** on its group in Crew Sources, for example **Add
+Agent...** on Agents. CrewForge asks for the agent's name, role, capabilities,
+PromptModules, and tools, writes `templates/agent-<name>.yaml` in the shape of the
+chart's other templates, opens it, shows it in the tree, and lints the chart.
+**Remove from Source...** on an object takes it out again, after a confirmation.
 
 Whenever a file of the crew is open, the status bar names the crew and where it stands:
 
