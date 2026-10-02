@@ -13,7 +13,7 @@ the editor, without GitOps: CrewForge deploys with Helm straight to a namespace,
 never commits or pushes. Flux rollouts stay the outer loop.
 
 You need CrewForge connected to a cluster that runs the Kubemoot operator, with `helm`
-and `kmctl` 0.14.0 or later on your PATH. See [Install and connect](../install-and-connect/).
+and `kmctl` 0.15.0 or later on your PATH. See [Install and connect](../install-and-connect/).
 
 ## 1. Create the crew
 
