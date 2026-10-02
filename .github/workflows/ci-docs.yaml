@@ -16,6 +16,7 @@ on:
       - 'Dockerfile'
       - 'nginx.conf'
       - 'charts/**'
+      - '.github/workflows/ci-docs.yaml'
   workflow_dispatch:
 
 env:
