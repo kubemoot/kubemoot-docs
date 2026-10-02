@@ -24,12 +24,19 @@ Click the Kubemoot mark in the activity bar. Two views share the side bar.
 
 ### Deployed Crews
 
-The crews running on the cluster, grouped by namespace. The first items say what
-CrewForge is connected to and open the **Crews Overview**. A green mark means ready.
+The crews running on the cluster. The first items say what CrewForge is connected to and
+open the **Crews Overview**; that row stays first. A green mark means ready.
 
-A crew's line shows its phase, agent count, chart version, and whether its source is open
-in the workspace (*source open* or *no local source*). Hover for its namespace, labels,
-creation time, archetype, and status conditions.
+By default the view is a flat list: one row per crew, sorted by namespace and then name.
+A row is labeled with the crew's display name and reads
+`<namespace>[/<kubernetes name when different>] · <phase>, <N> agents[, vX] · source open|no local source`.
+The Kubernetes name appears only when it differs from the display name. Hover for its
+namespace, labels, creation time, archetype, and status conditions.
+
+**Group by Namespace** (the list-tree icon on the title bar) nests the crews under their
+namespaces. **Show as a Flat List** switches back. CrewForge remembers the choice for each
+workspace. A namespace that cannot be read shows as an error row, "Cannot read namespace
+`<ns>`: `<reason>`", in both modes.
 
 Expand a crew to see every part of it, read from the cluster, in this order. A group with
 nothing in it says *none*; hover a group for the rule that puts an object in it.
@@ -59,7 +66,8 @@ nothing in it says *none*; hover a group for the rule that puts an object in it.
   MootArchetype it runs. Hover a policy for what it governs.
 - **Notifications**: the NotificationSinks in the namespace that fire for the crew's
   agents. The tooltip shows only the webhook's host.
-- **Fitness**: the CrewFitnessSuites and CrewFitness runs whose `crewRef` names the crew.
+- **Fitness**: the scenarios deployed with the crew, then its past runs. See
+  [Live Fitness group](#live-fitness-group).
 - **Deployment**: the channel (Helm, Flux, or a kubectl bundle), the chart and version,
   the release, the Flux object, what a CrewForge deploy recorded (source, revision, who,
   and when), and the operator's KubemootConfig.
@@ -67,6 +75,37 @@ nothing in it says *none*; hover a group for the rule that puts an object in it.
 An object that is not the crew's own (a ModelProvider in `kubemoot`, another crew's
 Model, the cluster's archetype) is marked **shared**, and its tooltip says who owns it.
 CrewForge only shows it.
+
+#### Live Fitness group
+
+![The Deployed Crews view with the Help Desk crew expanded. Its Fitness group reads "4 scenarios, 2 runs" and lists four scenario rows and a past run.](../live-fitness.png)
+
+The **Fitness** group lists the scenarios deployed with the crew, then its past runs.
+Scenarios come from the ConfigMaps labeled `kubemoot.ai/crew=<crew>` and
+`kubemoot.ai/fitness-kind=scenarios`. A key ending in `.yaml` holds CrewFitness or
+CrewFitnessSuite manifests; a key ending in `.adl` or `.md` (other than `README.md`) holds
+one script named after the key. The group reads `<n> scenarios · <m> runs`, plus *changed
+since deploy* when an open workspace source's scenarios differ from the deployed ones. It
+works with no local source open.
+
+Runs from here always use the deployed scenarios, and the tooltips say so. The actions:
+
+- **Run All Deployed Scenarios**: one click runs every scenario once, as a suite named
+  `<crew>-all-<timestamp>`.
+- **Run Scenarios...**: a multi-select pick of every scenario with its DESCRIPTION, all
+  checked, then an iteration count of 1, 3, 5, 10, or another number up to 100. It starts
+  one CrewFitnessSuite named `<crew>-batch-<n>-<timestamp>`, or `<crew>-all-...` when you
+  keep every scenario.
+- **Run This Scenario Only**: one iteration of that scenario.
+- **Show Scenario Script**: opens the script.
+- **Pause**, **Resume**, and **Stop**, inline on a run in progress.
+
+Select several scenario rows together and choose **Run Selected Scenarios as One Batch**
+to run them as one suite after the iterations prompt. **Run Scenarios...** and **Run
+Selected Scenarios as One Batch** also work in Crew Sources, on a source's **Fitness
+Scenarios**, against its deployment. Each batch is one CrewFitnessSuite, judged together,
+with one XLSX, and the fitness dashboard opens on it. See
+[Fitness from the editor](../fitness/).
 
 Click any item for its live YAML in a read-only editor. The title bar has **Create Crew**,
 **Open Crews Overview**, **Refresh Deployed Crews**, **Continue a Conversation**, and
@@ -84,7 +123,7 @@ source. A Flux-managed crew changes only through git.
 
 The crews in your workspace: Helm charts whose templates declare a Kubemoot Crew, and
 folders of plain manifests that include one (a bundle). Each source reads as its crew's
-name, with where it stands on its line: *deployed in crew-helpdesk, changed*, *deployed in
+display name, with where it stands on its line: *deployed in crew-helpdesk, changed*, *deployed in
 crew-helpdesk, in sync*, or *not deployed*.
 
 Each source expands to what it declares, in the same groups as Deployed Crews: the Crew,
@@ -122,7 +161,8 @@ of its files updates it by itself. **Refresh** stays on the title bar as a fallb
 source whose render fails shows the error as an item.
 
 The title bar has **Create Crew** (the **+**) and **Refresh Crew Sources**. **Create
-Crew** asks for a name, a size from 1 to 5 (the number of specialists beside the
+Crew** asks for a display name, then a Kubernetes name (prefilled from the display name and
+editable), a size from 1 to 5 (the number of specialists beside the
 coordinator: `workloads`, then `events`, `networking`, `config`, and a `reviewer`), and a
 model family, and needs `kmctl` 0.14.0 or later. In the
 Explorer, **New Kubemoot Crew Here** is on folders outside crew sources and **View in
@@ -142,11 +182,20 @@ the first item of Deployed Crews. It is a table of every deployed crew your kube
 can see: name, namespace, phase and readiness, agents ready out of total, chart version,
 channel (helm, bundle, flux), last deploy time, the turn answering now, recent problems,
 and whether a local source is open. Click a crew for its dashboard. The header says what
-CrewForge is connected to.
+CrewForge is connected to. The Kubernetes name sits beside the display name.
+
+### Where the display name shows
+
+A crew's display name is the name people read. It appears in the Deployed Crews and Crew
+Sources labels, the crew dashboard's heading and tab title (with the Kubernetes name beside
+where it runs), the fitness dashboard's tab (`<display name> fitness`) and heading, the
+chat's tab title and heading (the Kubernetes name shows on hover and beside the namespace),
+and the Crews Overview table. A crew without a display name shows its Kubernetes name.
 
 ### Crew dashboard
 
-Click a crew in Crew Sources or Deployed Crews. The tab is titled with the crew's name.
+Click a crew in Crew Sources or Deployed Crews. The tab is titled with the crew's display
+name.
 Its buttons are **Deploy to Namespace...**, **Redeploy**, **Undeploy**, **Ask**, **Run
 Fitness**, **Fitness Runs**, **Lint**, **Show YAML**, and **Refresh**. A button that does
 not apply is disabled, with the reason in its tooltip. Four tabs sit under the buttons.
@@ -188,8 +237,10 @@ deployed, and **Select Kubernetes Context** when the cluster cannot be reached.
 
 ### Fitness dashboard
 
-Click a **Fitness** node, a run, or **Open Fitness Dashboard**. It shows the crew's runs
-and the selected one in detail, with **Pause**, **Resume**, and **Stop**. See
+Click a **Fitness** node, a run, or **Open Fitness Dashboard**. The tab reads
+`<display name> fitness` and the heading `Fitness: <display name>`. It shows the crew's runs and the selected one in detail, with
+**Pause**, **Resume**, and **Stop**. A live crew that carries deployed scenarios can run
+from here without a source. See
 [Fitness from the editor](../fitness/).
 
 ### Where the numbers come from
@@ -274,7 +325,7 @@ menu button.
 
 | Action | When to use it | What it changes |
 |---|---|---|
-| **Create Crew** / **New Kubemoot Crew Here** | Start a new crew | A new chart folder on disk, written by `kmctl create --chart`: the starter crew, a read-only guide to its namespace, with 1 to 5 specialists as you choose. Nothing on the cluster. |
+| **Create Crew** / **New Kubemoot Crew Here** | Start a new crew | A new chart folder on disk, written by `kmctl create --display-name ... --chart`: the starter crew, a read-only guide to its namespace, with 1 to 5 specialists as you choose. Nothing on the cluster. |
 | **Deploy to Namespace...** | Deploy a crew, here or to one more namespace | `helm upgrade --install` (a bundle: `kubectl apply --server-side`) into the namespace you pick. The last one, else `crew-<name>`, is offered, and Redeploy then uses it. Records the source on the Crew and waits until it is ready. |
 | **Redeploy** (on a source) | After editing a deployed crew | The same release in the namespace you last deployed to, upgraded from the source. Waits for the agents again. |
 | **Redeploy** (on a deployment or a deployed crew) | A deployment is behind its source | That deployment, through the channel it came by. A bundle applies only the objects that differ. |
@@ -284,7 +335,8 @@ menu button.
 | **Follow Flux Rollout (GitOps channel)** | A crew Flux manages, after you push | Nothing. It follows the HelmRelease until it settles. |
 | **Undeploy** | Take a crew out of a namespace | `helm uninstall` of its release, or deletes the Kubemoot objects the bundle renders. The operator's finalizers clean up the rest. The namespace stays unless the Crew and the namespace opt in to its deletion. |
 | **Delete Source... (move folder to trash)** | Throw away a crew you no longer want | The source folder moves to your trash after a confirmation that names it. If the crew is deployed, it offers to undeploy first. A workspace folder, or a folder holding another crew source, is refused. The cluster does not change otherwise. |
-| **Rename...** | Give a crew a new name | The chart name, the Crew, every name built on the crew's (agents, PromptModules, policy, fitness suites) and the references to them, and the folder when it carries the crew's name. Other keys, prompt text, and `.tpl` helpers stay as they are. A deployed crew keeps its old name: redeploy to deploy the new one, and undeploy the old one. |
+| **Rename...** > **Change the Display Name** | Change the name people read | The `kubemoot.ai/display-name` annotation in the source (and `Chart.yaml` for a chart), and on each deployed copy right away, with no redeploy. A copy Flux deploys takes it from git: commit and push. |
+| **Rename...** > **Change the Kubernetes Name...** | Give a crew a new Kubernetes name | The chart name, the Crew, every name built on the crew's (agents, PromptModules, policy, fitness suites) and the references to them, and the folder when it carries the crew's name. Other keys, prompt text, and `.tpl` helpers stay as they are. A deployed crew keeps its old name: redeploy to deploy the new one, and undeploy the old one. |
 | **Compare Source with Live (normalized diff)** | See how a deployed object differs from its source | Nothing. |
 | **Show Source YAML** / **Show Live YAML** / **Show Live YAML (raw)** | Look at one side alone | Nothing. |
 | **Lint (helm lint and schema check)** | Before deploying, or any time | Nothing. Findings go to the Problems panel. |
@@ -292,7 +344,8 @@ menu button.
 | **Remove from Source...** | Take a part out of a crew's source | Its file moves to the trash, or its document leaves a file that holds others, after a confirmation. Nothing on the cluster until you deploy. |
 | **Show Tool Details** | See where a tool comes from and what it takes | Nothing. A read-only page. |
 | **Ask** | Try a deployed crew | Nothing on the cluster. The chat is a discussion turn. |
-| **Run Fitness** | Measure a deployed crew | Creates a fitness run (a Kubemoot object) in the crew's namespace. |
+| **Run Fitness** | Measure a deployed crew | Creates a fitness run (a Kubemoot object) in the crew's namespace. On a live crew it runs the deployed scenarios when it carries any, else the source's definitions. |
+| **Run All Deployed Scenarios** / **Run Scenarios...** / **Run Selected Scenarios as One Batch** | Measure a deployed crew's scenarios as one batch | One CrewFitnessSuite in the crew's namespace, named `<crew>-all-<timestamp>` or `<crew>-batch-<n>-<timestamp>`. |
 | **Run This Scenario Only** | Try one scenario after changing a prompt | One fitness run of one scenario, one iteration, marked so its dashboard offers Stop. |
 | **Add / Rename / Delete Fitness Scenario** | Grow or tidy a crew's scenarios | Local files in the fitness folder only. Delete moves a file to the trash after a confirmation. |
 | **Pause** / **Resume** / **Stop** (fitness dashboard) | Hold or end a running suite | Sets `spec.suspend` or `spec.cancel` on the suite. See [Fitness from the editor](../fitness/). |

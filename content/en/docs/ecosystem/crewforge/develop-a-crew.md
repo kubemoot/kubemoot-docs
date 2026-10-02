@@ -24,10 +24,16 @@ first.
 
 ![The Explorer's context menu on a folder named notes, ending with the entry New Kubemoot Crew Here.](../explorer-new-crew.png)
 
-CrewForge asks for three things:
+CrewForge asks for these, in order:
 
-1. **A name**, for example `helpdesk`.
-2. **How many specialists** to start with, 1 to 5. The scaffold adds a coordinator and that
+1. **A display name**: the name people read, any text, for example `Help Desk`,
+   `Homelab Health Guide`, or `Lab-Ops Crew #2`.
+2. **A Kubernetes name**, in a second input prefilled with a name derived from the display
+   name. You can edit it. It becomes the Kubernetes name of the crew's objects, so
+   CrewForge checks it: "Use lowercase letters, digits and hyphens, starting and ending
+   with a letter or digit; it becomes the Kubernetes name of the crew's objects." It also
+   says "Keep it to 36 characters" when the name is longer.
+3. **How many specialists** to start with, 1 to 5. The scaffold adds a coordinator and that
    many specialists, so `2` gives three agents. Each size is a working crew; it adds the
    next specialist in this order:
 
@@ -38,9 +44,24 @@ CrewForge asks for three things:
    | 3 | `networking`: Services, endpoints, routes, NetworkPolicies |
    | 4 | `config`: ConfigMaps, ServiceAccounts, Secret references |
    | 5 | `reviewer`: checks the answer against the gathered data |
-3. **A model family**: `qwen`, `gemma`, `llama`, or `mistral`.
+4. **A model family**: `qwen`, `gemma`, `llama`, or `mistral`.
 
-CrewForge then runs `kmctl create helpdesk --chart` and writes the crew as a Helm chart
+The derived Kubernetes name follows these rules: lowercase; accented letters become their
+ASCII spelling (the accented e becomes `e`, the German sharp s becomes `ss`, and letters
+such as the ligature ae, o with a stroke, l with a stroke, eth, and thorn become `ae`, `o`,
+`l`, `d`, and `th`); every run of other characters becomes one hyphen; no hyphen at either
+end; at most 36 characters; and `crew` when nothing is left.
+
+| Display name | Kubernetes name |
+|---|---|
+| `Homelab Health Guide` | `homelab-health-guide` |
+| `Lab-Ops Crew #2` | `lab-ops-crew-2` |
+| A Japanese name with no ASCII letters | `crew` |
+
+Creating a crew needs a `kmctl` whose `create` takes `--display-name`. CrewForge checks
+`kmctl create --help` first and names the problem in a modal before it asks anything.
+
+CrewForge then runs `kmctl create helpdesk --display-name "Help Desk" --chart` and writes the crew as a Helm chart
 in a folder named `helpdesk`. kmctl asks the cluster which model providers exist and
 generates Models for them.
 
@@ -60,6 +81,7 @@ helpdesk/
     models.yaml          the Models the scheduler can bind agents to
     tools.yaml           the read-only Kubernetes MCP server and its gateway
     rbac.yaml            the Role the tool server runs with
+    fitness-scenarios.yaml   a ConfigMap carrying the fitness scenarios
   fitness/
     fitness.yaml         a starter fitness suite
 ```
@@ -70,7 +92,9 @@ suite has 3 scenarios at size 1 and up to 7 at size 5, and they pass on a fresh 
 The [starter crew](../../../user-guides/starter-crew/) guide describes it in full.
 
 The fitness suite sits outside `templates/` on purpose, so installing the chart does not
-start a run.
+start a run. The scenarios do ship in `templates/fitness-scenarios.yaml`, a ConfigMap
+labeled `kubemoot.ai/crew` and `kubemoot.ai/fitness-kind: scenarios`, so a deployed crew
+carries them and CrewForge can run them without the source. A ConfigMap starts nothing.
 
 ## 2. Understand what it declares
 
@@ -127,6 +151,19 @@ Whenever a file of the crew is open, the status bar names the crew and where it 
 
 Click it for the next steps in that state. Above each object in a crew manifest, a code
 lens shows the same drift check.
+
+### Rename a crew
+
+Right-click a crew source and choose **Rename...**. A picker offers two choices:
+
+- **Change the Display Name**: what people read; no redeploy. CrewForge edits the Crew's
+  `kubemoot.ai/display-name` annotation in the source file (and in `Chart.yaml` for a
+  chart), and sets it on each deployed copy right away, without a redeploy. A copy that
+  Flux deploys takes the new name from git, so commit and push the change.
+- **Change the Kubernetes Name...**: renames every object built on it: the chart, the Crew,
+  the agents, the prompt modules, the policy, and the fitness suites. A deployed crew keeps
+  the old name until you redeploy it as a new crew. A display name that was the old
+  Kubernetes name follows the new one.
 
 ## 4. Lint it
 
