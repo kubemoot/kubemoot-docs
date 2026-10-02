@@ -25,10 +25,46 @@ each CrewFitnessSuite, each CrewFitness, and loose `.adl` (ADL) and `.md` (prose
 
 These three change local files only.
 
+## Scenarios on a live crew
+
+A crew made by `kmctl create` deploys its scenarios in a ConfigMap, so a running crew
+carries them. In **Deployed Crews**, the crew's **Fitness** group lists them with its past
+runs, for example `4 scenarios · 2 runs`, and adds *changed since deploy* when an open
+source's scenarios differ. It works with no local source open.
+
+![The Deployed Crews view with the Help Desk crew expanded: its Fitness group reads "4 scenarios, 2 runs", with four scenario rows and a past run.](../live-fitness.png)
+
+Scenarios come from ConfigMaps labeled `kubemoot.ai/crew=<crew>` and
+`kubemoot.ai/fitness-kind=scenarios`. A key ending in `.yaml` holds CrewFitness or
+CrewFitnessSuite manifests; a key ending in `.adl` or `.md` (other than `README.md`) holds
+one script named after the key. Runs from this group always use the deployed scenarios,
+and the tooltips say so.
+
+- **Run All Deployed Scenarios** runs every scenario once, as a suite named
+  `<crew>-all-<timestamp>`.
+- **Run Scenarios...** shows every scenario with its DESCRIPTION, all checked. Pick the
+  ones to keep, then an iteration count: 1, 3, 5, 10, or another number up to 100. It
+  starts one CrewFitnessSuite named `<crew>-batch-<n>-<timestamp>`, or `<crew>-all-...`
+  when you kept every scenario.
+- **Run This Scenario Only** runs one iteration of one scenario.
+- **Show Scenario Script** opens the script.
+- **Pause**, **Resume**, and **Stop** appear inline on a run in progress.
+
+Rows can be selected together. **Run Selected Scenarios as One Batch** runs the selected
+scenarios as one suite after the iterations prompt. **Run Scenarios...** and **Run Selected
+Scenarios as One Batch** also work in **Crew Sources**, on a source's **Fitness
+Scenarios**, against its deployment.
+
+Each batch is one CrewFitnessSuite, judged together, with one XLSX. Its fitness dashboard
+opens on it. CrewForge refuses to start while another run of that crew is in progress and
+names that run. Selected rows from two crews or two sources are refused, with "CrewForge
+runs one crew's batch at a time". An empty selection is said plainly.
+
 ## Run a crew's fitness
 
 Choose **Run Fitness** on a source, on a deployment, on a deployed crew, in the status
-bar menu, or in the crew dashboard. CrewForge offers the fitness definitions the source
+bar menu, or in the crew dashboard. On a live crew that carries deployed scenarios, it
+runs those; otherwise CrewForge offers the fitness definitions the source
 renders, plus any in its `fitness/` folder, and starts a run under a timestamped name so
 every run is kept. The run is a Kubemoot resource in the crew's namespace.
 
@@ -38,15 +74,19 @@ every run is kept. The run is a Kubemoot resource in the crew's namespace.
 
 To try one scenario after changing a prompt, choose **Run This Scenario Only** (the play
 icon) on a scenario. It starts one iteration of that scenario against the deployment
-that Redeploy goes to, as a suite of that one script, or as a CrewFitness. The run is
-marked so its dashboard offers **Stop**.
+that Redeploy goes to, as a CrewFitnessSuite of that one script named
+`<crew>-<scenario>-<timestamp>`, whether the scenario is a suite's script, a CrewFitness,
+or a script file. The run is marked as a single-scenario run, and its Fitness dashboard
+opens on it.
 
 After a redeploy, the notification's **Rerun fitness** button runs the definition you ran
 last, without asking.
 
 ## The fitness dashboard
 
-Click a **Fitness** node, a run, or **Open Fitness Dashboard**.
+Click a **Fitness** node, a run, or **Open Fitness Dashboard**. The tab reads
+`<display name> fitness` and the heading `Fitness: <display name>`. A live crew that carries deployed scenarios can run from the
+dashboard without a source.
 
 ![The fitness dashboard for the helpdesk crew while a suite runs: two runs listed, the running suite at 4 of 6 iterations with a progress bar, Pause and Stop buttons, and a per-scenario table.](../fitness-dashboard.png)
 
