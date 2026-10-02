@@ -16,6 +16,7 @@ on:
       - 'Dockerfile'
       - 'nginx.conf'
       - 'charts/**'
+      - '.github/workflows/ci-docs.yaml'
   workflow_dispatch:
 
 env:
@@ -41,17 +42,22 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: kubemoot/kubemoot
-          # GITHUB_TOKEN is scoped to this repo only and cannot read the private
-          # kubemoot repo; a fine-grained PAT with read:contents on kubemoot is
-          # required (repo secret KUBEMOOT_READ_TOKEN).
+          # KUBEMOOT_READ_TOKEN is used when the repo secret is set; fork pull
+          # requests get no secrets and read the public kubemoot repo with
+          # github.token.
           token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
           path: _docs/kubemoot
 
-      # The Hugo build happens entirely inside the Dockerfile (Kaniko) below, so
-      # the runner needs no Go/Node/Hugo toolchain. The sparse-checked-out
-      # component docs (_docs/kubemoot) ride along in the Kaniko build context.
+      # The Hugo build happens entirely inside the Dockerfile, so the runner needs
+      # no Go/Node/Hugo toolchain. The sparse-checked-out component docs
+      # (_docs/kubemoot) ride along in the build context. Pull requests build the
+      # same Dockerfile with Docker on the hosted runner and push nothing.
+      - name: Build site (pull request)
+        if: github.event_name == 'pull_request'
+        run: docker build --build-arg SITE_URL=https://kubemoot.org/ -t kubemoot-docs:pr .
+
       - name: Install kubectl
         if: github.event_name != 'pull_request'
         run: |
@@ -71,13 +77,13 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           SHA="${{ github.sha }}"
-          JOB_NAME="kaniko-docs-$(echo ${SHA} | cut -c1-8)-${GITHUB_RUN_NUMBER}"
+          JOB_NAME="kaniko-docs-$(echo "${SHA}" | cut -c1-8)-${GITHUB_RUN_NUMBER}"
 
           # Build context = repo root; Dockerfile references _docs/ for the docs content
           tar --exclude='.git' --exclude='node_modules' --exclude='public' --exclude='resources' \
               -czf /tmp/context.tar.gz .
 
-          kubectl run ${JOB_NAME} \
+          kubectl run "${JOB_NAME}" \
             --rm -i \
             --restart=Never \
             --namespace=arc-runners \
