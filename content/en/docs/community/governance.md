@@ -29,8 +29,8 @@ record:
   the discussion happens in the issue.
 - **Architecture decisions.** Accepted proposals are implemented, and significant ones
   also land as an ADR under `docs/adr/` in the `kubemoot` repository (see the
-  [decision records](../adr/)).
-- **Direction.** The [Roadmap](../introduction/roadmap/) lists the major directions
+  [decision records](../../adr/)).
+- **Direction.** The [Roadmap](../../introduction/roadmap/) lists the major directions
   under consideration. Items on it move when someone makes the case in
   [Discussions](https://github.com/orgs/kubemoot/discussions).
 

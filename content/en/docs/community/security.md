@@ -20,8 +20,9 @@ maintainer, that is best effort, not a guaranteed response time.
 
 ## Supported versions
 
-Every merge to `main` that changes a component releases it (see [Releases](../releases/)). Kubemoot is a young project and does not backport fixes.
-A security fix lands on `main` and ships in the next release of the affected component;
+Every merge to `main` that changes a component builds a release candidate, and a maintainer promotes it to a
+versioned release (see [Releases](../releases/)). Kubemoot is a young project and does not backport fixes.
+A security fix lands on `main` and ships in the next promoted release of the affected component;
 to receive it, move to that release.
 
 ## Security model and known limitations

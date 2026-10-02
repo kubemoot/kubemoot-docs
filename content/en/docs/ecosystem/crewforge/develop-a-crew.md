@@ -44,7 +44,7 @@ CrewForge asks for these, in order:
    | 3 | `networking`: Services, endpoints, routes, NetworkPolicies |
    | 4 | `config`: ConfigMaps, ServiceAccounts, Secret references |
    | 5 | `reviewer`: checks the answer against the gathered data |
-4. **A model family**: `qwen`, `gemma`, `llama`, or `mistral`.
+4. **A model family**: `qwen`, `gemma`, `llama`, or `mistral`, or `none` to add Models yourself.
 
 The derived Kubernetes name follows these rules: lowercase; accented letters become their
 ASCII spelling (the accented e becomes `e`, the German sharp s becomes `ss`, and letters

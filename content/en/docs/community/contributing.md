@@ -5,7 +5,7 @@ description: "Issues, ideas, pull requests, commit conventions, tests, and how A
 ---
 
 Contributions are welcome: bug reports, ideas, documentation fixes, tests, and code.
-This page is the process. The [Development Guide](development/) covers the repository
+This page is the process. The [Development Guide](../development/) covers the repository
 layout and how to build and test each component.
 
 ## Report a bug or request a feature
@@ -13,7 +13,7 @@ layout and how to build and test each component.
 - **Not sure it is a bug, or have a question?** Open a
   [Discussion](https://github.com/orgs/kubemoot/discussions).
 - **Found a defect?** Open an issue on the repo where you found it, using the bug
-  report template. If the [Quickstart](../introduction/quickstart/) itself failed, use
+  report template. If the [Quickstart](../../introduction/quickstart/) itself failed, use
   the quickstart-failed template; it asks for what is needed to reproduce a
   fresh-cluster run.
 - **Have an idea for a feature?** Start in Discussions, so the shape of the idea can
@@ -78,7 +78,7 @@ use a dispatch table, or decompose the conditional before opening the pull reque
 
 - **Prompts in ADL.** Agent prompt text lives in `PromptModule` resources written in
   ADL (the Architecture Definition Language), never inline in an Agent spec. See
-  [Write Agents & ADL](../user-guides/write-agents-and-adl/).
+  [Write Agents & ADL](../../user-guides/write-agents-and-adl/).
 - **Lifecycle belongs to the operator.** Cleanup, garbage collection, and namespace
   management are handled in the operator with finalizers and owner references, not in
   client-side tools.

@@ -49,9 +49,11 @@ Each component has its own tag stream, so components version independently:
 | Repository | Final tag format | Example |
 |------------|------------------|---------|
 | `kubemoot`, operator | `v<version>` | `vX.Y.Z` |
+| `kubemoot`, operator chart | `operator-chart-v<version>` | `operator-chart-vX.Y.Z` |
 | `kubemoot`, other components | `<component>-v<version>` | `agent-runtime-vX.Y.Z` |
 | `crews`, each crew | `<crew>-v<version>` | `homelab-pilot-crew-vX.Y.Z` |
 | `kmctl` | `v<version>` | `vX.Y.Z` |
+| `kubemoot-docs`, this site | `docs-v<version>` | `docs-vX.Y.Z` |
 
 Candidate tags add a suffix: `vX.Y.Z-rc.N`.
 

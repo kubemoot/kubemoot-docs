@@ -164,7 +164,7 @@ The title bar has **Create Crew** (the **+**) and **Refresh Crew Sources**. **Cr
 Crew** asks for a display name, then a Kubernetes name (prefilled from the display name and
 editable), a size from 1 to 5 (the number of specialists beside the
 coordinator: `workloads`, then `events`, `networking`, `config`, and a `reviewer`), and a
-model family, and needs a current `kmctl` release (one whose `kmctl create` takes `--display-name`). In the
+model family (or `none`, to add Models yourself), and needs a current `kmctl` release (one whose `kmctl create` takes `--display-name`). In the
 Explorer, **New Kubemoot Crew Here** is on folders outside crew sources and **View in
 CrewForge** is on files and folders inside one.
 
