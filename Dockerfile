@@ -6,10 +6,25 @@
 # linked and will not run on Alpine/musl ("hugo: not found" = missing ELF loader).
 FROM golang:1.26-bookworm AS builder
 
-# Install Node.js for PostCSS (Docsy dependency)
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends nodejs npm curl ca-certificates \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js for PostCSS (Docsy dependency): the latest release of the major in
+# .nvmrc, the single Node version source the workflows also read, checked against
+# the release's published SHA-256 sums.
+COPY .nvmrc /tmp/.nvmrc
+RUN set -eu; \
+    major="$(tr -d '[:space:]v' < /tmp/.nvmrc)"; \
+    base="https://nodejs.org/dist/latest-v${major}.x"; \
+    curl -fsSL "${base}/SHASUMS256.txt" -o /tmp/SHASUMS256.txt; \
+    tarball="$(awk '/ node-v[0-9.]+-linux-x64\.tar\.gz$/ {print $2}' /tmp/SHASUMS256.txt)"; \
+    test -n "${tarball}"; \
+    curl -fsSL "${base}/${tarball}" -o "/tmp/${tarball}"; \
+    (cd /tmp && grep " ${tarball}\$" SHASUMS256.txt | sha256sum -c -); \
+    tar -xzf "/tmp/${tarball}" -C /usr/local --strip-components=1 --exclude='*.md' --exclude=LICENSE; \
+    rm -f "/tmp/${tarball}" /tmp/SHASUMS256.txt; \
+    node --version; npm --version
 
 # Install Hugo extended (required for Docsy SCSS pipeline)
 ENV HUGO_VERSION=0.156.0
