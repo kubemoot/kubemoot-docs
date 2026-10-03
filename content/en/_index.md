@@ -2,21 +2,21 @@
 title: Kubemoot
 ---
 
-{{< blocks/cover title="Kubemoot" image_anchor="top" height="med" color="primary" >}}
+{{< blocks/cover image_anchor="top" height="med" color="table" >}}
 <div class="mx-auto">
-  {{< mark width="140" >}}
+  <h1 class="kubemoot-hero-title">{{< lockup >}}</h1>
   <p class="h4 mb-3">Every voice, one answer.</p>
   <p class="lead mt-3">
     A committee of AI agents that deliberate to an answer, instead of trusting one
     large model. Multi-agent consensus, Kubernetes-native.
   </p>
-  <a class="btn btn-lg btn-primary me-3 mb-4" href="/docs/introduction/installation/">
+  <a class="btn btn-lg btn-drop me-3 mb-4" href="/docs/introduction/installation/">
     Install <i class="fas fa-arrow-alt-circle-right ms-2"></i>
   </a>
-  <a class="btn btn-lg btn-secondary me-3 mb-4" href="/docs/introduction/quickstart/">
+  <a class="btn btn-lg btn-outline-hero me-3 mb-4" href="/docs/introduction/quickstart/">
     Quickstart <i class="fas fa-terminal ms-2"></i>
   </a>
-  <a class="btn btn-lg btn-secondary me-3 mb-4" href="https://github.com/kubemoot/kubemoot">
+  <a class="btn btn-lg btn-outline-hero me-3 mb-4" href="https://github.com/kubemoot/kubemoot">
     View on GitHub <i class="fab fa-github ms-2"></i>
   </a>
 </div>
