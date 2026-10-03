@@ -6,10 +6,15 @@
 name = "kubemoot-org"
 compatibility_date = "2026-09-24"
 workers_dev = false
+# worker/index.js redirects www.kubemoot.org to the apex (301, path kept) and passes every
+# other request to the static assets below. Tests: node --test worker/index.test.js
+main = "worker/index.js"
 
 [assets]
 directory = "./public"
-not_found_handling = "404-page"
+not_found_handling = "404-page"   # unknown paths get public/404.html with a 404 status
+binding = "ASSETS"
+run_worker_first = true
 
 [[routes]]
 pattern = "kubemoot.org"

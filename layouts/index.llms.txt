@@ -1,0 +1,25 @@
+{{- /* /llms.txt (llmstxt.org): generated from the site's section structure, so it needs no
+hand maintenance. Each rendered docs section becomes an H2; each page in it is one link line
+with the page's description. Sections and pages follow their weights. */ -}}
+# {{ .Site.Title }}
+
+> {{ .Site.Params.description }}
+
+{{ with .Site.GetPage "docs" -}}
+{{ range .Sections.ByWeight -}}
+{{ if and (ne .Params.build.render "never") (ne .Params.build.list "never") (not .Params.hidden) }}
+## {{ .Title }}
+
+{{ with .Description }}{{ . }}
+
+{{ end -}}
+{{ range .RegularPagesRecursive.ByWeight -}}
+- [{{ .LinkTitle }}]({{ .Permalink }}){{ with .Description }}: {{ . | plainify | replaceRE `\s+` " " }}{{ end }}
+{{ end }}
+{{- end -}}
+{{ end -}}
+{{ end }}
+## Project
+
+- [Source on GitHub](https://github.com/kubemoot/kubemoot): the operator, agent runtime, and dashboard
+- [Discussions](https://github.com/orgs/kubemoot/discussions): questions and answers in the open
