@@ -51,7 +51,7 @@ defaultContentLanguage = "en"
   [[module.mounts]]
     source = "../kubemoot/docs"
     target = "content/docs"
-    files = ['! **/CLAUDE.md']
+    files = ['! **/CLAUDE.md', '! README.md']
 
 [params]
   copyright = "The Kubemoot Authors"

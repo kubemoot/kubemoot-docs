@@ -301,6 +301,11 @@ menu button.
   not changed), copy the whole conversation as Markdown, and save it as Markdown.
   **CrewForge: Continue a Conversation** reopens a saved one, and **CrewForge: Open
   Conversations Folder** shows where they are kept.
+- **Export Conversation as Markdown.** With a chat panel open, run **CrewForge: Export
+  Conversation as Markdown** from the Command Palette. A save dialog offers a file named
+  for the crew and the conversation title, and the file holds the whole conversation as
+  Markdown, the same text the chat header's save button writes. The command appears in the
+  palette only while a chat panel has focus; run elsewhere it has nothing to export.
 - **Ask about code.** Select code in an editor and choose **Ask a Crew about the
   Selection** from the editor's context menu. Pick a crew; its chat opens with the
   selection in the input, fenced and labelled with its file and language, ready for your
@@ -312,6 +317,20 @@ menu button.
 - **Status bar, crew.** While a file of a crew source is open, an item names the crew and
   where it stands: not deployed, deployed in a namespace and in sync, or deployed and
   changed. Click it for the next steps.
+- **Next Steps...** The menu behind the crew item in the status bar, also available as
+  **CrewForge: Next Steps...** in the Command Palette. It lists what makes sense for the
+  crew's state, so the next move is one pick away:
+
+  | The crew is | The menu offers |
+  |---|---|
+  | Not deployed | Deploy to Namespace..., Lint, Change the Namespace Redeploy Uses... |
+  | Deployed, changed since deploy | Redeploy, Lint, Ask, Run Fitness, Change the Namespace Redeploy Uses... |
+  | Deployed and in sync | Ask, Run Fitness, Show in the Deployed Crews view, Lint, Change the Namespace Redeploy Uses... |
+  | State unknown | Check the state again, Deploy to Namespace..., Lint, Change the Namespace Redeploy Uses... |
+
+  Each pick runs the same action as its button elsewhere. The command needs a crew
+  source: with a file of a source open it acts on that crew, otherwise it asks which
+  source.
 - **Status bar, connection.** The context CrewForge uses. Click it to switch. See
   [Install and connect](../install-and-connect/#what-you-are-connected-to).
 - **Code lens.** In an open crew manifest, a lens above the Crew offers **Ask in** each
@@ -349,6 +368,8 @@ menu button.
 | **Run This Scenario Only** | Try one scenario after changing a prompt | One fitness run of one scenario, one iteration, marked so its dashboard offers Stop. |
 | **Add / Rename / Delete Fitness Scenario** | Grow or tidy a crew's scenarios | Local files in the fitness folder only. Delete moves a file to the trash after a confirmation. |
 | **Pause** / **Resume** / **Stop** (fitness dashboard) | Hold or end a running suite | Sets `spec.suspend` or `spec.cancel` on the suite. See [Fitness from the editor](../fitness/). |
+| **Next Steps...** | Unsure what comes next for a crew source | Nothing itself. It lists the actions that fit the crew's state, and runs the one you pick. |
+| **Export Conversation as Markdown** | Keep or share a chat | A Markdown file at the place you choose. The conversation and the crew do not change. |
 | **Open Dashboard** / **Open Crews Overview** / **Open Fitness Dashboard** | See a crew, every crew, or a crew's fitness at a glance | Nothing. |
 | **Select Kubernetes Context** / **Select Kubeconfig File** / **Show Connection Info** | Choose or check the cluster | Nothing on the cluster. |
 
