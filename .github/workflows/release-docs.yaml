@@ -146,17 +146,22 @@ jobs:
           VERSION="${{ steps.version.outputs.version }}"
           TAG="docs-v$VERSION"
 
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists locally, skipping"
-          elif git ls-remote --tags origin | grep -q "refs/tags/$TAG$"; then
-            echo "Tag $TAG already exists on remote, skipping"
-          else
-            echo "Creating tag: $TAG"
-            git tag -a "$TAG" -m "Release candidate Kubemoot Docs Site $TAG"
-          fi
+          # Land the chart commit on main first, rebasing onto any commit that landed
+          # meanwhile, then tag that commit. A push that cannot land fails the job, so
+          # a release never ends without its tag.
+          pushed=false
+          for attempt in 1 2 3 4 5 6 7 8; do
+            if git push origin HEAD:main; then pushed=true; break; fi
+            echo "git push rejected (attempt ${attempt}/8); rebasing onto origin/main and retrying"
+            git pull -q --rebase origin main
+            sleep $((attempt * 5))
+          done
+          [ "$pushed" = true ] || { echo "::error::could not land the docs chart ${VERSION} on main"; exit 1; }
 
-          git push origin main --follow-tags || {
-            echo "Push failed, attempting without tags..."
-            git push origin main || true
-          }
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists on remote"
+          else
+            git tag -a "$TAG" -m "Release candidate Kubemoot Docs Site $TAG"
+            git push origin "refs/tags/$TAG"
+          fi
 
