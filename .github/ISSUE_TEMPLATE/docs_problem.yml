@@ -1,0 +1,55 @@
+name: Docs or website problem
+description: A docs page is wrong or missing, or the site is broken.
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: "This repository covers the docs site at kubemoot.org and its content, including broken links and layout. A bug in the software itself belongs in [kubemoot/kubemoot](https://github.com/kubemoot/kubemoot/issues/new/choose) or the matching component repository; questions go to [Discussions](https://github.com/orgs/kubemoot/discussions/categories/q-a)."
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched existing issues and did not find this one
+          required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem
+      options:
+        - Wrong or outdated content
+        - Missing content
+        - Broken link
+        - Layout or rendering
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page URL
+      placeholder: The address of the page in your browser
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: Suggested fix
+      description: New wording or a pointer to the right answer is welcome.
+    validations:
+      required: false
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      description: For layout or rendering problems.
+      placeholder: For example Firefox on Linux, or Safari on iPhone
+    validations:
+      required: false
