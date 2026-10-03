@@ -22,7 +22,7 @@ title: Kubemoot
 </div>
 {{< /blocks/cover >}}
 
-{{% blocks/lead color="dark" %}}
+{{% blocks/lead color="light" %}}
 A **moot** is an assembly that settles a question by deliberation. Kubemoot runs a
 crew of AI agents on Kubernetes that each bring their own expertise and reach
 **consensus** over a message bus, where any of them can agree, raise a concern,
@@ -80,6 +80,7 @@ cluster with a GPU-backed model provider: **[Installation](/docs/introduction/in
 - **Crews** - packaged crews as Helm charts, from the reference crew to examples you can copy.
 - **Homelab Pilot** - the reference crew, with its chat and dashboard app.
 - **kmctl** - the command-line tool for crews and discussions.
+- **CrewForge** - the VS Code extension for building, deploying, and talking to crews.
 
 See **[Ecosystem](/docs/ecosystem/)** for what each component is and how they fit.
 {{% /blocks/section %}}

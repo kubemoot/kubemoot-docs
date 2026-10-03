@@ -69,3 +69,18 @@ $kubemoot-ring: #5b8def;
     box-shadow: none;
   }
 }
+
+// Landing feature cards: four across on desktop, two by two on tablet, one column on
+// phone. Docsy's feature block is col-lg-4 (three across).
+.td-home .td-box .row > .col-lg-4 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  @media (min-width: 576px) {
+    flex-basis: 50%;
+    max-width: 50%;
+  }
+  @media (min-width: 992px) {
+    flex-basis: 25%;
+    max-width: 25%;
+  }
+}
