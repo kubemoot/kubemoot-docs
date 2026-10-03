@@ -39,9 +39,8 @@ For the end-to-end workflow, start with
 
 ## Status
 
-CrewForge installs from the `.vsix` attached to each
-[GitHub release](https://github.com/kubemoot/vscode-crewforge/releases). Listings in the
-Visual Studio Marketplace and Open VSX are coming. It needs VS Code 1.95 or later.
+CrewForge installs from the VS Code Marketplace and Open VSX, or offline from a `.vsix`;
+see [Install and connect](install-and-connect/). It needs VS Code 1.95 or later.
 
 ## Related pages
 
