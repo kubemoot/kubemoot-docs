@@ -9,3 +9,78 @@
   width: auto;
   height: 2.5rem;
 }
+
+// Landing hero: Table navy (brand), so the full-color keyline mark and the white-text
+// wordmark lockup work there as designed. The hero stays navy in light and dark mode.
+$kubemoot-table: #1f2a37;
+$kubemoot-drop: #3b82f6;
+$kubemoot-ring: #5b8def;
+
+.td-cover-block.-bg-table {
+  background-color: $kubemoot-table;
+  color: #fff;
+}
+
+.kubemoot-hero-title {
+  margin: 0 0 1.25rem;
+  line-height: 1;
+}
+
+.kubemoot-lockup {
+  display: block;
+  margin: 0 auto;
+  width: clamp(11rem, 38vw, 17rem);
+  height: auto;
+}
+
+// Primary action: Drop blue, white label. 3.7:1 is below AA for small text, so the label
+// is bold at btn-lg size, which counts as large text (AA needs 3:1).
+.btn-drop {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #{$kubemoot-drop};
+  --bs-btn-border-color: #{$kubemoot-drop};
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #2f6fdc;
+  --bs-btn-hover-border-color: #2f6fdc;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #2a63c4;
+  --bs-btn-active-border-color: #2a63c4;
+  font-weight: 700;
+}
+
+// Secondary actions: light outline on navy.
+.btn-outline-hero {
+  --bs-btn-color: #f3f4f6;
+  --bs-btn-border-color: #cbd5e1;
+  --bs-btn-hover-color: #{$kubemoot-table};
+  --bs-btn-hover-bg: #f3f4f6;
+  --bs-btn-hover-border-color: #f3f4f6;
+  --bs-btn-active-color: #{$kubemoot-table};
+  --bs-btn-active-bg: #e5e7eb;
+  --bs-btn-active-border-color: #e5e7eb;
+  font-weight: 600;
+}
+
+.btn-drop,
+.btn-outline-hero {
+  &:focus-visible {
+    outline: 3px solid $kubemoot-ring;
+    outline-offset: 3px;
+    box-shadow: none;
+  }
+}
+
+// Landing feature cards: four across on desktop, two by two on tablet, one column on
+// phone. Docsy's feature block is col-lg-4 (three across).
+.td-home .td-box .row > .col-lg-4 {
+  flex: 0 0 100%;
+  max-width: 100%;
+  @media (min-width: 576px) {
+    flex-basis: 50%;
+    max-width: 50%;
+  }
+  @media (min-width: 992px) {
+    flex-basis: 25%;
+    max-width: 25%;
+  }
+}

@@ -4,10 +4,10 @@
 commit b4721dd5d96d39b42a2542ff685c1c633d6f96f3
 # sha256 destination source
 9dfb13a31d7453cad7ff858d7148c0093b6b0c6ef44c88ee48c914a7927f49e6 assets/icons/logo.svg icon/color/kubemoot-icon-color.svg
-7cfd27b75318b6b05234a5fdcf8f98532fd2d4bf007f8bbf8930d54edc43a9c9 assets/img/kubemoot-icon-white.svg icon/white/kubemoot-icon-white.svg
 ed6b9db97e84f6645301909c27ed26f8fd4f3651bd8eb0e4368a50e684b0685b static/favicons/favicon.ico favicon/favicon.ico
 15dc3421b34011af47d46439bbb43b25ec486183282bf0f65f589639fc13c3c6 static/favicons/kubemoot-favicon.svg favicon/kubemoot-favicon.svg
 dffb7f341c371258a78533dd29071a0d556ef22ac7d70f0dd97e6c04acbaa161 static/favicons/apple-touch-icon.png avatar/kubemoot-avatar-512.png
 9dfb13a31d7453cad7ff858d7148c0093b6b0c6ef44c88ee48c914a7927f49e6 soon/kubemoot-icon-color.svg icon/color/kubemoot-icon-color.svg
 ed6b9db97e84f6645301909c27ed26f8fd4f3651bd8eb0e4368a50e684b0685b soon/favicon.ico favicon/favicon.ico
 15dc3421b34011af47d46439bbb43b25ec486183282bf0f65f589639fc13c3c6 soon/kubemoot-favicon.svg favicon/kubemoot-favicon.svg
+6f56fd10d76f5f742ddf6bb23d013c553955d2ac7e892184c1e2f34c79469c79 assets/img/kubemoot-stacked-white-text.svg stacked/white-text/kubemoot-stacked-white-text.svg

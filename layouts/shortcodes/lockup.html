@@ -1,0 +1,5 @@
+{{- /* The stacked white-text brand lockup (brand.lock): the full-color keyline mark above the
+wordmark, for the navy landing cover. Served under a content hash so a changed lockup is
+never read from a stale cache. The wordmark is outlined artwork, so the name is not live text. */ -}}
+{{- $m := resources.Get "img/kubemoot-stacked-white-text.svg" | fingerprint -}}
+<img src="{{ $m.RelPermalink }}" alt="Kubemoot" class="{{ .Get "class" | default "kubemoot-lockup" }}">
