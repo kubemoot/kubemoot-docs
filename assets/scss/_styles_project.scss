@@ -2,3 +2,10 @@
 // theme and its dark style under the dark theme (needs markup.highlight.noClasses
 // = false in hugo.toml).
 @import 'td/code-dark';
+
+// The navbar's brand icon (assets/icons/logo.svg) carries width="200" from the brand
+// file; size it by height alone so it takes no more room than it draws.
+.td-navbar .navbar-brand svg {
+  width: auto;
+  height: 2.5rem;
+}
