@@ -1,11 +1,11 @@
-name: Docs or website problem
-description: A docs page is wrong or missing, or the site is broken.
+name: Docs problem
+description: A docs page says something wrong or outdated.
 labels:
   - documentation
 body:
   - type: markdown
     attributes:
-      value: "This repository covers the docs site at kubemoot.org and its content, including broken links and layout. A bug in the software itself belongs in [kubemoot/kubemoot](https://github.com/kubemoot/kubemoot/issues/new/choose) or the matching component repository; questions go to [Discussions](https://github.com/orgs/kubemoot/discussions/categories/q-a)."
+      value: "This repository covers the docs site at kubemoot.org and its content. A bug in the software itself belongs in [kubemoot/kubemoot](https://github.com/kubemoot/kubemoot/issues/new/choose). Use this form for content that exists but is wrong; a missing topic belongs in Docs request, and a broken link or layout in Site problem."
   - type: checkboxes
     id: searched
     attributes:
@@ -13,18 +13,6 @@ body:
       options:
         - label: I searched existing issues and did not find this one
           required: true
-  - type: dropdown
-    id: kind
-    attributes:
-      label: What kind of problem
-      options:
-        - Wrong or outdated content
-        - Missing content
-        - Broken link
-        - Layout or rendering
-        - Other
-    validations:
-      required: true
   - type: input
     id: page
     attributes:
@@ -35,7 +23,8 @@ body:
   - type: textarea
     id: problem
     attributes:
-      label: What is wrong or missing
+      label: What is wrong
+      description: Quote the text, and say what is true instead if you know.
     validations:
       required: true
   - type: textarea
@@ -43,13 +32,5 @@ body:
     attributes:
       label: Suggested fix
       description: New wording or a pointer to the right answer is welcome.
-    validations:
-      required: false
-  - type: input
-    id: browser
-    attributes:
-      label: Browser and device
-      description: For layout or rendering problems.
-      placeholder: For example Firefox on Linux, or Safari on iPhone
     validations:
       required: false
