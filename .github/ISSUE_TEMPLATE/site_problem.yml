@@ -1,0 +1,54 @@
+name: Site problem
+description: A broken link, layout, or rendering problem on the website.
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: "This repository covers the docs site at kubemoot.org and its content. A bug in the software itself belongs in [kubemoot/kubemoot](https://github.com/kubemoot/kubemoot/issues/new/choose). Use this form for what looks or behaves wrong on the site: links, layout, search, or rendering; wrong content belongs in Docs problem, and a missing topic in Docs request."
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched existing issues and did not find this one
+          required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page URL
+      placeholder: The address of the page in your browser
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem
+      options:
+        - Broken link
+        - Layout or rendering
+        - Search
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you see
+      description: For a broken link, include the link text and where it leads.
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      placeholder: For example Firefox on Linux, or Safari on iOS
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Optional. Drag an image into this box.
+    validations:
+      required: false

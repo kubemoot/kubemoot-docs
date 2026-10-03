@@ -1,0 +1,47 @@
+name: Docs request
+description: A topic the docs do not cover.
+labels:
+  - documentation
+body:
+  - type: markdown
+    attributes:
+      value: "This repository covers the docs site at kubemoot.org and its content. A bug in the software itself belongs in [kubemoot/kubemoot](https://github.com/kubemoot/kubemoot/issues/new/choose). Use this form for a topic that is missing; wrong content belongs in Docs problem, and a broken link or layout in Site problem."
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: Before you file
+      options:
+        - label: I searched existing issues and did not find this one
+          required: true
+  - type: textarea
+    id: topic
+    attributes:
+      label: Missing topic
+      description: What you tried to find out, and where you looked.
+    validations:
+      required: true
+  - type: textarea
+    id: audience
+    attributes:
+      label: Who needs it
+      description: Who would read this page and what they are trying to do.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where it could live
+      description: Optional.
+      placeholder: A nearby page or section
+    validations:
+      required: false
+  - type: dropdown
+    id: contribute
+    attributes:
+      label: "Would you be willing to help write it?"
+      options:
+        - "Yes"
+        - Maybe
+        - "No"
+    validations:
+      required: false
