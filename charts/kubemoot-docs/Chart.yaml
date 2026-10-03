@@ -4,8 +4,8 @@ description: Hugo/Docsy documentation site for the Kubemoot ecosystem
 type: application
 
 # This version is set by CI/CD from git tags - DO NOT hardcode
-version: 0.16.0-rc.2
-appVersion: 0.16.0-rc.2
+version: 0.16.1-rc.1
+appVersion: 0.16.1-rc.1
 
 keywords:
   - kubemoot
