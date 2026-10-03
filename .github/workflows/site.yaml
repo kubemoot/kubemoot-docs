@@ -23,6 +23,7 @@ on:
       - 'package-lock.json'
       - 'go.mod'
       - 'go.sum'
+      - 'Dockerfile'
       - '.github/workflows/site.yaml'
       - '!**/CLAUDE.md'
   workflow_dispatch:
@@ -49,7 +50,6 @@ concurrency:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  HUGO_VERSION: "0.156.0"
   SITE_URL: https://kubemoot.org/
 
 permissions:
@@ -80,10 +80,18 @@ jobs:
           sparse-checkout-cone-mode: true
           path: kubemoot
 
+      # The Dockerfile's ENV HUGO_VERSION is the single Hugo version source.
+      - name: Read the Hugo version from the Dockerfile
+        id: hugo
+        run: |
+          version=$(sed -n 's/^ENV HUGO_VERSION=//p' site/Dockerfile)
+          test -n "${version}" || { echo "::error::ENV HUGO_VERSION not found in Dockerfile"; exit 1; }
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
       - name: Set up Hugo
         uses: peaceiris/actions-hugo@v3
         with:
-          hugo-version: ${{ env.HUGO_VERSION }}
+          hugo-version: ${{ steps.hugo.outputs.version }}
           extended: true
 
       - name: Set up Node
