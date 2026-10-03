@@ -4,7 +4,7 @@
 # this build context is created — see ci-docs.yaml and release-docs.yaml.
 # Debian (glibc) base: the official hugo_extended linux-amd64 binary is glibc-
 # linked and will not run on Alpine/musl ("hugo: not found" = missing ELF loader).
-FROM golang:1.26-bookworm AS builder
+FROM golang:1.27-bookworm AS builder
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl ca-certificates \
@@ -58,7 +58,7 @@ RUN hugo --gc --minify --baseURL "${SITE_URL}"
 # Serve stage: nginx serving the static output, fully non-root.
 # nginx-unprivileged runs as uid 101 and listens on 8080, so the container needs
 # neither root nor the NET_BIND_SERVICE capability (see chart securityContext).
-FROM nginxinc/nginx-unprivileged:1.27-alpine
+FROM nginxinc/nginx-unprivileged:1.31-alpine
 
 COPY --from=builder /site/public /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
