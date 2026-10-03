@@ -23,7 +23,6 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   REGISTRY: ${{ vars.REGISTRY }}
   IMAGE_NAME: kubemoot/docs
-  HUGO_VERSION: "0.156.0"
 
 permissions:
   contents: read
