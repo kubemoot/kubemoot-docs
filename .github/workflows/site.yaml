@@ -21,6 +21,7 @@ on:
       - 'assets/**'
       - 'package.json'
       - 'package-lock.json'
+      - '.nvmrc'
       - 'go.mod'
       - 'go.sum'
       - 'Dockerfile'
@@ -97,7 +98,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version-file: site/.nvmrc
           cache: npm
           cache-dependency-path: site/package-lock.json
 
