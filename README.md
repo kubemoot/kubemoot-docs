@@ -1,4 +1,11 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset=".github/assets/kubemoot-horizontal-white-text.png">
+  <img src=".github/assets/kubemoot-horizontal-color.png" alt="Kubemoot" height="64">
+</picture>
+
 # Kubemoot Docs Site (Hugo + Docsy)
+
+[![Latest release](https://img.shields.io/github/v/release/kubemoot/kubemoot-docs?sort=semver)](https://github.com/kubemoot/kubemoot-docs/releases/latest) [![Build status](https://github.com/kubemoot/kubemoot-docs/actions/workflows/release-docs.yaml/badge.svg?branch=main)](https://github.com/kubemoot/kubemoot-docs/actions/workflows/release-docs.yaml?query=branch%3Amain) [![License: Apache 2.0](https://img.shields.io/github/license/kubemoot/kubemoot-docs)](https://github.com/kubemoot/kubemoot-docs/blob/main/LICENSE)
 
 The documentation site for the Kubemoot ecosystem, published at
 [kubemoot.org](https://kubemoot.org). Built with Hugo and the
