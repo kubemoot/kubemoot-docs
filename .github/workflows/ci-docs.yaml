@@ -35,13 +35,13 @@ jobs:
 
     steps:
       - name: Checkout kubemoot-docs
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # Aggregate component docs into _docs/ so the default hugo.toml mounts work.
       # Only the docs/ subdirectory of each component repo is needed; sparse checkout
       # keeps the clone fast and avoids pulling large binary assets.
       - name: Checkout kubemoot docs (sparse)
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: kubemoot/kubemoot
           # KUBEMOOT_READ_TOKEN is used when the repo secret is set; fork pull

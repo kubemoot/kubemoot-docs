@@ -42,7 +42,7 @@ jobs:
       kubemoot_ref: ${{ steps.kubemoot.outputs.ref }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           # RELEASE_TOKEN (contents and workflows write) lets the final tag land on the
           # candidate's commit when workflow files changed on main after it; the default
@@ -83,7 +83,7 @@ jobs:
           echo "ref=${ref}" >> "$GITHUB_OUTPUT"
 
       - name: Keep the promotion output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: promotion
           path: promotion/
@@ -106,7 +106,7 @@ jobs:
       contents: write
     steps:
       - name: Download the promotion output
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: promotion
           path: promotion

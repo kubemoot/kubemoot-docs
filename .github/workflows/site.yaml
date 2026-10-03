@@ -64,7 +64,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout the site shell
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref }}
           path: site
@@ -72,7 +72,7 @@ jobs:
       # hugo.toml mounts the operator docs from ../kubemoot/docs, so the component
       # checkout sits beside the site directory. Sparse: only docs/ is fetched.
       - name: Checkout kubemoot docs (sparse)
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           repository: kubemoot/kubemoot
           token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
@@ -96,7 +96,7 @@ jobs:
           extended: true
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: site/.nvmrc
           cache: npm
@@ -123,7 +123,7 @@ jobs:
           echo "$pages pages rendered for $SITE_URL" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload the built site
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: site
           path: site/public
@@ -138,12 +138,12 @@ jobs:
       contents: read
     steps:
       - name: Checkout the site shell (for wrangler.toml)
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           ref: ${{ inputs.ref }}
 
       - name: Download the built site
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: site
           path: public
