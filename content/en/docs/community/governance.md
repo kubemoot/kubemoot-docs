@@ -27,9 +27,9 @@ record:
   `Proposal: <summary>` that describes the problem, the proposed approach, the
   alternatives considered, and what it touches. A maintainer labels it `proposal`, and
   the discussion happens in the issue.
-- **Architecture decisions.** Accepted proposals are implemented, and significant ones
-  also land as an ADR under `docs/adr/` in the `kubemoot` repository (see the
-  [decision records](../../adr/)).
+- **Architecture decisions.** Accepted proposals are implemented, and the reasoning
+  behind significant ones is written into the architecture and concepts pages, so the
+  design is documented in one place.
 - **Direction.** The [Roadmap](../../introduction/roadmap/) lists the major directions
   under consideration. Items on it move when someone makes the case in
   [Discussions](https://github.com/orgs/kubemoot/discussions).
