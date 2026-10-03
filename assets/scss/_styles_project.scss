@@ -84,3 +84,17 @@ $kubemoot-ring: #5b8def;
     max-width: 25%;
   }
 }
+
+// 404 page: a navy panel like the landing cover.
+.kubemoot-404 {
+  background-color: $kubemoot-table;
+  color: #fff;
+  border-radius: 0.5rem;
+  margin: 2rem auto;
+  max-width: 48rem;
+  padding: 3rem 1.5rem;
+
+  h1 {
+    color: #fff;
+  }
+}

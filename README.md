@@ -53,6 +53,14 @@ Cloudflare Worker `kubemoot-org` (static assets, `wrangler.toml`) with
 `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. The custom domain `kubemoot.org`
 is declared in `wrangler.toml` and attached by Cloudflare on the first deploy.
 
+The Worker script `worker/index.js` redirects `www.kubemoot.org` to the apex with a 301
+and serves everything else from the built site, including `404.html` with a 404 status.
+The build also produces `robots.txt`, `sitemap.xml`, and `llms.txt` (generated from the
+docs sections by `layouts/index.llms.txt`). `scripts/check-site.sh public` verifies those
+files, the description, Open Graph, Twitter card, and canonical tags, and that every
+`llms.txt` link resolves; `node --test worker/index.test.js` tests the redirect. The share
+image is `static/social/kubemoot.png`, a brand copy tracked in `brand.lock`.
+
 ## How aggregation works
 
 The `hugo.toml` `[module]` section mounts each component's `docs/` tree under

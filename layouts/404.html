@@ -1,0 +1,14 @@
+{{ define "main" -}}
+{{- /* Same navy Table panel as the landing cover, so the brand lockup and the hero buttons read as designed. */ -}}
+{{- $m := resources.Get "img/kubemoot-stacked-white-text.svg" | fingerprint -}}
+<div class="td-content kubemoot-404 text-center">
+  <img src="{{ $m.RelPermalink }}" alt="Kubemoot" class="kubemoot-lockup mb-4">
+  <h1>This page is not on the table</h1>
+  <p class="lead">The address may have moved, or it may never have existed.</p>
+  <p class="mt-4 mb-0">
+    <a class="btn btn-lg btn-drop me-3 mb-2" href="{{ "" | absURL }}">Home</a>
+    <a class="btn btn-lg btn-outline-hero me-3 mb-2" href="{{ "docs/" | absURL }}">Documentation</a>
+    <a class="btn btn-lg btn-outline-hero mb-2" href="#" onclick="var i = document.querySelector('.td-search__input'); if (i) { i.focus(); } return false;">Search</a>
+  </p>
+</div>
+{{- end }}

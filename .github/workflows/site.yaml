@@ -19,6 +19,8 @@ on:
       - 'layouts/**'
       - 'static/**'
       - 'assets/**'
+      - 'worker/**'
+      - 'scripts/check-site.sh'
       - 'package.json'
       - 'package-lock.json'
       - '.nvmrc'
@@ -121,6 +123,12 @@ jobs:
           [ "$pages" -ge 60 ] || { echo "only $pages pages rendered; the component docs mount is probably empty" >&2; exit 1; }
           echo "### Site build" >> "$GITHUB_STEP_SUMMARY"
           echo "$pages pages rendered for $SITE_URL" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check the SEO files, tags, and llms.txt links
+        working-directory: site
+        run: |
+          scripts/check-site.sh public
+          node --test worker/index.test.js
 
       - name: Upload the built site
         uses: actions/upload-artifact@v4

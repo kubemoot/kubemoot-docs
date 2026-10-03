@@ -1,5 +1,6 @@
 ---
 title: Kubemoot
+description: "Kubemoot runs a crew of AI agents on Kubernetes that deliberate to a consensus answer, instead of trusting one large model. Open models, your own GPUs."
 ---
 
 {{< blocks/cover image_anchor="top" height="med" color="table" >}}

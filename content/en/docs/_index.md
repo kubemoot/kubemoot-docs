@@ -1,5 +1,6 @@
 ---
 title: Documentation
+description: "Kubemoot documentation by topic: getting started, concepts, ecosystem, user guides, reference, fitness functions, operations, and architecture."
 linkTitle: Docs
 weight: 1
 ---

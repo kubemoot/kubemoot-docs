@@ -7,6 +7,12 @@ enableGitInfo = false
 contentDir = "content/en"
 defaultContentLanguage = "en"
 
+# The home page also publishes /llms.txt (layouts/index.llms.txt), built from the
+# site's section structure; the LLMS output format comes from Docsy.
+# Absolute links in sitemap.xml, canonical tags, and share tags come from baseURL.
+[outputs]
+  home = ["HTML", "RSS", "LLMS"]
+
 [languages]
   [languages.en]
     languageName = "English"
@@ -54,6 +60,10 @@ defaultContentLanguage = "en"
     files = ['! **/CLAUDE.md', '! README.md']
 
 [params]
+  description = "Kubemoot is a Kubernetes operator that runs crews of open LLM agents. They deliberate to a consensus answer, with prompts governed by ADL as custom resources."
+  # The share image for Open Graph and Twitter cards; a page's own `images` overrides it.
+  # Copied from the brand repository (brand.lock).
+  images = ["social/kubemoot.png"]
   copyright = "The Kubemoot Authors"
   # Rendered in the footer as the "License" link (label set in i18n/en.toml).
   privacy_policy = "https://github.com/kubemoot/kubemoot-docs/blob/main/LICENSE"
