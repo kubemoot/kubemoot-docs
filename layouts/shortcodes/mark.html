@@ -1,3 +1,4 @@
-{{- /* The brand mark with a content hash in its URL, so a changed mark is never served from a stale cache. */ -}}
-{{- $m := resources.Get "img/kubemoot-mark.svg" | fingerprint -}}
-<img src="{{ $m.RelPermalink }}" width="{{ .Get "width" | default 140 }}" height="{{ .Get "width" | default 140 }}" alt="Kubemoot: a round table with seven water drops gathered around it" class="{{ .Get "class" | default "mb-3" }}">
+{{- /* The one-color white brand mark, for the landing cover's brand-blue background, with a
+content hash in its URL so a changed mark is never served from a stale cache. */ -}}
+{{- $m := resources.Get "img/kubemoot-icon-white.svg" | fingerprint -}}
+<img src="{{ $m.RelPermalink }}" width="{{ .Get "width" | default 140 }}" height="{{ .Get "width" | default 140 }}" alt="Kubemoot" class="{{ .Get "class" | default "mb-3" }}">
