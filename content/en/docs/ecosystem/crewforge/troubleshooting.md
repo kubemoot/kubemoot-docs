@@ -74,8 +74,14 @@ render fails is listed with the error as an item; click it to open the file and 
 | Lint needs helm on your PATH to lint a Helm chart, and none was found. | Install [Helm](https://helm.sh/docs/intro/install/). A bundle of plain manifests lints without it. |
 | Deploying a chart or a bundle fails to start. | `helm` and `kubectl` must be on the PATH of the VS Code window. Start VS Code from a shell where `helm version` and `kubectl version --client` work, then check the **CrewForge** output channel. |
 
-Create Crew and Lint check the tool before they ask you anything, and show the problem as
-a message you cannot miss.
+Create Crew and Lint check the tool before they ask you anything, and each reports a
+missing tool differently:
+
+- **Create Crew** shows a dialog that stays until you dismiss it.
+- **Lint** shows a warning notification in the corner of the window, not a dialog; it can
+  go unseen if you are looking elsewhere. Lint you run yourself shows it every time. Lint that runs when you save shows
+  it once per session. The same text is written to the **CrewForge** output channel,
+  which keeps it.
 
 ## A schema mismatch
 
