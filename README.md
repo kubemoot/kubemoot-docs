@@ -5,7 +5,7 @@
 
 # Kubemoot Docs Site (Hugo + Docsy)
 
-[![Latest release](https://img.shields.io/github/v/release/kubemoot/kubemoot-docs?sort=semver)](https://github.com/kubemoot/kubemoot-docs/releases/latest) [![Build status](https://github.com/kubemoot/kubemoot-docs/actions/workflows/release-docs.yaml/badge.svg?branch=main)](https://github.com/kubemoot/kubemoot-docs/actions/workflows/release-docs.yaml?query=branch%3Amain) [![License: Apache 2.0](https://img.shields.io/github/license/kubemoot/kubemoot-docs)](https://github.com/kubemoot/kubemoot-docs/blob/main/LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/kubemoot/kubemoot-docs?sort=semver)](https://github.com/kubemoot/kubemoot-docs/releases/latest) [![Build status](https://github.com/kubemoot/kubemoot-docs/actions/workflows/release-docs.yaml/badge.svg?branch=main)](https://github.com/kubemoot/kubemoot-docs/actions/workflows/release-docs.yaml?query=branch%3Amain) [![License: Apache 2.0](https://img.shields.io/github/license/kubemoot/kubemoot-docs)](https://github.com/kubemoot/kubemoot-docs/blob/main/LICENSE) [![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/kubemoot/kubemoot-docs?label=openssf%20scorecard)](https://scorecard.dev/viewer/?uri=github.com/kubemoot/kubemoot-docs)
 
 The documentation site for the Kubemoot ecosystem, published at
 [kubemoot.org](https://kubemoot.org). Built with Hugo and the
