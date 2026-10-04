@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up the release helpers
-        uses: kubemoot/release-actions/setup@76c35a749b9db4105e73307b91b8f7cf1359b755 # v0.4.0
+        uses: kubemoot/release-actions/setup@b34dad0b433ccebf5aee23174157493df3e91240 # v0.5.0
 
       - name: Tag the final version
         id: promote

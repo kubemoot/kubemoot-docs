@@ -58,14 +58,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          # RELEASE_TOKEN (contents+workflows write) pushes even when main's workflow files changed after this commit; GITHUB_TOKEN is refused there.
+          # RELEASE_TOKEN (contents+workflows write) pushes the tag even when main's workflow files changed after this commit; GITHUB_TOKEN is refused there.
           token: ${{ secrets.RELEASE_TOKEN || github.token }}
           fetch-depth: 0
           fetch-tags: true
 
       - name: Calculate the release candidate version
         id: version
-        uses: kubemoot/release-actions/release-candidate-version@76c35a749b9db4105e73307b91b8f7cf1359b755 # v0.4.0
+        uses: kubemoot/release-actions/release-candidate-version@b34dad0b433ccebf5aee23174157493df3e91240 # v0.5.0
         with:
           tag_prefix: "docs-v"
           force: ${{ inputs.force_release }}
@@ -102,16 +102,16 @@ jobs:
             crane copy --insecure "${FULL_IMAGE}:latest" "${FULL_IMAGE}:${VERSION}"
           fi
 
-      - name: Update Helm chart version
+      # Git holds 0.0.0; the build stamps the candidate version into the chart it
+      # packages and never commits it. The image tag defaults to the appVersion.
+      - name: Stamp the chart version
         if: steps.version.outputs.release_created == 'true'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          echo "Updating Helm chart to version: $VERSION"
-
-          sed -i "s/^version:.*/version: $VERSION/" charts/kubemoot-docs/Chart.yaml
-          sed -i "s/^appVersion:.*/appVersion: $VERSION/" charts/kubemoot-docs/Chart.yaml
-
-          echo "Updated Chart.yaml:"
+          # shellcheck source=/dev/null
+          source "${RELEASE_LIB}"
+          rl_stamp_chart charts/kubemoot-docs "${VERSION}"
           grep -E "^(version|appVersion):" charts/kubemoot-docs/Chart.yaml
 
       - name: Package and push Helm chart
@@ -132,43 +132,19 @@ jobs:
           echo "Pushing Helm chart to ${CHART_REGISTRY}..."
           helm push --insecure-skip-tls-verify kubemoot-docs-${VERSION}.tgz ${CHART_REGISTRY}
 
-      - name: Commit chart changes
-        if: steps.version.outputs.release_created == 'true'
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          if git diff --quiet charts/; then
-            echo "No chart changes to commit"
-          else
-            git add charts/
-            git commit -m "chore: update docs Helm chart to v$VERSION [skip ci]"
-          fi
-
       - name: Create and push tag
         if: steps.version.outputs.release_created == 'true'
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           TAG="docs-v$VERSION"
 
-          # Land the chart commit on main first, rebasing onto any commit that landed
-          # meanwhile, then tag that commit. A push that cannot land fails the job, so
-          # a release never ends without its tag.
-          pushed=false
-          for attempt in 1 2 3 4 5 6 7 8; do
-            if git push origin HEAD:main; then pushed=true; break; fi
-            echo "git push rejected (attempt ${attempt}/8); rebasing onto origin/main and retrying"
-            git pull -q --rebase origin main
-            sleep $((attempt * 5))
-          done
-          [ "$pushed" = true ] || { echo "::error::could not land the docs chart ${VERSION} on main"; exit 1; }
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # The tag marks the commit this run built; nothing is committed back to main.
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists on remote"
           else
-            git tag -a "$TAG" -m "Release candidate Kubemoot Docs Site $TAG"
+            git tag -a "$TAG" -m "Release candidate Kubemoot Docs Site $TAG" "${GITHUB_SHA}"
             git push origin "refs/tags/$TAG"
           fi
-

@@ -3,9 +3,10 @@ name: kubemoot-docs
 description: Hugo/Docsy documentation site for the Kubemoot ecosystem
 type: application
 
-# This version is set by CI/CD from git tags - DO NOT hardcode
-version: 0.17.1-rc.17
-appVersion: 0.17.1-rc.17
+# Versions live only in git tags: git holds 0.0.0, and each build stamps the version it
+# computed into the chart it packages (rl_stamp_chart), never committing it.
+version: 0.0.0
+appVersion: 0.0.0
 
 keywords:
   - kubemoot
