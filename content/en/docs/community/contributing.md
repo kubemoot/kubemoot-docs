@@ -67,12 +67,34 @@ See [Releases](../releases/) for what a bump does.
 ## Tests ship with the code
 
 A pull request that adds a function, method, or class includes a test for it, covering
-the expected input and at least one unexpected one. Tests are part of the change, not a
-follow-up. Where a repo has a linter, CI runs it; a failing check means the code needs
-to change, not the check.
+the expected input and at least one unexpected one. New functionality comes with tests
+in the component's automated test suite, and a bug fix comes with a test that fails
+without the fix. Tests are part of the change, not a follow-up. CI runs these automated
+suites; the [Development Guide](../development/) lists the command for each component
+(`make test`, `go test ./...`, `./gradlew test`, `npm test`).
 
 Keep functions at a cyclomatic complexity of 10 or less. Past that, extract methods,
 use a dispatch table, or decompose the conditional before opening the pull request.
+
+## Linters and warnings
+
+Run the linter of the component you touched before you open a pull request; the
+[Development Guide](../development/) lists the commands. What runs automatically:
+
+| Check | Where it runs |
+|-------|---------------|
+| `go vet` and `golangci-lint` (with each repository's `.golangci.yml`) | Go code; CI runs `golangci-lint` for `kmctl` and for several `kubemoot` Go components |
+| `tsc` and ESLint | CrewForge, on every pull request |
+| `svelte-check` | The dashboard image build |
+| ShellCheck | The release scripts in `kubemoot` and `crews` |
+| CodeQL | Every repository, on every pull request, every push to `main`, and weekly |
+| SonarQube quality gate | Every push to `main` in `kubemoot`, `kmctl`, `vscode-crewforge`, and `crews` |
+
+Fix every warning these tools report. When a finding is a false positive, suppress it on
+that line with a comment that gives the reason (`//nolint:<linter> // why` in Go,
+`// NOSONAR <rule>: why` in Java, `// eslint-disable-next-line <rule> -- why` in
+TypeScript); do not turn a rule off for the whole repository. A failing check means the
+code needs to change, not the check.
 
 ## Conventions a reviewer looks for
 

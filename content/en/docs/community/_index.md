@@ -21,6 +21,8 @@ links here instead of repeating it.
 | Reach us about anything else: questions, speaking, press, teaching, partnerships | [moot@kubemoot.org](mailto:moot@kubemoot.org) |
 | Report a vulnerability (only) | [security@kubemoot.org](mailto:security@kubemoot.org), never a public issue. See [Security](security/) |
 | Report a conduct concern | [conduct@kubemoot.org](mailto:conduct@kubemoot.org). See [Code of Conduct](code-of-conduct/) |
+| See what changed in a release | The repository's GitHub Releases page. See [Releases](releases/#release-notes) |
+| See where the project is headed | The [Roadmap](../introduction/roadmap/) |
 
 The security address is only for vulnerability reports. Every other question goes to
 [moot@kubemoot.org](mailto:moot@kubemoot.org) or GitHub Discussions.
