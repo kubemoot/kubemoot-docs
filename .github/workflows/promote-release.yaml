@@ -56,7 +56,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up the release helpers
-        uses: kubemoot/release-actions/setup@7d70f8f6940f1fde5c1ea6e1f48b04cd1db5eb55 # v0.6.0
+        uses: kubemoot/release-actions/setup@73fdfa313081f82c79758dfba3f8b4bb1e106dcf # v0.6.2
 
       - name: Install crane
         run: |
