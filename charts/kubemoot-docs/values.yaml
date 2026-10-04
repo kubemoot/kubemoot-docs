@@ -5,7 +5,7 @@
 image:
   registry: ghcr.io
   repository: kubemoot/docs
-  # The tag is set by CI/CD from git tags - DO NOT override manually
+  # Empty: the tag defaults to the appVersion, which the release stamps from the git tag
   tag: ""  # defaults to .Chart.AppVersion
   pullPolicy: IfNotPresent
 

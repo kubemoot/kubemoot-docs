@@ -2,6 +2,10 @@ name: CI Docs Site
 
 on:
   workflow_call:
+    outputs:
+      kubemoot_sha:
+        description: The kubemoot commit whose docs/ the site was built with
+        value: ${{ jobs.build.outputs.kubemoot_sha }}
   pull_request:
     branches: [main]
     paths:
@@ -25,6 +29,8 @@ on:
       - 'scripts/brand-sync*.sh'
       - '.github/assets/**'
       - '.github/workflows/ci-docs.yaml'
+      - '.github/workflows/release-docs.yaml'
+      - '.github/workflows/promote-release.yaml'
   workflow_dispatch:
 
 env:
@@ -40,6 +46,8 @@ jobs:
     # Pull requests (including forks) run on GitHub-hosted runners; the self-hosted
     # cluster runners take push, dispatch, and workflow_call runs from main only.
     runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-latest' || 'homelab-runners' }}
+    outputs:
+      kubemoot_sha: ${{ steps.kubemoot.outputs.sha }}
 
     steps:
       - name: Checkout kubemoot-docs
@@ -49,6 +57,10 @@ jobs:
       # brand/ files; brand.lock pins the commit and each copy's sha256.
       - name: Check the brand copies against brand.lock
         run: scripts/brand-sync.sh check && scripts/brand-sync.test.sh
+
+      # Versions live only in git tags; a kubemoot docs change rebuilds without a commit.
+      - name: Test the release rules
+        run: scripts/release.test.sh
 
       # Aggregate component docs into _docs/ so the default hugo.toml mounts work.
       # Only the docs/ subdirectory of each component repo is needed; sparse checkout
@@ -64,6 +76,13 @@ jobs:
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
           path: _docs/kubemoot
+
+      - name: Record the kubemoot docs commit
+        id: kubemoot
+        run: |
+          sha="$(git -C _docs/kubemoot rev-parse HEAD)"
+          echo "Kubemoot docs @ ${sha}"
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
 
       # The Hugo build happens entirely inside the Dockerfile, so the runner needs
       # no Go/Node/Hugo toolchain. The sparse-checked-out component docs
@@ -90,6 +109,8 @@ jobs:
 
       - name: Build and push with Kaniko
         if: github.event_name != 'pull_request'
+        env:
+          KUBEMOOT_SHA: ${{ steps.kubemoot.outputs.sha }}
         run: |
           SHA="${{ github.sha }}"
           JOB_NAME="kaniko-docs-$(echo "${SHA}" | cut -c1-8)-${GITHUB_RUN_NUMBER}"
@@ -115,6 +136,8 @@ jobs:
                     "--context=tar://stdin",
                     "--dockerfile=Dockerfile",
                     "--build-arg=SITE_URL=${{ vars.PREVIEW_SITE_URL || 'https://kubemoot.org/' }}",
+                    "--label=org.opencontainers.image.revision='"${SHA}"'",
+                    "--label=org.kubemoot.docs.kubemoot-revision='"${KUBEMOOT_SHA}"'",
                     "--destination=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:'"${SHA}"'",
                     "--destination=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
                     "--insecure",
