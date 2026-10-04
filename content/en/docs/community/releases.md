@@ -67,9 +67,20 @@ The notes of a GitHub Release list only what a user can see, in four groups:
 - **Fixed**: `fix:` commits
 - **Faster**: `perf:` commits
 
-Maintenance, documentation, and refactoring commits do not appear in the notes. Every
-release links to the full list of commits since the previous release for readers who
-want everything.
+Maintenance, documentation, and refactoring commits do not appear in the notes, except
+that this site's own releases also list documentation changes, under **Documentation**.
+Every release links to the full list of commits since the previous release for readers
+who want everything.
+
+The release notes are on each repository's GitHub Releases page:
+
+| Repository | Release notes |
+|------------|---------------|
+| `kubemoot` | [github.com/kubemoot/kubemoot/releases](https://github.com/kubemoot/kubemoot/releases) |
+| `kmctl` | [github.com/kubemoot/kmctl/releases](https://github.com/kubemoot/kmctl/releases) |
+| `vscode-crewforge` | [github.com/kubemoot/vscode-crewforge/releases](https://github.com/kubemoot/vscode-crewforge/releases) |
+| `crews` | [github.com/kubemoot/crews/releases](https://github.com/kubemoot/crews/releases) |
+| `kubemoot-docs` | [github.com/kubemoot/kubemoot-docs/releases](https://github.com/kubemoot/kubemoot-docs/releases) |
 
 ## CrewForge
 
