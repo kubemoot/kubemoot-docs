@@ -51,7 +51,7 @@ jobs:
 
     steps:
       - name: Checkout kubemoot-docs
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       # The logo, landing mark, favicons, and README lockups are copies of github.com/kubemoot/.github
       # brand/ files; brand.lock pins the commit and each copy's sha256.
@@ -66,7 +66,7 @@ jobs:
       # Only the docs/ subdirectory of each component repo is needed; sparse checkout
       # keeps the clone fast and avoids pulling large binary assets.
       - name: Checkout kubemoot docs (sparse)
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: kubemoot/kubemoot
           # KUBEMOOT_READ_TOKEN is used when the repo secret is set; fork pull
