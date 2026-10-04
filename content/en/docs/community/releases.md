@@ -103,9 +103,8 @@ Candidate tags add a suffix: `vX.Y.Z-rc.N`.
 
 The version rule is the target for every repository. Today:
 
-- `kmctl` and `vscode-crewforge` follow it: they stamp the version at build and commit
-  nothing.
-- `kubemoot-docs` is moving to it now.
+- `kmctl`, `vscode-crewforge`, and `kubemoot-docs` follow it: they stamp the version at
+  build and commit nothing.
 - `crews` follows next.
 - `kubemoot` moves after the current release cycle.
 - The remaining repositories follow after that.
