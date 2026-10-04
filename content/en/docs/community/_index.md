@@ -40,6 +40,9 @@ and a failure there is the fastest route to a useful report.
 
 {{< docs-index >}}
 
+See [How Kubemoot Is Built and Secured](how-kubemoot-is-built-and-secured/) for how the
+project's practices meet the OpenSSF Best Practices criteria.
+
 ## Organization and repositories
 
 The [kubemoot organization](https://github.com/kubemoot) holds the operator

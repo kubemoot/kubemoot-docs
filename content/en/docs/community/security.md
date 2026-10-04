@@ -62,6 +62,9 @@ a keyless Sigstore signature and SLSA build provenance
 CrewForge releases carry the same for their release assets, attached to the GitHub
 Release.
 
+For the full picture across change control, releases, supply chain, and settings, see
+[How Kubemoot Is Built and Secured](../how-kubemoot-is-built-and-secured/).
+
 ## Security model and known limitations
 
 Kubemoot is a `v1alpha1` platform to evaluate and shape, not one to install where it
