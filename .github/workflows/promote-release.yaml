@@ -2,8 +2,9 @@
 #
 # Every push to main builds a docs release candidate (docs-vX.Y.Z-rc.N) into Harbor,
 # and the private preview runs it. A maintainer runs this workflow (Actions tab, Run
-# workflow; dispatch needs write access) to tag the candidate's commit docs-vX.Y.Z,
-# build the public site from that commit with the Kubemoot docs of the latest
+# workflow; dispatch needs write access) to publish the candidate's image and chart to
+# Harbor as the final X.Y.Z (the homelab moves to it), tag the candidate's commit
+# docs-vX.Y.Z, build the public site from that commit with the Kubemoot docs of the latest
 # promoted Kubemoot release, deploy it to kubemoot.org (when SITE_DEPLOY is "true"),
 # and write the GitHub Release. The default is a dry run: the site is built and
 # checked, the notes are in the run summary, and nothing is tagged or deployed.
@@ -52,6 +53,57 @@ jobs:
 
       - name: Set up the release helpers
         uses: kubemoot/release-actions/setup@b34dad0b433ccebf5aee23174157493df3e91240 # v0.5.0
+
+      - name: Install crane
+        run: |
+          curl -sL https://github.com/google/go-containerregistry/releases/download/v0.20.2/go-containerregistry_Linux_x86_64.tar.gz | tar -xzf - crane
+          sudo mv crane /usr/local/bin/
+
+      - name: Install Helm
+        uses: azure/setup-helm@v5
+        with:
+          version: 'v3.14.0'
+
+      # The homelab moves from the candidate to the identical final: the candidate's
+      # image gets the final tag in Harbor (a copy, never a rebuild), and the chart from
+      # the candidate's commit is stamped with the final version and pushed to Harbor.
+      # Done before tagging, so a failed publish leaves no final tag; if tagging fails
+      # afterwards, a re-run copies and pushes the same final again. The dry run
+      # packages the chart and publishes nothing.
+      - name: Package the final chart
+        env:
+          RC_TAG: ${{ inputs.rc_tag }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          REGISTRY: ${{ vars.REGISTRY }}
+          IMAGE_NAME: kubemoot/docs
+          HARBOR_USERNAME: ${{ secrets.HARBOR_USERNAME }}
+          HARBOR_PASSWORD: ${{ secrets.HARBOR_PASSWORD }}
+        run: |
+          # shellcheck source=/dev/null
+          source "${RELEASE_LIB}"
+          plan="$(DRY_RUN=true rl_promote_single docs-v "Kubemoot docs" "$(mktemp -d)")"
+          final="$(sed -n 's/^final_tag=docs-v//p' <<<"${plan}")"
+          commit="$(sed -n 's/^commit=//p' <<<"${plan}")"
+          rc="$(rl_latest_rc docs-v "${commit}")"
+          rc="${rc#docs-v}"
+          [ -n "${final}" ] && [ -n "${commit}" ] && [ -n "${rc}" ] \
+            || { echo "::error::could not plan the promotion: ${plan}"; exit 1; }
+
+          rl_checkout_at "${commit}"
+          trap rl_remove_worktrees EXIT
+          rl_stamp_chart "${RL_CHECKOUT}/charts/kubemoot-docs" "${final}"
+          helm package "${RL_CHECKOUT}/charts/kubemoot-docs" --destination final-chart
+          echo "Final chart: $(ls final-chart) from ${rc} (commit ${commit})" | tee -a "$GITHUB_STEP_SUMMARY"
+
+          if [ "${DRY_RUN}" = "true" ]; then
+            echo "Dry run: the final image and chart are not published"
+            exit 0
+          fi
+          FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}"
+          echo "${HARBOR_PASSWORD}" | crane auth login --insecure "${REGISTRY}" -u "${HARBOR_USERNAME}" --password-stdin
+          crane copy --insecure "${FULL_IMAGE}:${rc}" "${FULL_IMAGE}:${final}"
+          echo "${HARBOR_PASSWORD}" | helm registry login --insecure "${REGISTRY}" -u "${HARBOR_USERNAME}" --password-stdin
+          helm push --insecure-skip-tls-verify "final-chart/kubemoot-docs-${final}.tgz" "oci://${REGISTRY}/kubemoot/charts"
 
       - name: Tag the final version
         id: promote
