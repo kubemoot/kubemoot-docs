@@ -4,7 +4,7 @@ weight: 10
 description: "Install the CrewForge extension, point it at a cluster, and what it shows when the cluster cannot be reached."
 ---
 
-CrewForge installs from a `.vsix` file and connects through the kubeconfig you already
+CrewForge installs from the VS Code Marketplace and connects through the kubeconfig you already
 use. This page covers the prerequisites, the install, how CrewForge chooses a cluster,
 and what it tells you when it cannot reach one.
 
@@ -25,22 +25,29 @@ Your account's cluster permissions are listed in
 
 ## Install
 
-1. Download `crewforge-<version>.vsix` from the extension's
-   [GitHub releases](https://github.com/kubemoot/vscode-crewforge/releases).
-2. Install it, either way:
-   - In VS Code, run **Extensions: Install from VSIX...** from the Command Palette and
-     choose the file.
-   - Or from a terminal: `code --install-extension crewforge-<version>.vsix`.
+CrewForge is a Preview extension (0.x): its features and settings may change between
+releases.
+
+1. **VS Code Marketplace.** Open the Extensions view, search for "CrewForge" (publisher
+   Kubemoot), and choose Install. Or from a terminal:
+   `code --install-extension kubemoot.crewforge`. The listing is on the
+   [Marketplace](https://marketplace.visualstudio.com/items?itemName=kubemoot.crewforge).
+2. **Open VSX**, for VSCodium, Cursor, Gitpod, and other editors that use it: install
+   [kubemoot.crewforge](https://open-vsx.org/extension/kubemoot/crewforge) from the
+   editor's Extensions view.
+3. **Offline.** Download `crewforge-<version>.vsix` from the extension's
+   [GitHub releases](https://github.com/kubemoot/vscode-crewforge/releases), then either
+   run **Extensions: Install from VSIX...** from the Command Palette and choose the file,
+   or run `code --install-extension crewforge-<version>.vsix` in a terminal.
 
 The Kubemoot mark (the round table) appears in the activity bar.
 
 CrewForge runs where your folder is open. In a WSL or other remote window, install it
-into the remote: run **Extensions: Install from VSIX...** while connected to the remote,
-or run `code --install-extension` from a terminal inside it. The extension then reads the
+into the remote: search the Extensions view while connected to the remote, run
+**Extensions: Install from VSIX...** there, or run `code --install-extension` from a
+terminal inside it. The extension then reads the
 kubeconfig, and runs `helm`, `kubectl`, and `kmctl`, on the remote machine, so those
 tools and the kubeconfig must be there.
-
-Marketplace and Open VSX listings are coming. Until then, install from the release file.
 
 ## Connect to a cluster
 
