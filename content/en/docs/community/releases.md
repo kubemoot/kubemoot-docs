@@ -41,9 +41,11 @@ packages the artifacts, shows the release notes in the run summary, and publishe
 nothing. The maintainer reviews the plan, then runs it again with the dry run turned
 off. A promotion publishes the exact images that were tested, copied by digest and not
 rebuilt, to GHCR under their final version `X.Y.Z`. It packages the final Helm charts
-with the final image versions, pushes them to `oci://ghcr.io/kubemoot/charts`, tags the
-candidates' commits with the final version, runs the quickstart against the published
-chart, and creates the GitHub Release.
+with the final image versions, pushes them to `oci://ghcr.io/kubemoot/charts`, signs
+every published image and chart (see [Verify images and charts](#verify-images-and-charts)),
+tags the candidates' commits with the final version, runs the quickstart against the
+published chart, and creates the GitHub Release. A signing failure stops the promotion
+before any tag.
 
 Promotion is per repository:
 
@@ -143,6 +145,58 @@ Released artifacts are public. Candidates are not.
 - **This documentation site** is deployed when the docs release is promoted.
 
 Release images are `amd64` only today.
+
+## Verify images and charts
+
+Every container image and Helm chart that **Promote Release** publishes to GHCR is
+signed by digest with a keyless [Sigstore](https://www.sigstore.dev/) signature and has
+an SLSA build provenance attestation. Both are stored in GHCR next to the artifact;
+nothing extra is attached to the GitHub Release. No key is stored anywhere: the
+signing certificate is issued to the release workflow's GitHub Actions identity, so
+verifying means checking that identity.
+
+The tools are [cosign](https://docs.sigstore.dev/cosign/system_config/installation/)
+and the [GitHub CLI](https://cli.github.com/). Replace `<version>` with a released
+version.
+
+**An image** from `kubemoot` (the operator, `agent-runtime`, `dashboard`, and every
+other `ghcr.io/kubemoot/<image>`):
+
+```bash
+cosign verify ghcr.io/kubemoot/kubemoot-operator:<version> \
+  --certificate-identity https://github.com/kubemoot/kubemoot/.github/workflows/promote-release.yaml@refs/heads/main \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+gh attestation verify oci://ghcr.io/kubemoot/kubemoot-operator:<version> --repo kubemoot/kubemoot
+```
+
+**The operator chart**, at `ghcr.io/kubemoot/charts/kubemoot-operator`:
+
+```bash
+cosign verify ghcr.io/kubemoot/charts/kubemoot-operator:<version> \
+  --certificate-identity https://github.com/kubemoot/kubemoot/.github/workflows/promote-release.yaml@refs/heads/main \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+gh attestation verify oci://ghcr.io/kubemoot/charts/kubemoot-operator:<version> --repo kubemoot/kubemoot
+```
+
+**A crew chart** is signed by the `crews` release workflow:
+
+```bash
+cosign verify ghcr.io/kubemoot/charts/homelab-pilot-crew:<version> \
+  --certificate-identity https://github.com/kubemoot/crews/.github/workflows/promote-release.yaml@refs/heads/main \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+gh attestation verify oci://ghcr.io/kubemoot/charts/homelab-pilot-crew:<version> --repo kubemoot/crews
+```
+
+A successful `cosign verify` lists the checks it made and the signed claims, including
+the digest; `gh attestation verify` names the workflow that produced the provenance.
+Either command fails when the artifact was not signed by that workflow, or when its
+digest no longer matches what was signed. Both check the digest the tag points to, so
+to install exactly the bytes you verified, pin that digest
+(`ghcr.io/kubemoot/<image>@sha256:...`), which `crane digest ghcr.io/kubemoot/<image>:<version>`
+prints.
 
 ## API versions
 
