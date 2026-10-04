@@ -103,11 +103,12 @@ Candidate tags add a suffix: `vX.Y.Z-rc.N`.
 
 The version rule is the target for every repository. Today:
 
-- `kmctl`, `vscode-crewforge`, `kubemoot-docs`, and `crews` follow it: they stamp the
+- `kmctl`, `vscode-crewforge`, `kubemoot-docs`, `crews`, and `kubemoot` follow it: they stamp the
   version at build and commit nothing. A crew chart also gets the Kubemoot images it uses
   from Kubemoot's latest final release tags at build, and its promotion keeps exactly the
   images its candidate ran.
-- `kubemoot` moves next.
+- `kubemoot` builds its operator chart after any component it pins releases, with every
+  image version taken from that component's tags.
 - The remaining repositories follow after that.
 
 A repository that has not moved yet still commits its candidate version to its chart
