@@ -54,10 +54,13 @@ These checks run on the public repositories without anyone starting them:
   `vscode-crewforge`, and `crews`; for `kubemoot` it also imports Trivy's findings.
 
 Workflows reference GitHub Actions by commit SHA, and the default workflow token is
-read-only; a job that needs more asks for it. `kmctl` and CrewForge releases carry a
-keyless Sigstore signature and SLSA build provenance, added by **Promote Release**;
-releases promoted before signing was added carry neither. Container images and Helm
-charts are not signed yet.
+read-only; a job that needs more asks for it.
+
+Every container image and Helm chart that **Promote Release** publishes to GHCR carries
+a keyless Sigstore signature and SLSA build provenance
+([Verify images and charts](../releases/#verify-images-and-charts)). The `kmctl` and
+CrewForge releases carry the same for their release assets, attached to the GitHub
+Release.
 
 ## Security model and known limitations
 
