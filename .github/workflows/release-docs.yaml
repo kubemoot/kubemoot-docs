@@ -23,6 +23,10 @@ on:
       - 'brand.lock'
       - 'scripts/brand-sync*.sh'
       - '!**/CLAUDE.md'
+  # kubemoot's trigger-docs-rebuild.yaml sends this when kubemoot/docs changes on main:
+  # the site is rebuilt from this repository's unchanged main as a new candidate.
+  repository_dispatch:
+    types: [kubemoot-docs-changed]
   workflow_dispatch:
     inputs:
       force_release:
@@ -65,10 +69,11 @@ jobs:
 
       - name: Calculate the release candidate version
         id: version
-        uses: kubemoot/release-actions/release-candidate-version@73fdfa313081f82c79758dfba3f8b4bb1e106dcf # v0.6.2
+        uses: kubemoot/release-actions/release-candidate-version@71225d1c899d63a0c66500eeb798433b137ebe4f # v0.8.1
         with:
           tag_prefix: "docs-v"
-          force: ${{ inputs.force_release }}
+          # A kubemoot docs change has no commit here: force the next free candidate.
+          force: ${{ inputs.force_release || github.event_name == 'repository_dispatch' }}
 
       - name: Install crane
         if: steps.version.outputs.release_created == 'true'
@@ -94,13 +99,13 @@ jobs:
 
           echo "${HARBOR_PASSWORD}" | crane auth login --insecure ${{ env.REGISTRY }} -u "${HARBOR_USERNAME}" --password-stdin
 
-          if crane manifest --insecure "${FULL_IMAGE}:${SHA}" >/dev/null 2>&1; then
-            echo "Copying ${FULL_IMAGE}:${SHA} -> ${FULL_IMAGE}:${VERSION}"
-            crane copy --insecure "${FULL_IMAGE}:${SHA}" "${FULL_IMAGE}:${VERSION}"
-          elif crane manifest --insecure "${FULL_IMAGE}:latest" >/dev/null 2>&1; then
-            echo "Copying ${FULL_IMAGE}:latest -> ${FULL_IMAGE}:${VERSION}"
-            crane copy --insecure "${FULL_IMAGE}:latest" "${FULL_IMAGE}:${VERSION}"
+          # The image this run's CI built; never another build's :latest.
+          if ! crane manifest --insecure "${FULL_IMAGE}:${SHA}" >/dev/null 2>&1; then
+            echo "::error::${FULL_IMAGE}:${SHA} was not built"
+            exit 1
           fi
+          echo "Copying ${FULL_IMAGE}:${SHA} -> ${FULL_IMAGE}:${VERSION}"
+          crane copy --insecure "${FULL_IMAGE}:${SHA}" "${FULL_IMAGE}:${VERSION}"
 
       # Git holds 0.0.0; the build stamps the candidate version into the chart it
       # packages and never commits it. The image tag defaults to the appVersion.
@@ -134,6 +139,10 @@ jobs:
 
       - name: Create and push tag
         if: steps.version.outputs.release_created == 'true'
+        env:
+          # The site builds kubemoot's main as it is now, which can be newer than the
+          # commit that sent a dispatch; this is the commit the build actually used.
+          KUBEMOOT_SHA: ${{ needs.ci.outputs.kubemoot_sha }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           TAG="docs-v$VERSION"
@@ -145,6 +154,7 @@ jobs:
           if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
             echo "Tag $TAG already exists on remote"
           else
-            git tag -a "$TAG" -m "Release candidate Kubemoot Docs Site $TAG" "${GITHUB_SHA}"
+            git tag -a "$TAG" -m "Release candidate Kubemoot Docs Site $TAG" \
+              -m "Built with kubemoot docs @ ${KUBEMOOT_SHA}" "${GITHUB_SHA}"
             git push origin "refs/tags/$TAG"
           fi

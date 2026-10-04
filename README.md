@@ -78,10 +78,11 @@ mount's file filter.
 The site aggregates each component's docs at build time, so a change to
 `kubemoot/docs` reaches the site only when this repo builds again. The workflow
 `trigger-docs-rebuild.yaml` in the `kubemoot` repo does that: when `docs/**` changes on
-`main`, it writes the current commit SHA into `component-sync.md` here, which matches
-the path filters of the build workflows and starts a new build. To republish by hand,
-commit a change to any tracked file under those filters (an empty commit matches
-nothing and does not build).
+`main`, it sends this repo a `kubemoot-docs-changed` repository dispatch. Release Docs
+Site then builds a new release candidate from this repo's unchanged `main` (the next free
+`rc.N`, with no commit) and records the kubemoot commit it built with in the image label
+`org.kubemoot.docs.kubemoot-revision` and in the candidate tag's message. To republish by
+hand, run Release Docs Site with `force_release`.
 
 ## Docker image
 

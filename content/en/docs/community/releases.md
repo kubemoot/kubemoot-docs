@@ -47,7 +47,9 @@ chart, and creates the GitHub Release.
 
 Promotion is per repository:
 
-- `kubemoot` promotes the operator chart together with every image it pins.
+- `kubemoot` promotes the operator chart together with every image it pins, and the
+  images crews use on their own (`code-sandbox`, `artifact-access`, `scheduling-mcp`,
+  `test-runner`).
 - `crews` promotes each crew chart. A crew that pins an unreleased Kubemoot candidate
   is refused until Kubemoot is promoted.
 - `kmctl` promotes the command-line binaries.
@@ -101,19 +103,17 @@ Candidate tags add a suffix: `vX.Y.Z-rc.N`.
 
 ## Where each repository stands
 
-The version rule is the target for every repository. Today:
+Every repository follows the rule: `kmctl`, `vscode-crewforge`, `kubemoot-docs`, `crews`,
+and `kubemoot` stamp the version at build and commit nothing.
 
-- `kmctl`, `vscode-crewforge`, `kubemoot-docs`, `crews`, and `kubemoot` follow it: they stamp the
-  version at build and commit nothing. A crew chart also gets the Kubemoot images it uses
-  from Kubemoot's latest final release tags at build, and its promotion keeps exactly the
-  images its candidate ran.
+- A crew chart also gets the Kubemoot images it uses from Kubemoot's latest final release
+  tags at build, and its promotion keeps exactly the images its candidate ran.
 - `kubemoot` builds its operator chart after any component it pins releases, with every
-  image version taken from that component's tags.
-- The remaining repositories follow after that.
-
-A repository that has not moved yet still commits its candidate version to its chart
-files after each build. Treat any version number in such a file as a build artifact, not
-as a release record; the tag is the record.
+  image version taken from that component's tags. Generated code (CRDs, RBAC, deepcopy)
+  is committed by the developer; CI checks it and commits nothing.
+- This site rebuilds when the Kubemoot docs change without a commit: Kubemoot sends a
+  dispatch event, and the site builds a new candidate that records the Kubemoot docs
+  commit it was built with.
 
 ## Where the artifacts are
 

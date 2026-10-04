@@ -56,7 +56,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up the release helpers
-        uses: kubemoot/release-actions/setup@73fdfa313081f82c79758dfba3f8b4bb1e106dcf # v0.6.2
+        uses: kubemoot/release-actions/setup@71225d1c899d63a0c66500eeb798433b137ebe4f # v0.8.1
 
       - name: Install crane
         run: |
@@ -88,8 +88,7 @@ jobs:
           plan="$(DRY_RUN=true rl_promote_single docs-v "Kubemoot docs" "$(mktemp -d)")"
           final="$(sed -n 's/^final_tag=docs-v//p' <<<"${plan}")"
           commit="$(sed -n 's/^commit=//p' <<<"${plan}")"
-          rc="$(rl_latest_rc docs-v "${commit}")"
-          rc="${rc#docs-v}"
+          rc="$(sed -n 's/^rc_tag=docs-v//p' <<<"${plan}")"
           [ -n "${final}" ] && [ -n "${commit}" ] && [ -n "${rc}" ] \
             || { echo "::error::could not plan the promotion: ${plan}"; exit 1; }
 
