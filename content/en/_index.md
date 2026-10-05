@@ -95,4 +95,9 @@ Start with the **[Community](/docs/community/)** section and the
 **[kubemoot organization](https://github.com/kubemoot)** on GitHub, and
 **[Discussions](https://github.com/orgs/kubemoot/discussions)**. For anything else,
 write to **moot@kubemoot.org**. **security@kubemoot.org** is only for vulnerability reports.
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15226/badge)](https://www.bestpractices.dev/projects/15226)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/kubemoot/kubemoot/badge)](https://scorecard.dev/viewer/?uri=github.com/kubemoot/kubemoot)
+
+See **[How Kubemoot is built and secured](/docs/community/how-kubemoot-is-built-and-secured/)**.
 {{% /blocks/section %}}
