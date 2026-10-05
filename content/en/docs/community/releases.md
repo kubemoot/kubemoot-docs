@@ -140,7 +140,8 @@ Released artifacts are public. Candidates are not.
 - **GitHub Releases** are created per published component, with generated release notes. The
   `kmctl` release carries the command-line binaries for Linux, macOS, and Windows on
   `amd64` and `arm64`, with a checksums file. The CrewForge release carries the extension
-  package.
+  package. The Kubemoot and crew releases carry their build provenance as
+  `<name>_<version>.intoto.jsonl`.
 - **The CrewForge extension** is published to the VS Code Marketplace and Open VSX.
 - **This documentation site** is deployed when the docs release is published.
 
@@ -150,8 +151,9 @@ Release images are `amd64` only today.
 
 Every container image and Helm chart that **Publish Release** publishes to GHCR is
 signed by digest with a keyless [Sigstore](https://www.sigstore.dev/) signature and has
-an SLSA build provenance attestation. Both are stored in GHCR next to the artifact;
-nothing extra is attached to the GitHub Release. No key is stored anywhere: the
+an SLSA build provenance attestation. Both are stored in GHCR next to the artifact, and
+the GitHub Release carries a copy of the provenance as `<name>_<version>.intoto.jsonl`
+(`gh attestation verify ... --bundle <file>` checks against it offline). No key is stored anywhere: the
 signing certificate is issued to the release workflow's GitHub Actions identity, so
 verifying means checking that identity.
 
