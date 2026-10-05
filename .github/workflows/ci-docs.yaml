@@ -30,7 +30,7 @@ on:
       - '.github/assets/**'
       - '.github/workflows/ci-docs.yaml'
       - '.github/workflows/release-docs.yaml'
-      - '.github/workflows/promote-release.yaml'
+      - '.github/workflows/publish-release.yaml'
   workflow_dispatch:
 
 env:

@@ -2,8 +2,8 @@
 # component docs, prove it renders, and publish it as a Cloudflare Worker serving
 # static assets. Nothing here touches the homelab.
 #
-# A push to main (or a dispatch) only builds and checks the site. Promote Release calls
-# this workflow with the promoted commit, the Kubemoot release whose docs it carries,
+# A push to main (or a dispatch) only builds and checks the site. Publish Release calls
+# this workflow with the released commit, the Kubemoot release whose docs it carries,
 # and deploy: true; the deploy then runs once SITE_DEPLOY is "true". The private
 # preview (release-docs.yaml) keeps tracking main.
 name: Site

@@ -1,14 +1,14 @@
-# Promote Release: publish the tested docs release candidate to kubemoot.org.
+# Publish Release: publish the tested docs release candidate to kubemoot.org.
 #
 # Every push to main builds a docs release candidate (docs-vX.Y.Z-rc.N) into Harbor,
 # and the private preview runs it. A maintainer runs this workflow (Actions tab, Run
 # workflow; dispatch needs write access) to publish the candidate's image and chart to
 # Harbor as the final X.Y.Z (the homelab moves to it), tag the candidate's commit
 # docs-vX.Y.Z, build the public site from that commit with the Kubemoot docs of the latest
-# promoted Kubemoot release, deploy it to kubemoot.org (when SITE_DEPLOY is "true"),
+# published Kubemoot release, deploy it to kubemoot.org (when SITE_DEPLOY is "true"),
 # and write the GitHub Release. The default is a dry run: the site is built and
 # checked, the notes are in the run summary, and nothing is tagged or deployed.
-name: Promote Release
+name: Publish Release
 
 on:
   workflow_dispatch:
@@ -29,21 +29,21 @@ env:
   RL_NOTES_DOCS: "true"
 
 concurrency:
-  group: promote-release
+  group: publish-release
   cancel-in-progress: false
 
 permissions:
   contents: read
 
 jobs:
-  promote:
+  publish:
     # The same runners as every release in the ecosystem, and only from main.
     if: github.ref == 'refs/heads/main'
     runs-on: homelab-runners
     permissions:
       contents: write
     outputs:
-      commit: ${{ steps.promote.outputs.commit }}
+      commit: ${{ steps.tag.outputs.commit }}
       kubemoot_ref: ${{ steps.kubemoot.outputs.ref }}
     steps:
       - name: Checkout repository
@@ -90,7 +90,7 @@ jobs:
           commit="$(sed -n 's/^commit=//p' <<<"${plan}")"
           rc="$(sed -n 's/^rc_tag=docs-v//p' <<<"${plan}")"
           [ -n "${final}" ] && [ -n "${commit}" ] && [ -n "${rc}" ] \
-            || { echo "::error::could not plan the promotion: ${plan}"; exit 1; }
+            || { echo "::error::could not plan the release: ${plan}"; exit 1; }
 
           rl_checkout_at "${commit}"
           trap rl_remove_worktrees EXIT
@@ -109,11 +109,11 @@ jobs:
           helm push --insecure-skip-tls-verify "final-chart/kubemoot-docs-${final}.tgz" "oci://${REGISTRY}/kubemoot/charts"
 
       - name: Tag the final version
-        id: promote
+        id: tag
         env:
           RC_TAG: ${{ inputs.rc_tag }}
           DRY_RUN: ${{ inputs.dry_run }}
-          OUT_DIR: promotion
+          OUT_DIR: release-files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -123,7 +123,7 @@ jobs:
           cat "${OUT_DIR}/notes.md" >> "$GITHUB_STEP_SUMMARY"
 
       # The public site documents released Kubemoot: its docs/ come from the latest
-      # promoted Kubemoot release (operator-chart-vA.B.C, or before the first promotion
+      # published Kubemoot release (operator-chart-vA.B.C, or before the first release
       # the latest vX.Y.Z operator release), not from Kubemoot's main.
       - name: Find the latest Kubemoot release
         id: kubemoot
@@ -138,45 +138,45 @@ jobs:
           echo "Kubemoot docs from ${ref}" | tee -a "$GITHUB_STEP_SUMMARY"
           echo "ref=${ref}" >> "$GITHUB_OUTPUT"
 
-      - name: Keep the promotion output
+      - name: Keep the release files
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: promotion
-          path: promotion/
+          name: release-files
+          path: release-files/
           retention-days: 30
 
   site:
-    needs: promote
+    needs: publish
     uses: ./.github/workflows/site.yaml
     with:
-      ref: ${{ needs.promote.outputs.commit }}
-      kubemoot_ref: ${{ needs.promote.outputs.kubemoot_ref }}
+      ref: ${{ needs.publish.outputs.commit }}
+      kubemoot_ref: ${{ needs.publish.outputs.kubemoot_ref }}
       deploy: ${{ !inputs.dry_run }}
     secrets: inherit
 
   release:
-    needs: [promote, site]
+    needs: [publish, site]
     if: ${{ !inputs.dry_run }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Download the promotion output
+      - name: Download the release files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: promotion
-          path: promotion
+          name: release-files
+          path: release-files
 
       - name: Create the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # promotion/releases.tsv: tag, title, notes file (one release per line).
+          # release-files/releases.tsv: tag, title, notes file (one release per line).
           while IFS=$'\t' read -r tag title notes; do
             if gh release view "${tag}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
               echo "${tag} already has a release"
               continue
             fi
             gh release create "${tag}" --repo "${GITHUB_REPOSITORY}" --verify-tag \
-              --title "${title}" --notes-file "promotion/${notes}"
-          done < promotion/releases.tsv
+              --title "${title}" --notes-file "release-files/${notes}"
+          done < release-files/releases.tsv
