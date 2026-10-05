@@ -18,6 +18,9 @@ that show them.
   open a pull request using the template. A maintainer review and approval is required
   to merge. See [Contributing](../contributing/#open-a-pull-request) and
   [Governance](../governance/#how-public-issues-and-pull-requests-are-handled).
+- **Maintainers use pull requests too.** Every change to a public repository reaches
+  `main` through a pull request that merges only after its required checks pass: the DCO
+  sign-off, CodeQL, and a gate that waits for every other check, including the tests.
 - **Conventional Commits.** Every commit message carries a prefix such as `fix:` or
   `feat:`, and the prefix decides the version bump. See
   [Contributing](../contributing/#commit-messages).
@@ -68,6 +71,14 @@ that show them.
 - **Dependencies are pinned by digest.** Container base images and GitHub Actions
   reference an immutable digest or commit, not a movable tag. The default workflow token
   is read-only, and a job that needs more asks for it.
+- **How images are built.** Every image is built inside the project's own cluster, from a
+  Dockerfile, by [Kaniko](https://github.com/GoogleContainerTools/kaniko) running as an
+  unprivileged Kubernetes Job: no Docker daemon and no privileged container. Images go to
+  the project's own registry first, and **Publish Release** copies the tested image to
+  GHCR by digest, never rebuilding it. Kaniko is archived upstream and its executor image
+  is the one build dependency not pinned by digest; it is being replaced by Cloud Native
+  Buildpacks (see the
+  [roadmap](../../introduction/roadmap/#images-built-with-cloud-native-buildpacks)).
 - **Dependabot** proposes updates to dependencies and Actions in every repository
   ([configuration](https://github.com/kubemoot/kubemoot/blob/main/.github/dependabot.yml)).
 - **Signatures and provenance.** `kmctl` and CrewForge releases carry a keyless
