@@ -31,9 +31,9 @@ maintainer, that is best effort, not a guaranteed response time.
 
 ## Supported versions
 
-Every merge to `main` that changes a component builds a release candidate, and a maintainer promotes it to a
+Every merge to `main` that changes a component builds a release candidate, and a maintainer publishes it as a
 versioned release (see [Releases](../releases/)). Kubemoot is a young project and does not backport fixes.
-A security fix lands on `main` and ships in the next promoted release of the affected component;
+A security fix lands on `main` and ships in the next published release of the affected component;
 to receive it, move to that release.
 
 ## How the code is checked
@@ -56,7 +56,7 @@ These checks run on the public repositories without anyone starting them:
 Workflows reference GitHub Actions by commit SHA, and the default workflow token is
 read-only; a job that needs more asks for it.
 
-Every container image and Helm chart that **Promote Release** publishes to GHCR carries
+Every container image and Helm chart that **Publish Release** publishes to GHCR carries
 a keyless Sigstore signature and SLSA build provenance
 ([Verify images and charts](../releases/#verify-images-and-charts)). The `kmctl` and
 CrewForge releases carry the same for their release assets, attached to the GitHub

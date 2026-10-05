@@ -42,7 +42,7 @@ layout and how to build and test each component.
 5. Open a pull request against `main` using the template, and say what changed and why.
 
 Once merged, a pull request builds a release candidate from `main` and ships in the
-next promoted release; see [Releases](../releases/). Install final releases, not
+next published release; see [Releases](../releases/). Install final releases, not
 `main`.
 
 Small, focused pull requests review faster: one concern per pull request. A maintainer

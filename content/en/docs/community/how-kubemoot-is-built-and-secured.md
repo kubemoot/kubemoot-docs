@@ -45,10 +45,10 @@ that show them.
 - **Every merge to `main` builds a release candidate.** Candidates are tagged
   `X.Y.Z-rc.N` and are not published publicly. See
   [From merge to release](../releases/#from-merge-to-release).
-- **A maintainer promotes a candidate.** The **Promote Release** workflow starts as a
+- **A maintainer publishes a candidate.** The **Publish Release** workflow starts as a
   dry run that publishes nothing, then runs again with approval. It copies the exact
   tested images by digest rather than rebuilding them
-  ([workflow](https://github.com/kubemoot/kubemoot/blob/main/.github/workflows/promote-release.yaml)).
+  ([workflow](https://github.com/kubemoot/kubemoot/blob/main/.github/workflows/publish-release.yaml)).
 - **Releases are immutable.** A published version is never rewritten; a fix ships as the
   next version.
 - **Release notes list what users see.** Breaking changes, new features, fixes, and
@@ -59,7 +59,7 @@ that show them.
   [`kubemoot/release-actions`](https://github.com/kubemoot/release-actions), so the logic
   is not copied from repository to repository.
 - **No stored registry tokens for CrewForge.** The extension is published to the VS Code
-  Marketplace and Open VSX only from the promotion workflow, in a protected environment
+  Marketplace and Open VSX only from the Publish Release workflow, in a protected environment
   that waits for maintainer approval, using federated sign-in instead of a stored token.
   See [CrewForge](../releases/#crewforge).
 

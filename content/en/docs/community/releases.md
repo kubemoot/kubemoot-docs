@@ -1,11 +1,11 @@
 ---
 title: "Releases and Versioning"
 weight: 50
-description: "How a merge to main becomes a release candidate and how a maintainer promotes it to a versioned release."
+description: "How a merge to main becomes a release candidate and how a maintainer publishes it as a versioned release."
 ---
 
-Every merge to `main` builds a release candidate. A maintainer promotes a tested
-candidate to a public release. Users install final releases; `main` is in development.
+Every merge to `main` builds a release candidate. A maintainer publishes a tested
+candidate as a public release. Users install final releases; `main` is in development.
 
 ## The version rule
 
@@ -16,8 +16,8 @@ candidate number, and the tag is the only record of what was released.
 
 All repositories use the same pipeline pieces from
 [`kubemoot/release-actions`](https://github.com/kubemoot/release-actions): one action
-computes the next candidate version, one sets up the promotion helpers, and one
-shell library holds the shared logic for candidates, promotion, and release notes. A
+computes the next candidate version, one sets up the release helpers, and one
+shell library holds the shared logic for candidates, final releases, and release notes. A
 repository pins a released version of these actions by commit.
 
 ## From merge to release
@@ -35,30 +35,30 @@ that runs on a push to `main` that changes that component's files. The workflow:
    and pushes them to the maintainers' own registry. Candidates are not published
    publicly and are not meant for installation.
 
-**Promotion.** When a candidate has passed its tests, a maintainer runs the
-**Promote Release** workflow. It always starts as a dry run: it plans the release,
+**Publishing a release.** When a candidate has passed its tests, a maintainer runs the
+**Publish Release** workflow. It always starts as a dry run: it plans the release,
 packages the artifacts, shows the release notes in the run summary, and publishes
 nothing. The maintainer reviews the plan, then runs it again with the dry run turned
-off. A promotion publishes the exact images that were tested, copied by digest and not
+off. A release publishes the exact images that were tested, copied by digest and not
 rebuilt, to GHCR under their final version `X.Y.Z`. It packages the final Helm charts
 with the final image versions, pushes them to `oci://ghcr.io/kubemoot/charts`, signs
 every published image and chart (see [Verify images and charts](#verify-images-and-charts)),
 tags the candidates' commits with the final version, runs the quickstart against the
-published chart, and creates the GitHub Release. A signing failure stops the promotion
+published chart, and creates the GitHub Release. A signing failure stops the release
 before any tag.
 
-Promotion is per repository:
+Publishing is per repository:
 
-- `kubemoot` promotes the operator chart together with every image it pins, and the
+- `kubemoot` publishes the operator chart together with every image it pins, and the
   images crews use on their own (`code-sandbox`, `artifact-access`, `scheduling-mcp`,
   `test-runner`).
-- `crews` promotes each crew chart. A crew that pins an unreleased Kubemoot candidate
-  is refused until Kubemoot is promoted.
-- `kmctl` promotes the command-line binaries.
-- `kubemoot-docs` promotes this documentation site.
-- `vscode-crewforge` promotes the CrewForge extension.
+- `crews` publishes each crew chart. A crew that pins an unreleased Kubemoot candidate
+  is refused until that Kubemoot release is published.
+- `kmctl` publishes the command-line binaries.
+- `kubemoot-docs` publishes this documentation site.
+- `vscode-crewforge` publishes the CrewForge extension.
 
-A merged pull request therefore ships in the next promoted release, not at merge time.
+A merged pull request therefore ships in the next published release, not at merge time.
 
 ## Release notes
 
@@ -86,16 +86,16 @@ The release notes are on each repository's GitHub Releases page:
 
 ## CrewForge
 
-CrewForge is promoted like every other component and publishes one more artifact: the
+CrewForge goes through the same release as every other component and publishes one more artifact: the
 extension is released to the VS Code Marketplace and to Open VSX.
 
 | Step | What happens |
 |------|--------------|
 | Candidate | Every merge to `main` tags `vX.Y.Z-rc.N` and packages the extension without publishing it. |
-| Promotion | A maintainer runs **Promote Release**. It packages the extension again at the final version, tags the commit `vX.Y.Z`, and creates the GitHub Release with the package attached. |
+| Release | A maintainer runs **Publish Release**. It packages the extension again at the final version, tags the commit `vX.Y.Z`, and creates the GitHub Release with the package attached. |
 | Registry publish | With the registry option selected, the same run publishes the attached package to the Marketplace and to Open VSX. |
 | Approval | Registry publishing runs in the protected `marketplace` environment. It runs only from `main` and waits for a maintainer to approve, with no administrator bypass. |
-| Sign-in | No registry token is stored. The Marketplace publish signs in with a Microsoft Entra federated credential that trusts only the `marketplace` environment. Open VSX uses Trusted Publishing, which trusts the promotion workflow of the repository. |
+| Sign-in | No registry token is stored. The Marketplace publish signs in with a Microsoft Entra federated credential that trusts only the `marketplace` environment. Open VSX uses Trusted Publishing, which trusts the Publish Release workflow of the repository. |
 | Changelog | The Changelog tab on both registries is generated from the GitHub Releases, so it matches the release notes. |
 
 ## Git tags are the version
@@ -120,7 +120,7 @@ Every repository follows the rule: `kmctl`, `vscode-crewforge`, `kubemoot-docs`,
 and `kubemoot` stamp the version at build and commit nothing.
 
 - A crew chart also gets the Kubemoot images it uses from Kubemoot's latest final release
-  tags at build, and its promotion keeps exactly the images its candidate ran.
+  tags at build, and its final release keeps exactly the images its candidate ran.
 - `kubemoot` builds its operator chart after any component it pins releases, with every
   image version taken from that component's tags. Generated code (CRDs, RBAC, deepcopy)
   is committed by the developer; CI checks it and commits nothing.
@@ -137,18 +137,18 @@ Released artifacts are public. Candidates are not.
   `latest` tag and no candidate tag.
 - **Helm charts** are published as OCI artifacts under `oci://ghcr.io/kubemoot/charts`,
   for the operator chart and for each crew chart.
-- **GitHub Releases** are created per promoted component, with generated release notes. The
+- **GitHub Releases** are created per published component, with generated release notes. The
   `kmctl` release carries the command-line binaries for Linux, macOS, and Windows on
   `amd64` and `arm64`, with a checksums file. The CrewForge release carries the extension
   package.
 - **The CrewForge extension** is published to the VS Code Marketplace and Open VSX.
-- **This documentation site** is deployed when the docs release is promoted.
+- **This documentation site** is deployed when the docs release is published.
 
 Release images are `amd64` only today.
 
 ## Verify images and charts
 
-Every container image and Helm chart that **Promote Release** publishes to GHCR is
+Every container image and Helm chart that **Publish Release** publishes to GHCR is
 signed by digest with a keyless [Sigstore](https://www.sigstore.dev/) signature and has
 an SLSA build provenance attestation. Both are stored in GHCR next to the artifact;
 nothing extra is attached to the GitHub Release. No key is stored anywhere: the
@@ -164,7 +164,7 @@ other `ghcr.io/kubemoot/<image>`):
 
 ```bash
 cosign verify ghcr.io/kubemoot/kubemoot-operator:<version> \
-  --certificate-identity https://github.com/kubemoot/kubemoot/.github/workflows/promote-release.yaml@refs/heads/main \
+  --certificate-identity https://github.com/kubemoot/kubemoot/.github/workflows/publish-release.yaml@refs/heads/main \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
 gh attestation verify oci://ghcr.io/kubemoot/kubemoot-operator:<version> --repo kubemoot/kubemoot
@@ -174,7 +174,7 @@ gh attestation verify oci://ghcr.io/kubemoot/kubemoot-operator:<version> --repo 
 
 ```bash
 cosign verify ghcr.io/kubemoot/charts/kubemoot-operator:<version> \
-  --certificate-identity https://github.com/kubemoot/kubemoot/.github/workflows/promote-release.yaml@refs/heads/main \
+  --certificate-identity https://github.com/kubemoot/kubemoot/.github/workflows/publish-release.yaml@refs/heads/main \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
 gh attestation verify oci://ghcr.io/kubemoot/charts/kubemoot-operator:<version> --repo kubemoot/kubemoot
@@ -184,7 +184,7 @@ gh attestation verify oci://ghcr.io/kubemoot/charts/kubemoot-operator:<version> 
 
 ```bash
 cosign verify ghcr.io/kubemoot/charts/homelab-pilot-crew:<version> \
-  --certificate-identity https://github.com/kubemoot/crews/.github/workflows/promote-release.yaml@refs/heads/main \
+  --certificate-identity https://github.com/kubemoot/crews/.github/workflows/publish-release.yaml@refs/heads/main \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
 gh attestation verify oci://ghcr.io/kubemoot/charts/homelab-pilot-crew:<version> --repo kubemoot/crews
