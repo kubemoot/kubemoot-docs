@@ -72,7 +72,8 @@ that show them.
   ([configuration](https://github.com/kubemoot/kubemoot/blob/main/.github/dependabot.yml)).
 - **Signatures and provenance.** `kmctl` and CrewForge releases carry a keyless
   [Sigstore](https://www.sigstore.dev/) signature and SLSA build provenance. Every
-  container image and Helm chart published to GHCR carries both from the next release on.
+  container image and Helm chart published to GHCR carries both, and the Kubemoot and
+  crew GitHub Releases attach the provenance file.
   No signing key is stored; the certificate is issued to the release workflow's
   identity. You can check any of them yourself with the commands in
   [Verify images and charts](../releases/#verify-images-and-charts).
