@@ -7,7 +7,8 @@ description: "How changes are made, how versions and releases work, how the supp
 This page describes how the project builds, releases, and protects its software, and
 where you can see each practice for yourself. It follows the
 [OpenSSF Best Practices](https://www.bestpractices.dev/) criteria for open-source
-projects. The per-criterion answers live on the project's Best Practices entry; this
+projects. The per-criterion answers live on the
+[project's Best Practices entry](https://www.bestpractices.dev/projects/15226); this
 page explains the practices in plain words and links to the files, workflows, and pages
 that show them.
 
@@ -83,9 +84,11 @@ that show them.
 - **Tests** run in CI on every pull request and every push to `main`, and the
   [quickstart](../../introduction/quickstart/) runs against each release's published
   chart. The [Development Guide](../development/) lists the command for each component.
-- **Linters** (`go vet`, `golangci-lint`, `tsc`, ESLint, `svelte-check`, ShellCheck)
-  with a cyclomatic complexity limit of 10. Every warning is fixed, and a false positive
-  is suppressed on its line with the reason. See
+- **Linters** run in CI for every language and block a merge on any finding:
+  `golangci-lint` for each Go module, Checkstyle for the Java services, ESLint and
+  `svelte-check` for the dashboard and CrewForge, ruff for Python, and ShellCheck for
+  scripts, with a cyclomatic complexity limit of 10. A false positive is suppressed on
+  its line with the reason. See
   [Linters and warnings](../contributing/#linters-and-warnings).
 - **CodeQL** scans every repository on every pull request, every push to `main`, and
   weekly. Every alert it has raised was fixed.
@@ -124,9 +127,11 @@ configuration lives in a maintainer-only repository.
 The live results are in the
 [Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/kubemoot/kubemoot).
 
-<!-- TODO-BADGE-ID: after registering kubemoot/kubemoot at bestpractices.dev, add the Best Practices badge here:
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/TODO-BADGE-ID/badge)](https://www.bestpractices.dev/projects/TODO-BADGE-ID)
--->
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/15226/badge)](https://www.bestpractices.dev/projects/15226)
+
+Kubemoot meets the OpenSSF Best Practices "passing" criteria. The answer and evidence
+for each criterion are on the
+[project's Best Practices entry](https://www.bestpractices.dev/projects/15226).
 
 ## Related pages
 

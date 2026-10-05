@@ -83,12 +83,15 @@ Run the linter of the component you touched before you open a pull request; the
 
 | Check | Where it runs |
 |-------|---------------|
-| `go vet` and `golangci-lint` (with each repository's `.golangci.yml`) | Go code; CI runs `golangci-lint` for `kmctl` and for several `kubemoot` Go components |
-| `tsc` and ESLint | CrewForge, on every pull request |
-| `svelte-check` | The dashboard image build |
-| ShellCheck | The release scripts in `kubemoot` and `crews` |
+| `golangci-lint` (with the repository's `.golangci.yml`) and a `go mod tidy` check | Every Go module in `kubemoot` and `kmctl`, on every pull request |
+| Checkstyle | The Java services in `kubemoot` (agent runtime, MCP gateway, indexer) |
+| `tsc`, ESLint, and `svelte-check` | CrewForge on every pull request; the dashboard in its image build |
+| ruff | The Python code in `kubemoot` and `crews` |
+| ShellCheck | The release scripts in `kubemoot`, `crews`, `kmctl`, and `vscode-crewforge` |
 | CodeQL | Every repository, on every pull request, every push to `main`, and weekly |
 | SonarQube quality gate | Every push to `main` in `kubemoot`, `kmctl`, `vscode-crewforge`, and `crews` |
+
+Each of these blocks the build on any finding, and every repository is at zero.
 
 Fix every warning these tools report. When a finding is a false positive, suppress it on
 that line with a comment that gives the reason (`//nolint:<linter> // why` in Go,
