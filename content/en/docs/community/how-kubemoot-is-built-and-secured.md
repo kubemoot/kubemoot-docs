@@ -73,12 +73,12 @@ that show them.
   is read-only, and a job that needs more asks for it.
 - **How images are built.** Every image is built inside the project's own cluster, in a
   short-lived pod with no Docker daemon and no privileged container. The Java, GraalVM
-  native, and Go images are built with [Cloud Native Buildpacks](https://buildpacks.io/)
-  and the [Paketo](https://paketo.io/) buildpacks, as a non-root user, and carry a
-  software bill of materials. The images that keep a Dockerfile (the dashboard, the RAG
-  query service, the code sandbox, and the test runner) are built by
-  [Buildah](https://buildah.io/) in a pod with its own user namespace, so the build is
-  root only inside that namespace. The builder images are pinned by digest. Images go to
+  native, and Go images, and the image of this documentation site, are built with
+  [Cloud Native Buildpacks](https://buildpacks.io/) and the [Paketo](https://paketo.io/)
+  buildpacks, as a non-root user, and carry a software bill of materials. The images
+  that keep a Dockerfile (the dashboard, the RAG query service, the code sandbox, and
+  the test runner) are built by [Buildah](https://buildah.io/) in a pod with its own
+  user namespace, so the build is root only inside that namespace. The builder images are pinned by digest. Images go to
   the project's own registry first, and **Publish Release** copies the tested image to
   GHCR by digest, never rebuilding it (see the
   [roadmap](../../introduction/roadmap/#images-built-with-cloud-native-buildpacks)).
