@@ -5,7 +5,7 @@ on:
     outputs:
       kubemoot_sha:
         description: The kubemoot commit whose docs/ the site was built with
-        value: ${{ jobs.build.outputs.kubemoot_sha }}
+        value: ${{ jobs.site.outputs.kubemoot_sha }}
   pull_request:
     branches: [main]
     paths:
@@ -22,12 +22,14 @@ on:
       - '.nvmrc'
       - 'go.mod'
       - 'go.sum'
-      - 'Dockerfile'
+      - '.hugo-version'
       - 'nginx.conf'
+      - 'scripts/check-nginx.sh'
       - 'charts/**'
       - 'brand.lock'
       - 'scripts/brand-sync*.sh'
       - '.github/assets/**'
+      - '.github/actions/build-site/**'
       - '.github/workflows/ci-docs.yaml'
       - '.github/workflows/release-docs.yaml'
       - '.github/workflows/publish-release.yaml'
@@ -42,29 +44,33 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    # Pull requests (including forks) run on GitHub-hosted runners; the self-hosted
-    # cluster runners take push, dispatch, and workflow_call runs from main only.
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-latest' || 'homelab-runners' }}
+  # The site builds on a GitHub-hosted runner for every event, exactly as the public
+  # site does (the build-site action), and nginx serves it with the image's nginx.conf.
+  site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       kubemoot_sha: ${{ steps.kubemoot.outputs.sha }}
 
     steps:
       - name: Checkout kubemoot-docs
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: site
 
       # The logo, landing mark, favicons, and README lockups are copies of github.com/kubemoot/.github
       # brand/ files; brand.lock pins the commit and each copy's sha256.
       - name: Check the brand copies against brand.lock
+        working-directory: site
         run: scripts/brand-sync.sh check && scripts/brand-sync.test.sh
 
       # Versions live only in git tags; a kubemoot docs change rebuilds without a commit.
       - name: Test the release rules
+        working-directory: site
         run: scripts/release.test.sh
 
-      # Aggregate component docs into _docs/ so the default hugo.toml mounts work.
-      # Only the docs/ subdirectory of each component repo is needed; sparse checkout
-      # keeps the clone fast and avoids pulling large binary assets.
+      # hugo.toml mounts the operator docs from ../kubemoot/docs, so the component
+      # checkout sits beside the site directory. Sparse: only docs/ is fetched.
       - name: Checkout kubemoot docs (sparse)
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -75,68 +81,79 @@ jobs:
           token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
-          path: _docs/kubemoot
+          path: kubemoot
 
       - name: Record the kubemoot docs commit
         id: kubemoot
         run: |
-          sha="$(git -C _docs/kubemoot rev-parse HEAD)"
+          sha="$(git -C kubemoot rev-parse HEAD)"
           echo "Kubemoot docs @ ${sha}"
           echo "sha=${sha}" >> "$GITHUB_OUTPUT"
 
-      # The Hugo build happens entirely inside the Dockerfile, so the runner needs
-      # no Go/Node/Hugo toolchain. The sparse-checked-out component docs
-      # (_docs/kubemoot) ride along in the build context. Pull requests build the
-      # same Dockerfile with Docker on the hosted runner and push nothing.
-      - name: Build site (pull request)
-        if: github.event_name == 'pull_request'
-        run: docker build --build-arg SITE_URL=https://kubemoot.org/ -t kubemoot-docs:pr .
+      # Pull requests build for kubemoot.org; the image is the private preview.
+      - name: Build the site
+        uses: ./site/.github/actions/build-site
+        with:
+          site-dir: site
+          site-url: ${{ github.event_name != 'pull_request' && vars.PREVIEW_SITE_URL || 'https://kubemoot.org/' }}
+
+      - name: Test the nginx check
+        run: site/scripts/check-nginx.test.sh
+
+      - name: Serve the site with the image's nginx.conf
+        run: site/scripts/check-nginx.sh site/public site/nginx.conf
+
+      # What the image packages: the built site and the nginx configuration.
+      - name: Stage the image source
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p "${RUNNER_TEMP}/image"
+          cp site/nginx.conf "${RUNNER_TEMP}/image/"
+          cp -R site/public "${RUNNER_TEMP}/image/public"
+
+      - name: Upload the image source
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docs-image
+          path: ${{ runner.temp }}/image
+          include-hidden-files: true
+          retention-days: 1
+
+  # The Paketo nginx buildpack packages the built site with nginx in the cluster and
+  # pushes the image to Harbor: main pushes :<sha>, which the release retags, and
+  # :latest; any other ref pushes only :branch-<sha>.
+  image:
+    needs: site
+    if: github.event_name != 'pull_request'
+    runs-on: homelab-runners
+
+    steps:
+      - name: Download the image source
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: docs-image
+          path: ${{ runner.temp }}/image
 
       - name: Install kubectl
-        if: github.event_name != 'pull_request'
-        run: |
-          curl -sLO "https://dl.k8s.io/release/$(curl -sL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+        uses: azure/setup-kubectl@829323503d1be3d00ca8346e5391ca0b07a9ab0d # v5.1.0
 
-      - name: Build and push with Kaniko
-        if: github.event_name != 'pull_request'
+      - name: Set up the build helpers
+        uses: kubemoot/release-actions/setup@7d1fcd865e059e89051a7f8c8c14745f02140d3a # agent/build-image
+
+      - name: Build and push with Paketo buildpacks
         env:
-          KUBEMOOT_SHA: ${{ steps.kubemoot.outputs.sha }}
+          REGISTRY_HOST_IP: ${{ vars.REGISTRY_HOST_IP }}
+          SHA: ${{ github.sha }}
+          KUBEMOOT_SHA: ${{ needs.site.outputs.kubemoot_sha }}
         run: |
-          SHA="${{ github.sha }}"
-          JOB_NAME="kaniko-docs-$(echo "${SHA}" | cut -c1-8)-${GITHUB_RUN_NUMBER}"
-
-          # Build context = repo root; Dockerfile references _docs/ for the docs content
-          tar --exclude='.git' --exclude='node_modules' --exclude='public' --exclude='resources' \
-              -czf /tmp/context.tar.gz .
-
-          kubectl run "${JOB_NAME}" \
-            --rm -i \
-            --restart=Never \
-            --namespace=arc-runners \
-            --image=gcr.io/kaniko-project/executor:latest \
-            --overrides='{
-              "spec": {
-                "hostAliases": [{"ip": "${{ vars.REGISTRY_HOST_IP }}", "hostnames": ["${{ vars.REGISTRY }}"]}],
-                "containers": [{
-                  "name": "kaniko",
-                  "image": "gcr.io/kaniko-project/executor:latest",
-                  "stdin": true,
-                  "stdinOnce": true,
-                  "args": [
-                    "--context=tar://stdin",
-                    "--dockerfile=Dockerfile",
-                    "--build-arg=SITE_URL=${{ vars.PREVIEW_SITE_URL || 'https://kubemoot.org/' }}",
-                    "--label=org.opencontainers.image.revision='"${SHA}"'",
-                    "--label=org.kubemoot.docs.kubemoot-revision='"${KUBEMOOT_SHA}"'",
-                    "--destination=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:'"${SHA}"'",
-                    "--destination=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest",
-                    "--insecure",
-                    "--skip-tls-verify",
-                    "--cache=false"
-                  ],
-                  "volumeMounts": [{"name": "docker-config", "mountPath": "/kaniko/.docker"}]
-                }],
-                "volumes": [{"name": "docker-config", "secret": {"secretName": "kaniko-docker-config", "items": [{"key": "config.json", "path": "config.json"}]}}]
-              }
-            }' < /tmp/context.tar.gz
+          "${BUILD_IMAGE_DIR}/build-image-buildpacks.sh" \
+            --pod "buildpacks-docs-${SHA:0:8}-${GITHUB_RUN_NUMBER}-${GITHUB_RUN_ATTEMPT}" \
+            --sha "${SHA}" --ref "${GITHUB_REF}" \
+            --builder builder --run-image run-base \
+            --buildpack paketo-buildpacks/web-servers \
+            --env BP_OCI_SOURCE=https://github.com/kubemoot/kubemoot-docs \
+            --env "BP_OCI_REVISION=${SHA}" \
+            --env BP_OCI_LICENSES=Apache-2.0 \
+            --env "BP_IMAGE_LABELS=org.kubemoot.docs.kubemoot-revision=${KUBEMOOT_SHA}" \
+            "${RUNNER_TEMP}/image" "${REGISTRY}/${IMAGE_NAME}"

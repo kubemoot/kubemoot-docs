@@ -1,0 +1,65 @@
+name: Build the site
+description: >-
+  Builds the Hugo site with the Hugo version in .hugo-version and the Node version in
+  .nvmrc, and checks that it rendered. hugo.toml mounts the component docs from
+  ../kubemoot/docs, so the kubemoot docs checkout sits beside the site directory.
+
+inputs:
+  site-dir:
+    description: The directory of the site shell checkout
+    required: true
+  site-url:
+    description: The base URL the site is built for (its host root)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: hugo
+      shell: bash
+      env:
+        SITE_DIR: ${{ inputs.site-dir }}
+      run: |
+        version="$(tr -d '[:space:]' < "${SITE_DIR}/.hugo-version")"
+        [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+          || { echo "::error::.hugo-version holds no X.Y.Z Hugo version: ${version}"; exit 1; }
+        echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+    - name: Set up Hugo
+      uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
+      with:
+        hugo-version: ${{ steps.hugo.outputs.version }}
+        extended: true
+
+    - name: Set up Node
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version-file: ${{ inputs.site-dir }}/.nvmrc
+        cache: npm
+        cache-dependency-path: ${{ inputs.site-dir }}/package-lock.json
+
+    - name: Build
+      shell: bash
+      working-directory: ${{ inputs.site-dir }}
+      env:
+        SITE_URL: ${{ inputs.site-url }}
+      run: |
+        npm ci
+        # No `hugo mod get`: it upgrades Docsy past the go.mod pin. The build
+        # downloads the pinned module versions itself.
+        hugo --gc --minify --baseURL "${SITE_URL}"
+
+    - name: Prove the site rendered
+      shell: bash
+      working-directory: ${{ inputs.site-dir }}
+      env:
+        SITE_URL: ${{ inputs.site-url }}
+      run: |
+        pages=$(find public -name index.html | wc -l)
+        echo "pages=$pages"
+        test -f public/index.html
+        test -f public/docs/index.html
+        test -f public/docs/introduction/quickstart/index.html
+        [ "$pages" -ge 60 ] || { echo "only $pages pages rendered; the component docs mount is probably empty" >&2; exit 1; }
+        echo "### Site build" >> "$GITHUB_STEP_SUMMARY"
+        echo "$pages pages rendered for $SITE_URL" >> "$GITHUB_STEP_SUMMARY"
