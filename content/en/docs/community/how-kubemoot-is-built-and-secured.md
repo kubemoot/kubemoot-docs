@@ -127,6 +127,15 @@ steps, the supported versions, and the security model with its known limitations
 the [Security](../security/) page, and each repository carries a `SECURITY.md` with the
 same instructions.
 
+## A known gap: credentials for tools
+
+Kubemoot does not yet limit which Secrets a crew author may reference from an MCPServer.
+Anyone who can create an MCPServer in a namespace can have the operator mount any Secret
+in that namespace into it. Per-tool credential grants are the top priority on the
+[roadmap](../../introduction/roadmap/#credentials-for-tools-granted-per-tool), and
+[Secrets and tools](../../concepts/secrets-and-tools/) explains what to do until they
+ship.
+
 ## Settings are code
 
 The settings that protect the project are managed as code in OpenTofu, not by hand in a
