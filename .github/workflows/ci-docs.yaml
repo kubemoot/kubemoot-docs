@@ -139,7 +139,7 @@ jobs:
         uses: azure/setup-kubectl@829323503d1be3d00ca8346e5391ca0b07a9ab0d # v5.1.0
 
       - name: Set up the build helpers
-        uses: kubemoot/release-actions/setup@7d1fcd865e059e89051a7f8c8c14745f02140d3a # agent/build-image
+        uses: kubemoot/release-actions/setup@f0649e246e695534f92e0d9d4b6ba43bb1045d85 # v0.11.0
 
       - name: Build and push with Paketo buildpacks
         env:
