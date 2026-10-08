@@ -271,6 +271,11 @@ To look at one side alone, use a resource's menu or the diff editor's title bar:
 - **Show Live YAML**: the cluster's object, normalized the same way.
 - **Show Live YAML (raw)**: everything the API server holds, status and all.
 
+These views, and Compare with Live, write YAML as block YAML by default. Set
+`crewforge.yamlFormat` to `kyaml` to write [KYAML](../settings-and-permissions/) instead:
+every string quoted, maps in `{ }`, lists in `[ ]`. Both sides of a comparison use the
+chosen form, and the result is still valid YAML.
+
 With the Red Hat YAML extension installed, Kubemoot manifests are also checked against
 your cluster's own schema as you type.
 
