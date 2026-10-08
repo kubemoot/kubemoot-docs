@@ -37,8 +37,9 @@ check "the image records the kubemoot docs commit" "1" \
 # shellcheck disable=SC2016 # the workflow's literal text, not an expansion
 check "the candidate tag records the kubemoot docs commit" "1" \
   "$(grep -cF 'Built with kubemoot docs @ ${KUBEMOOT_SHA}' "$release")"
+# shellcheck disable=SC2016 # the workflow's literal text, not an expansion
 check "the image records the docs commit" "1" \
-  "$(grep -cF 'org.opencontainers.image.revision=' "${root}/.github/workflows/ci-docs.yaml")"
+  "$(grep -cF 'BP_OCI_REVISION=${SHA}' "${root}/.github/workflows/ci-docs.yaml")"
 check "the release copies the image of the candidate it publishes" "1" \
   "$(grep -cF "rc=\"\$(sed -n 's/^rc_tag=docs-v//p' <<<\"\${plan}\")\"" "${root}/.github/workflows/publish-release.yaml")"
 check "the release never copies another build's :latest" "0" \

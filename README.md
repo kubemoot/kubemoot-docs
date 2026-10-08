@@ -84,13 +84,16 @@ Site then builds a new release candidate from this repo's unchanged `main` (the 
 `org.kubemoot.docs.kubemoot-revision` and in the candidate tag's message. To republish by
 hand, run Release Docs Site with `force_release`.
 
-## Docker image
+## Container image
 
-The Dockerfile builds the site in a `golang:1.26-bookworm` stage (Go for Hugo
-modules, Node for the Docsy PostCSS step), placing the checked-out component docs at
-the mount path, then serves the static output from `nginxinc/nginx-unprivileged:1.27-alpine`. The site base
-URL is the `SITE_URL` build argument (default `https://kubemoot.org/`), and the site
-serves at its host root.
+CI builds the site on a GitHub-hosted runner with the Hugo version in `.hugo-version`
+and the Node version in `.nvmrc` (`.github/actions/build-site`, the same build as
+kubemoot.org), and checks that nginx serves it with `nginx.conf`
+(`scripts/check-nginx.sh`). The Paketo nginx buildpack then packages `public/` and
+`nginx.conf` into the image in the cluster. nginx listens on 8080 as a non-root user
+and writes only under `/tmp`, so the pod runs with a read-only root filesystem. The
+image's site is built for the preview URL (`PREVIEW_SITE_URL`) and serves at its host
+root.
 
 ## Helm chart
 

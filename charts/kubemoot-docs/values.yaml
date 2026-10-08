@@ -52,13 +52,15 @@ podSecurityContext:
   seccompProfile:
     type: RuntimeDefault
 
-# Security context for the container.
-# readOnlyRootFilesystem is false: nginx writes to /tmp and /var/cache/nginx.
+# Security context for the container. nginx listens on 8080 as the image's user
+# (1002:1001, the buildpacks run image's cnb user) and writes only under /tmp, an
+# emptyDir, so the root filesystem is read-only.
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: false
-  runAsNonRoot: true   # nginx-unprivileged listens on 8080 as uid 101; no root needed
-  runAsUser: 101
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1002
+  runAsGroup: 1001
   capabilities:
     drop:
       - ALL
