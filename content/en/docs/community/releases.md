@@ -141,7 +141,10 @@ Released artifacts are public. Candidates are not.
   `kmctl` release carries the command-line binaries for Linux, macOS, and Windows on
   `amd64` and `arm64`, with a checksums file. The CrewForge release carries the extension
   package. The Kubemoot and crew releases carry their build provenance as
-  `<name>_<version>.intoto.jsonl`.
+  `<name>_<version>.intoto.jsonl`. The Kubemoot release also carries the operator
+  chart's Grafana dashboards as JSON files, byte for byte the chart's files and signed with
+  the chart, for Grafana installs that import dashboards by hand (see
+  [Observability](../../operating/observability/#grafana-dashboards)).
 - **The CrewForge extension** is published to the VS Code Marketplace and Open VSX.
 - **This documentation site** is deployed when the docs release is published.
 
