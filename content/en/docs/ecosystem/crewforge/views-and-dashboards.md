@@ -48,10 +48,11 @@ nothing in it says *none*; hover a group for the rule that puts an object in it.
   each marked ADL or prose, with the agents that use it. A module an agent names that the
   cluster lacks shows as missing.
 - **Skills** labeled with the crew, in order.
-- **Models**: every Model in the crew's namespace, since the scheduler may bind the agents
-  to any of them by capability label, then the ModelServers they run on (looked up in
-  the crew's namespace, then `kubemoot`). Hover a Model for its model name, capability
-  tier (its `latencyClass`), capability labels, and context length.
+- **Models**: the Models in the crew's namespace, if any, then the ModelServers they run
+  on (looked up in the crew's namespace, then `kubemoot`). A crew states what it needs in
+  its scheduling policy and ships no Models; the cluster's model catalog supplies them, so
+  this group is empty for a scaffolded crew. Hover a Model for its model name, size,
+  capability labels, and context length.
 - **RAG Sources** the agents or skills name, or were matched to by keyword, and the
   crew's own, then the **EmbeddingModels** they embed with. Hover one for what it
   indexes, its chunking, its embedding model, and when it was last indexed.
@@ -130,7 +131,7 @@ Each source expands to what it declares, in the same groups as Deployed Crews: t
 **Agents**, **Prompts**, **Skills**, **Models**, **RAG Sources**, **MCP Servers**,
 **Tools**, **Policies**, **Notifications**, and **Fitness Scenarios**. Click an object to
 open its file at that object. Something the source names but does not declare, such as
-the ModelServer its Models run on, shows as *shared, installed elsewhere*, or as *not in
+an MCP server the cluster provides, shows as *shared, installed elsewhere*, or as *not in
 this source* when it should be there. After the groups come its deployments, one per
 namespace. A source can be deployed to many namespaces.
 
@@ -138,7 +139,9 @@ To define more of the crew, use **Add <Kind>...** on a group (the **+** on its l
 **Add Agent...** (name, role, capabilities, PromptModules, tools), **Add PromptModule...**
 (ADL or prose, and its order), **Add Skill...**, **Add Model...**, **Add RAGSource...**,
 **Add EmbeddingModel...**, **Add MCPServer...**, **Add CrewSchedulingPolicy...**, and
-**Add NotificationSink...**. CrewForge writes the new object in the shape of the source's
+**Add NotificationSink...**. To keep a crew portable, state what it needs in its
+**CrewSchedulingPolicy** and let the cluster's model catalog supply the models, rather than
+adding Models to the crew. CrewForge writes the new object in the shape of the source's
 own: in a chart, a file under `templates/` labeled with the crew (with the chart's
 common-labels helper when it has one); in a bundle, a YAML file beside the Crew in its
 namespace. The file opens, the object appears in the tree, and Lint checks it.
@@ -162,9 +165,10 @@ source whose render fails shows the error as an item.
 
 The title bar has **Create Crew** (the **+**) and **Refresh Crew Sources**. **Create
 Crew** asks for a display name, then a Kubernetes name (prefilled from the display name and
-editable), a size from 1 to 5 (the number of specialists beside the
-coordinator: `workloads`, then `events`, `networking`, `config`, and a `reviewer`), and a
-model family (or `none`, to add Models yourself), and needs a current `kmctl` release (one whose `kmctl create` takes `--display-name`). In the
+editable), and a size from 1 to 5 (the number of specialists beside the
+coordinator: `workloads`, then `events`, `networking`, `config`, and a `reviewer`). It
+needs a current `kmctl` release (one whose `kmctl create` takes `--display-name`, and
+which writes no Models). In the
 Explorer, **New Kubemoot Crew Here** is on folders outside crew sources and **View in
 CrewForge** is on files and folders inside one.
 
@@ -364,7 +368,7 @@ menu button.
 | **Compare Source with Live (normalized diff)** | See how a deployed object differs from its source | Nothing. |
 | **Show Source YAML** / **Show Live YAML** / **Show Live YAML (raw)** | Look at one side alone | Nothing. |
 | **Lint (helm lint and schema check)** | Before deploying, or any time | Nothing. Findings go to the Problems panel. |
-| **Add <Kind>...** | Define another part of a crew: an Agent, a PromptModule, a Model, a RAG source, and so on | A new file in the source, opened in the editor and linted. Nothing on the cluster until you deploy. |
+| **Add <Kind>...** | Define another part of a crew: an Agent, a PromptModule, a RAG source, a scheduling policy, and so on | A new file in the source, opened in the editor and linted. Nothing on the cluster until you deploy. |
 | **Remove from Source...** | Take a part out of a crew's source | Its file moves to the trash, or its document leaves a file that holds others, after a confirmation. Nothing on the cluster until you deploy. |
 | **Show Tool Details** | See where a tool comes from and what it takes | Nothing. A read-only page. |
 | **Ask** | Try a deployed crew | Nothing on the cluster. The chat is a discussion turn. |

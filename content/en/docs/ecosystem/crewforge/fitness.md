@@ -70,7 +70,7 @@ every run is kept. The run is a Kubemoot resource in the crew's namespace.
 
 - **Run Fitness** is hidden, and refuses, while a run of that crew is in progress.
 - CrewForge warns before starting a run while a run of another crew is in progress. Crews
-  share GPUs, so two runs at once measure contention, not the crew.
+  share accelerators, so two runs at once measure contention, not the crew.
 
 To try one scenario after changing a prompt, choose **Run This Scenario Only** (the play
 icon) on a scenario. It starts one iteration of that scenario against the deployment
