@@ -20,7 +20,7 @@ moves them to your trash. Actions that only read are marked "nothing" in the
 
 Click the Kubemoot mark in the activity bar. Two views share the side bar.
 
-![The Kubemoot view in VS Code's side bar. Deployed Crews lists the helpdesk crew expanded to its groups, with Models open: three Models and the shared ollama ModelProvider. Crew Sources lists the helpdesk chart, deployed in crew-helpdesk and in sync, expanded to the same groups.](../views.png)
+![The Kubemoot view in VS Code's side bar. Deployed Crews lists the helpdesk crew expanded to its groups, with Models open: three Models and the shared ollama ModelServer. Crew Sources lists the helpdesk chart, deployed in crew-helpdesk and in sync, expanded to the same groups.](../views.png)
 
 ### Deployed Crews
 
@@ -49,7 +49,7 @@ nothing in it says *none*; hover a group for the rule that puts an object in it.
   cluster lacks shows as missing.
 - **Skills** labeled with the crew, in order.
 - **Models**: every Model in the crew's namespace, since the scheduler may bind the agents
-  to any of them by capability label, then the ModelProviders they run on (looked up in
+  to any of them by capability label, then the ModelServers they run on (looked up in
   the crew's namespace, then `kubemoot`). Hover a Model for its model name, capability
   tier (its `latencyClass`), capability labels, and context length.
 - **RAG Sources** the agents or skills name, or were matched to by keyword, and the
@@ -72,7 +72,7 @@ nothing in it says *none*; hover a group for the rule that puts an object in it.
   the release, the Flux object, what a CrewForge deploy recorded (source, revision, who,
   and when), and the operator's KubemootConfig.
 
-An object that is not the crew's own (a ModelProvider in `kubemoot`, another crew's
+An object that is not the crew's own (a ModelServer in `kubemoot`, another crew's
 Model, the cluster's archetype) is marked **shared**, and its tooltip says who owns it.
 CrewForge only shows it.
 
@@ -130,7 +130,7 @@ Each source expands to what it declares, in the same groups as Deployed Crews: t
 **Agents**, **Prompts**, **Skills**, **Models**, **RAG Sources**, **MCP Servers**,
 **Tools**, **Policies**, **Notifications**, and **Fitness Scenarios**. Click an object to
 open its file at that object. Something the source names but does not declare, such as
-the ModelProvider its Models run on, shows as *shared, installed elsewhere*, or as *not in
+the ModelServer its Models run on, shows as *shared, installed elsewhere*, or as *not in
 this source* when it should be there. After the groups come its deployments, one per
 namespace. A source can be deployed to many namespaces.
 

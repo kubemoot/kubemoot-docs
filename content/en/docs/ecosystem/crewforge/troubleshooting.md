@@ -114,7 +114,7 @@ supports, see the [reference pages](../../../reference/crew/).
   Uses...** from the status bar menu, or deploy again with **Deploy to Namespace...**.
 - **The deploy finished but the crew never becomes ready.** Cancel the progress
   notification and open the crew dashboard's **Overview** for its phase and conditions. A
-  new crew also needs a model provider that the scheduler can bind its Models to; see
+  new crew also needs a model server that the scheduler can bind its Models to; see
   [Models and scheduling](../../../concepts/models-and-scheduling/).
 
 ## The chat will not send

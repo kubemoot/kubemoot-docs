@@ -62,7 +62,7 @@ Creating a crew needs a `kmctl` whose `create` takes `--display-name`. CrewForge
 `kmctl create --help` first and names the problem in a modal before it asks anything.
 
 CrewForge then runs `kmctl create helpdesk --display-name "Help Desk" --chart` and writes the crew as a Helm chart
-in a folder named `helpdesk`. kmctl asks the cluster which model providers exist and
+in a folder named `helpdesk`. kmctl asks the cluster which model servers exist and
 generates Models for them.
 
 What you see: the new crew is selected in **Crew Sources**, its `README.md` opens with
@@ -105,7 +105,7 @@ declares, group by group:
 - its **Agents**, each with its role and capabilities,
 - the **Prompts** (PromptModules) the agents compose, in order, marked ADL or prose,
 - **Skills**,
-- the **Models** the scheduler can bind the agents to, and the ModelProvider they run on,
+- the **Models** the scheduler can bind the agents to, and the ModelServer they run on,
   marked *shared, installed elsewhere* because the cluster provides it,
 - **RAG Sources**, **MCP Servers**, and the **Tools** the agents enable,
 - **Policies**: the scheduling policy and the archetype it runs,
