@@ -30,13 +30,19 @@ layout and how to build and test each component.
 2. Make the change, with tests (see below).
 3. Run the test suite for the component you touched. For the `kubemoot` repo, run the
    quickstart against a local `kind` cluster as a smoke test; it installs the operator,
-   a small CPU model, and a two-agent crew, asks the crew a question, and checks that an
-   answer comes back:
+   Ollama serving a small CPU model from the cluster's model catalog, and a two-agent
+   crew, asks the crew a question, and checks that an answer comes back:
 
    ```bash
    kind create cluster --name kubemoot
    ./quickstart/quickstart.sh
    ```
+
+   The script installs the chart of the release your checkout belongs to. On a branch
+   that changed the quickstart files it stops and says so; to test your own images or
+   chart, set `KUBEMOOT_CHART` and `KUBEMOOT_IMAGE_TAG` as the
+   [quickstart README](https://github.com/kubemoot/kubemoot/blob/main/quickstart/README.md)
+   describes.
 
 4. Commit with a conventional-commit message (below).
 5. Open a pull request against `main` using the template, and say what changed and why.

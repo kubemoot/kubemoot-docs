@@ -114,8 +114,9 @@ supports, see the [reference pages](../../../reference/crew/).
   Uses...** from the status bar menu, or deploy again with **Deploy to Namespace...**.
 - **The deploy finished but the crew never becomes ready.** Cancel the progress
   notification and open the crew dashboard's **Overview** for its phase and conditions. A
-  new crew also needs a model server that the scheduler can bind its Models to; see
-  [Models and scheduling](../../../concepts/models-and-scheduling/).
+  new crew also needs a model in the cluster's catalog that satisfies its scheduling policy
+  (a scaffolded crew requires one that can call tools). Run `kmctl model list` to see the
+  catalog, and see [Models and scheduling](../../../concepts/models-and-scheduling/).
 
 ## The chat will not send
 
@@ -131,5 +132,5 @@ cannot take a question yet:
 
 If a turn ends with a red card or a notice under the answer, an agent failed, could not
 run, or had not finished. Under the answer, **N agents took part** shows each agent's last
-word. When every GPU is busy, an agent waits for one with room for its model; see
+word. When every accelerator is busy, an agent waits for one with room for its model; see
 [Models and scheduling](../../../concepts/models-and-scheduling/#when-every-gpu-is-busy).

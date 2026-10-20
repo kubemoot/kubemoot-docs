@@ -1,6 +1,6 @@
 ---
 title: Kubemoot
-description: "Kubemoot runs a crew of AI agents on Kubernetes that deliberate to a consensus answer, instead of trusting one large model. Open models, your own GPUs."
+description: "Kubemoot runs a crew of AI agents on Kubernetes that deliberate to a consensus answer, instead of trusting one large model. Open models, on the accelerators you choose."
 ---
 
 {{< blocks/cover image_anchor="top" height="med" color="table" >}}
@@ -39,13 +39,14 @@ no majority vote. Failure is first-class signal, not silence.
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-cubes" title="Declarative crews" %}}
-Crews, agents, prompts (ADL), and models are Kubernetes objects. Author by
+Crews, agents, prompts (ADL), and scheduling policies are Kubernetes objects. Author by
 `kubectl apply`; version with `git diff`; no recompilation.
 {{% /blocks/feature %}}
 
-{{% blocks/feature icon="fas fa-microchip" title="Runs on your GPUs" %}}
-Just-in-time model scheduling spreads small models across commodity or local GPUs.
-Portable across clusters; no frontier-model dependency.
+{{% blocks/feature icon="fas fa-microchip" title="Runs on your accelerators" %}}
+Just-in-time model scheduling spreads small models across commodity or local accelerators.
+A crew states the models it needs and the cluster's catalog supplies them, so a crew
+is portable across clusters; no frontier-model dependency.
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fas fa-vial" title="Measurable" %}}
@@ -58,20 +59,23 @@ fabrication-aware - so crew quality is something you track, not guess.
 {{% blocks/section color="light" %}}
 ## Five-minute start
 
-A CPU trial you can run on a laptop, no GPU required: one script takes an empty
-cluster to a crew answering a question. NATS, a small model on CPU, the operator, and
-a two-agent crew.
+A CPU trial you can run on a laptop, no accelerator required: one script takes an empty
+cluster to a crew answering a question. NATS, Ollama serving a small model from the
+cluster's model catalog on CPU, the operator, and a two-agent crew.
 
 ```bash
 git clone https://github.com/kubemoot/kubemoot.git && cd kubemoot
+git checkout "$(git describe --tags --abbrev=0 --match 'operator-chart-v[0-9]*' --exclude '*-rc.*')"
 kind create cluster --name kubemoot
 ./quickstart/quickstart.sh
 ```
 
-The same script runs in CI against every release, on a 2-CPU node. What each step
-creates, the CPU-trial-versus-GPU-deployment profile, and how to go further:
-**[Quickstart](/docs/introduction/quickstart/)**. To install the operator on your own
-cluster with a GPU-backed model server: **[Installation](/docs/introduction/installation/)**.
+The `git checkout` selects the latest release, and the script installs the chart of the
+release it is checked out at. The same script runs in CI against every release, on a
+2-CPU node. What each step creates, the CPU-trial-versus-accelerator profile, and how to
+go further: **[Quickstart](/docs/introduction/quickstart/)**. To install the operator on
+your own cluster with an accelerator-backed model server (vLLM is the preferred engine):
+**[Installation](/docs/introduction/installation/)**.
 {{% /blocks/section %}}
 
 {{% blocks/section color="white" %}}
@@ -80,7 +84,7 @@ cluster with a GPU-backed model server: **[Installation](/docs/introduction/inst
 - **Kubemoot** - the operator: the Kubernetes controller and runtime that wire a crew together.
 - **Crews** - packaged crews as Helm charts, from the reference crew to examples you can copy.
 - **Homelab Pilot** - the reference crew, with its chat and dashboard app.
-- **kmctl** - the command-line tool for crews and discussions.
+- **kmctl** - the command-line tool for crews, discussions, and the cluster's model catalog.
 - **CrewForge** - the VS Code extension for building, deploying, and talking to crews.
 
 See **[Ecosystem](/docs/ecosystem/)** for what each component is and how they fit.

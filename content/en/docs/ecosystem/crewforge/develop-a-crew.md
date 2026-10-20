@@ -44,7 +44,6 @@ CrewForge asks for these, in order:
    | 3 | `networking`: Services, endpoints, routes, NetworkPolicies |
    | 4 | `config`: ConfigMaps, ServiceAccounts, Secret references |
    | 5 | `reviewer`: checks the answer against the gathered data |
-4. **A model family**: `qwen`, `gemma`, `llama`, or `mistral`, or `none` to add Models yourself.
 
 The derived Kubernetes name follows these rules: lowercase; accented letters become their
 ASCII spelling (the accented e becomes `e`, the German sharp s becomes `ss`, and letters
@@ -62,8 +61,11 @@ Creating a crew needs a `kmctl` whose `create` takes `--display-name`. CrewForge
 `kmctl create --help` first and names the problem in a modal before it asks anything.
 
 CrewForge then runs `kmctl create helpdesk --display-name "Help Desk" --chart` and writes the crew as a Helm chart
-in a folder named `helpdesk`. kmctl asks the cluster which model servers exist and
-generates Models for them.
+in a folder named `helpdesk`. The crew ships no Models and names no model server: its
+scheduling policy states what it needs (every phase requires a model that can call tools),
+and the cluster's model catalog supplies the models. kmctl reads the catalog and warns
+when no model can call tools; scaffolding itself needs no cluster. See the models the
+cluster offers with `kmctl model list`.
 
 What you see: the new crew is selected in **Crew Sources**, its `README.md` opens with
 `templates/crew.yaml` beside it, and a notification offers **Deploy to Namespace...**.
@@ -75,10 +77,9 @@ helpdesk/
   values.yaml
   README.md
   templates/
-    crew.yaml            the Crew and its scheduling policy
+    crew.yaml            the Crew and its scheduling policy (what models it needs)
     agents.yaml          the coordinator and the specialists
     promptmodules.yaml   what each agent is told
-    models.yaml          the Models the scheduler can bind agents to
     tools.yaml           the read-only Kubernetes MCP server and its gateway
     rbac.yaml            the Role the tool server runs with
     fitness-scenarios.yaml   a ConfigMap carrying the fitness scenarios
@@ -105,16 +106,16 @@ declares, group by group:
 - its **Agents**, each with its role and capabilities,
 - the **Prompts** (PromptModules) the agents compose, in order, marked ADL or prose,
 - **Skills**,
-- the **Models** the scheduler can bind the agents to, and the ModelServer they run on,
-  marked *shared, installed elsewhere* because the cluster provides it,
+- the **Models** the source declares, if any (a scaffolded crew declares none, because the
+  cluster's catalog supplies them),
 - **RAG Sources**, **MCP Servers**, and the **Tools** the agents enable,
 - **Policies**: the scheduling policy and the archetype it runs,
 - **Notifications**,
 - **Fitness Scenarios**, from the `fitness/` folder,
 - then its deployments. A new crew shows **not deployed**.
 
-A group with nothing in it says *none*. Hover a Model for its model name, capability tier,
-and context length, or a policy for what it governs.
+A group with nothing in it says *none*. Hover a Model for its model name, size, capability
+labels, and context length, or a policy for what it governs.
 
 Click any of them to open its file at that object. The view follows the file system:
 adding, renaming, or deleting a file updates it without a refresh. When the chart does
@@ -216,7 +217,7 @@ The send button shows once there is text and the crew can take a question. When 
 is not ready, in an error state, or out of reach, the reason shows above the input and
 sending waits.
 
-While the crew works, each agent has a card: starting up, queued, analyzing (with the GPU
+While the crew works, each agent has a card: starting up, queued, analyzing (with the accelerator
 it landed on), then what it found in plain words ("agrees", "has a concern", "objects",
 "failed") or "stood aside".
 
