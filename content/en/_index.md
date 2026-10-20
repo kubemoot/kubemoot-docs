@@ -71,7 +71,7 @@ kind create cluster --name kubemoot
 The same script runs in CI against every release, on a 2-CPU node. What each step
 creates, the CPU-trial-versus-GPU-deployment profile, and how to go further:
 **[Quickstart](/docs/introduction/quickstart/)**. To install the operator on your own
-cluster with a GPU-backed model provider: **[Installation](/docs/introduction/installation/)**.
+cluster with a GPU-backed model server: **[Installation](/docs/introduction/installation/)**.
 {{% /blocks/section %}}
 
 {{% blocks/section color="white" %}}
