@@ -137,14 +137,39 @@ namespace. A source can be deployed to many namespaces.
 
 To define more of the crew, use **Add <Kind>...** on a group (the **+** on its line):
 **Add Agent...** (name, role, capabilities, PromptModules, tools), **Add PromptModule...**
-(ADL or prose, and its order), **Add Skill...**, **Add Model...**, **Add RAGSource...**,
+(ADL or prose, and its order), **Add Skill...**, **Add RAGSource...**,
 **Add EmbeddingModel...**, **Add MCPServer...**, **Add CrewSchedulingPolicy...**, and
-**Add NotificationSink...**. To keep a crew portable, state what it needs in its
-**CrewSchedulingPolicy** and let the cluster's model catalog supply the models, rather than
-adding Models to the crew. CrewForge writes the new object in the shape of the source's
+**Add NotificationSink...**. CrewForge writes the new object in the shape of the source's
 own: in a chart, a file under `templates/` labeled with the crew (with the chart's
 common-labels helper when it has one); in a bundle, a YAML file beside the Crew in its
 namespace. The file opens, the object appears in the tree, and Lint checks it.
+
+The Models group's action is **Edit Scheduling Needs...** (the gear on its line, also on
+the Policies group). It states what the crew needs for one discussion phase, such as
+triage or mulling, in the crew's **CrewSchedulingPolicy**, and names no model, so the
+cluster's model catalog supplies the models and the crew stays portable:
+
+- **Required abilities**: tool-calling, reasoning, or vision. Every model for the phase
+  must have them (the rule's `require`).
+- **Preferred size**: small (under 12B parameters), medium (12B up to 30B), or large (30B
+  and over). A preference, not a requirement: a cluster without that size still runs the
+  crew (a weighted `prefer` on `kubemoot.ai/size`).
+- **preferFaster**: 0 to 100 points for the model the cluster measured faster; 0 turns it
+  off.
+
+Each question offers what the policy states now. CrewForge rewrites that phase's rule in
+the file, or adds one, and keeps the rest of the file as it is. A comment on a line of its
+own inside that rule moves above it; a comment at the end of one of its lines is not kept.
+A size or speed preference replaces `qualityBias` for that phase. A crew with no policy is
+offered **Add CrewSchedulingPolicy...** first. A chart whose rules a template writes, or
+whose policy spec a Helm action wraps, is left to you.
+
+**Add Crew-Local Model (Advanced)...**, in the Models group's menu, is for a crew that
+must bring its own model. It warns first: a crew with Models of its own stops using the
+cluster's model catalog and uses only those, on the servers they name. It writes the
+Model's `parameters`, `capabilities`, and context length, with the `kubemoot.ai/size`
+and `capability/<name>` labels the crew's rules match, and no `latencyClass`, which is
+retired.
 
 **Remove from Source...** on a declared object moves its file to the trash, or takes its
 document out of a file that holds others, after a confirmation that names anything that
@@ -369,6 +394,8 @@ menu button.
 | **Show Source YAML** / **Show Live YAML** / **Show Live YAML (raw)** | Look at one side alone | Nothing. |
 | **Lint (helm lint and schema check)** | Before deploying, or any time | Nothing. Findings go to the Problems panel. |
 | **Add <Kind>...** | Define another part of a crew: an Agent, a PromptModule, a RAG source, a scheduling policy, and so on | A new file in the source, opened in the editor and linted. Nothing on the cluster until you deploy. |
+| **Edit Scheduling Needs...** | Say what models a phase needs: abilities, a preferred size, preferFaster | That phase's rule in the crew's CrewSchedulingPolicy file, opened at the rule and linted. Nothing on the cluster until you deploy. |
+| **Add Crew-Local Model (Advanced)...** | Give a crew a model of its own, after a warning | A new Model file in the source. Once deployed, the crew uses only its own Models instead of the cluster's model catalog. |
 | **Remove from Source...** | Take a part out of a crew's source | Its file moves to the trash, or its document leaves a file that holds others, after a confirmation. Nothing on the cluster until you deploy. |
 | **Show Tool Details** | See where a tool comes from and what it takes | Nothing. A read-only page. |
 | **Ask** | Try a deployed crew | Nothing on the cluster. The chat is a discussion turn. |

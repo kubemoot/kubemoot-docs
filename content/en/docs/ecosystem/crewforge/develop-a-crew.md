@@ -144,6 +144,12 @@ PromptModules, and tools, writes `templates/agent-<name>.yaml` in the shape of t
 chart's other templates, opens it, shows it in the tree, and lints the chart.
 **Remove from Source...** on an object takes it out again, after a confirmation.
 
+To change which models the crew gets, use **Edit Scheduling Needs...** on the Models
+group, not a Model of the crew's own. For example, for triage pick the tool-calling
+ability, the small size, and a `preferFaster` of 50: CrewForge writes that rule into the
+crew's CrewSchedulingPolicy, and the cluster's model catalog supplies a small, fast model that
+can call tools on whatever cluster the crew is deployed to.
+
 Whenever a file of the crew is open, the status bar names the crew and where it stands:
 
 - **not deployed**,
