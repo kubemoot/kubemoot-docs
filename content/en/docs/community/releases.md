@@ -122,7 +122,9 @@ and `kubemoot` stamp the version at build and commit nothing.
 - A crew chart also gets the Kubemoot images it uses from Kubemoot's latest final release
   tags at build, and its final release keeps exactly the images its candidate ran.
 - `kubemoot` builds its operator chart after any component it pins releases, with every
-  image version taken from that component's tags. Generated code (CRDs, RBAC, deepcopy)
+  image version taken from that component's tags. The chart's version follows the same
+  commit rules as the components, counting the commits that touch the chart's own files
+  since its last release. Generated code (CRDs, RBAC, deepcopy)
   is committed by the developer; CI checks it and commits nothing.
 - This site rebuilds when the Kubemoot docs change without a commit: Kubemoot sends a
   dispatch event, and the site builds a new candidate that records the Kubemoot docs
