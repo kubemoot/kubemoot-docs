@@ -133,4 +133,4 @@ cannot take a question yet:
 If a turn ends with a red card or a notice under the answer, an agent failed, could not
 run, or had not finished. Under the answer, **N agents took part** shows each agent's last
 word. When every accelerator is busy, an agent waits for one with room for its model; see
-[Models and scheduling](../../../concepts/models-and-scheduling/#when-every-gpu-is-busy).
+[Models and scheduling](../../../concepts/models-and-scheduling/#when-every-accelerator-is-busy).
