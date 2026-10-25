@@ -22,6 +22,15 @@ are aggregated at build time via Hugo module mounts.
 Additional component chapters are added as those repos publish their own `docs/`
 directories.
 
+### Site-owned pages
+
+The roadmap lives in this repo at `content/en/docs/introduction/roadmap.md` and
+publishes at `/docs/introduction/roadmap/` whenever the site publishes, without waiting
+for a Kubemoot release. It sits inside the `/docs/` tree, so the other chapters link to
+it with their usual relative paths. The `kubemoot/docs` mount in `hugo.toml` excludes
+`introduction/roadmap.md`, so the site has exactly one roadmap even when the pinned
+Kubemoot release still contains one. Edit the roadmap here, not in `kubemoot/docs`.
+
 ## Build the site
 
 The `hugo.toml` mount points at `../kubemoot/docs`, so the site needs a `kubemoot`
