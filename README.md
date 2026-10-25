@@ -24,12 +24,17 @@ directories.
 
 ### Site-owned pages
 
-The roadmap lives in this repo at `content/en/docs/introduction/roadmap.md` and
-publishes at `/docs/introduction/roadmap/` whenever the site publishes, without waiting
-for a Kubemoot release. It sits inside the `/docs/` tree, so the other chapters link to
-it with their usual relative paths. The `kubemoot/docs` mount in `hugo.toml` excludes
-`introduction/roadmap.md`, so the site has exactly one roadmap even when the pinned
-Kubemoot release still contains one. Edit the roadmap here, not in `kubemoot/docs`.
+Three pages live in this repo under `content/en/docs/introduction/` and publish at
+the same URLs whenever the site publishes, without waiting for a Kubemoot release:
+
+- `roadmap.md` at `/docs/introduction/roadmap/`
+- `faq.md` at `/docs/introduction/faq/`
+- `related-projects.md` at `/docs/introduction/related-projects/`
+
+They sit inside the `/docs/` tree, so the other chapters link to them with their
+usual relative paths. The `kubemoot/docs` mount in `hugo.toml` excludes the same three
+files, so the site has exactly one copy of each even when the pinned Kubemoot release
+still contains one. Edit these pages here, not in `kubemoot/docs`.
 
 ## Build the site
 
