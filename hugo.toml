@@ -57,10 +57,10 @@ defaultContentLanguage = "en"
   [[module.mounts]]
     source = "../kubemoot/docs"
     target = "content/docs"
-    # The roadmap is a site page (content/en/docs/introduction/roadmap.md); the
-    # exclusion keeps a pinned kubemoot release that still ships its own copy from
-    # competing with it.
-    files = ['! **/CLAUDE.md', '! README.md', '! introduction/roadmap.md']
+    # The roadmap, FAQ, and related-projects pages are site pages
+    # (content/en/docs/introduction/); the exclusions keep a pinned kubemoot release
+    # that still ships its own copy from competing with them.
+    files = ['! **/CLAUDE.md', '! README.md', '! introduction/roadmap.md', '! introduction/faq.md', '! introduction/related-projects.md']
 
 [params]
   description = "Kubemoot is a Kubernetes operator that runs crews of open LLM agents. They deliberate to a consensus answer, with prompts governed by ADL as custom resources."
