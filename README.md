@@ -24,16 +24,17 @@ directories.
 
 ### Site-owned pages
 
-Three pages live in this repo under `content/en/docs/introduction/` and publish at
+Four pages live in this repo under `content/en/docs/introduction/` and publish at
 the same URLs whenever the site publishes, without waiting for a Kubemoot release:
 
 - `roadmap.md` at `/docs/introduction/roadmap/`
 - `faq.md` at `/docs/introduction/faq/`
 - `related-projects.md` at `/docs/introduction/related-projects/`
+- `how-the-pieces-fit-together.md` at `/docs/introduction/how-the-pieces-fit-together/`
 
 They sit inside the `/docs/` tree, so the other chapters link to them with their
-usual relative paths. The `kubemoot/docs` mount in `hugo.toml` excludes the same three
-files, so the site has exactly one copy of each even when the pinned Kubemoot release
+usual relative paths. The `kubemoot/docs` mount in `hugo.toml` excludes the same
+four files, so the site has exactly one copy of each even when the pinned Kubemoot release
 still contains one. Edit these pages here, not in `kubemoot/docs`.
 
 ## Build the site
