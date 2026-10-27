@@ -27,8 +27,10 @@ The same holds for `serviceAccountName`: the server runs as any ServiceAccount t
 author names. Agent pods run as the namespace `default` ServiceAccount unless the Agent
 sets another, with the ServiceAccount token mounted. The model itself never sees a
 Secret value in the prompt path, but the boundary that keeps one tool's credential away
-from another crew author is not enforced yet. Until it is, treat every namespace as one
-trust domain and follow the guidance in [Secrets and tools](../../concepts/secrets-and-tools/).
+from another crew author is not enforced by default. An admission check that requires the
+`use` verb on every Secret and ServiceAccount an MCPServer or Agent names is built and
+ships in the next release, off by default; until it is turned on, nothing checks. Until
+then, treat every namespace as one trust domain and follow the guidance in [Secrets and tools](../../concepts/secrets-and-tools/).
 
 **Direction:** the principle is that the model never holds a secret. Today only the tool
 process does; the aim is that not even the tool process does. The design uses Kubernetes mechanisms and invents nothing new:
