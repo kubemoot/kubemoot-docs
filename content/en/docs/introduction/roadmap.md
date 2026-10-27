@@ -58,12 +58,14 @@ picture.
 
 ## Agents on plain Deployments
 
-Kubemoot evaluated [Agent Substrate](../related-projects/#agent-substrate), a promising
-project, and does not adopt it. Its core worked in testing, with agents resuming in about
-80 ms, state kept across suspend and resume, and egress policy enforced. But Substrate
-publishes no images, has no GitOps install, documents installs for kind and GKE only, and
-needs installer patches on other distributions. Kubemoot users run many distributions, so
-Kubemoot does not depend on it.
+Kubemoot intends to run agents on [Agent Substrate](../related-projects/#agent-substrate),
+a promising project, once it progresses, and is waiting today. Its core worked in
+testing, with agents resuming in about 80 ms, state kept across suspend and resume, and
+egress policy enforced. But Substrate is packaged for GKE only: it documents installs for
+kind and GKE, has no GitOps install, needs installer patches on other distributions, and
+publishes no public images. Kubemoot pins every dependency by digest, and with no
+published images there is nothing to pin. Kubemoot users run many distributions, so
+Kubemoot does not depend on it yet.
 
 **Today:** every agent runs as its own Deployment, and the only isolation is the pod.
 
@@ -78,6 +80,9 @@ existing project:
   [Credentials for tools](#credentials-for-tools-granted-per-tool).
 - Scale to zero with KEDA, see [Scale to zero](#scale-to-zero).
 - A per-agent identity, through SPIFFE or projected ServiceAccount tokens.
+
+These are built so that moving to Substrate later is an adapter, not a rewrite: the
+operator owns how an agent runs, and agents keep their state outside the pod.
 
 ## More model servers and leased accelerators
 
