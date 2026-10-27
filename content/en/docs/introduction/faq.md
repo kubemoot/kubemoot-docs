@@ -49,9 +49,10 @@ models across a few accelerators, which neither addresses, and its agent pods al
 quickly. Agent Sandbox overlaps with the code sandbox the compute agent uses, and
 isolating that code is on the [Roadmap](../roadmap/#isolation-for-code-execution).
 Background: [Kubernetes Podcast episode 268, "Agent Sandbox and Lovable"](https://kubernetespodcast.com/episode/268-lovable/) and [episode 272, "Agent Substrate"](https://kubernetespodcast.com/episode/272-agent-substrate/), with Tim Hockin and Brandon Royal.
-Agent Substrate overlaps with running many idle agents densely; Kubemoot evaluated it and
-does not adopt it, because it is packaged today for GKE, and builds the same protections
-on plain Deployments instead (see the [Roadmap](../roadmap/#agents-on-plain-deployments)).
+Agent Substrate overlaps with running many idle agents densely. Running agents on it is a
+future goal: Kubemoot is waiting for public images and installs beyond GKE, and builds the
+same protections on plain Deployments meanwhile (see the
+[Roadmap](../roadmap/#agents-on-plain-deployments)).
 Neither replaces crews, consensus, ADL governance, or fitness, and Kubemoot does not run
 on either today. See [Related Projects](../related-projects/#agent-sandbox).
 
