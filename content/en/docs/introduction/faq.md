@@ -35,11 +35,13 @@ accelerators to schedule. Different job; see [Why Kubemoot](../why-kubemoot/).
 
 ## How is Kubemoot different from kagent?
 
-Both declare agents as Kubernetes resources. kagent is the more mature choice for
-agents backed by hosted models and for a ready set of cluster-operations tools.
-Kubemoot adds a consensus protocol between agents, accelerator-aware scheduling of each
-inference call, and fitness functions that score a crew. See
-[Related Projects](../related-projects/) for kagent and other neighbors.
+kagent, a CNCF Sandbox project started by Solo.io, makes single agents first-class in
+Kubernetes: each agent is a custom resource that speaks A2A. Kubemoot builds the crew
+around agents: consensus between them, scheduling of shared accelerators and models for
+each inference call, ADL governance, and fitness evidence. It is meant to run beside
+kagent and agentgateway, not replace them. kagent is the more mature choice for agents
+backed by hosted models and for a ready set of cluster-operations tools. See
+[Related Projects](../related-projects/) for kagent, agentgateway, and other neighbors.
 
 ## How does Kubemoot relate to Agent Sandbox and Agent Substrate?
 
