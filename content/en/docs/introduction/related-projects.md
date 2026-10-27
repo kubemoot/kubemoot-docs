@@ -63,23 +63,15 @@ Kubernetes `RuntimeClass`. It ships Go and Python SDKs and an optional Sandbox R
 
 [Agent Substrate](https://github.com/agent-substrate/substrate) is a standalone,
 Google-originated Apache-2.0 project (not part of Kubernetes SIGs; it has applied to the
-CNCF Sandbox). It is pre-1.0, with no compatibility guarantees. Because agents are idle most of the time, it multiplexes many
-agent "actors" onto a smaller set of worker pods. An actor's full state, memory and
-filesystem, is checkpointed when it goes idle and restored in well under a second when
-it is needed, which allows high oversubscription. An Envoy-based router parks requests
-for a suspended actor until it resumes. `WorkerPool` and `ActorTemplate` resources
-declare the pools and actors, isolation is gVisor or a microVM, and it is agnostic to
-the agent framework.
+CNCF Sandbox). It is pre-1.0. Because agents are idle most of the time, it multiplexes many
+agent "actors" onto a smaller set of worker pods, checkpointing an actor when it goes idle
+and restoring it in well under a second, with gVisor or microVM isolation.
 
-- **Overlap:** running many mostly-idle agents densely. Kubemoot's
-  [scale to zero](../roadmap/#scale-to-zero) direction pursues a similar saving for idle
-  agents, and Substrate is one of the two mechanisms it weighs.
-- **Differences:** Substrate packs agents onto worker pods and wakes them over HTTP;
-  it does not place models or accelerators, which stays Kubemoot's job, and it does not
-  replace crews, consensus, ADL governance, or fitness.
-- **Direction:** running agents on Substrate as an optional place beside Deployments is a
-  direction on the [Roadmap](../roadmap/#agents-on-agent-substrate), not a commitment.
-  Kubemoot does not run on it today.
+- **Evaluated, not adopted.** The core worked in testing, but Substrate is packaged today
+  for GKE: it publishes no images, has no GitOps install, documents installs for kind and
+  GKE only, and needs installer patches on other distributions. Kubemoot users run many
+  distributions, so Kubemoot builds isolation, network policy, scale to zero, and identity
+  on plain Deployments instead. See [Agents on plain Deployments](../roadmap/#agents-on-plain-deployments).
 - **Background:** [Kubernetes Podcast episode 272, "Agent Substrate"](https://kubernetespodcast.com/episode/272-agent-substrate/).
 
 Both projects address density, isolation, and fast resume, and they solve different
