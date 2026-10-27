@@ -18,7 +18,14 @@ For Kubemoot's own position, see [Why Kubemoot](../why-kubemoot/) and the
 ### kagent
 
 [kagent](https://github.com/kagent-dev/kagent) describes itself as a Kubernetes native
-framework for building AI agents. It is a CNCF project under the Apache 2.0 license.
+framework for building AI agents. It is a CNCF Sandbox project under the Apache 2.0
+license, started by [Solo.io](https://www.solo.io/). It defines agents as Kubernetes
+custom resources (`Agent`, `ModelConfig`, `RemoteMCPServer`, `MCPServer`), runs them on
+Google's Agent Development Kit, and every kagent agent speaks the A2A protocol.
+
+Kubemoot is meant to run beside kagent, not replace it. kagent makes a single agent a
+first-class Kubernetes resource; Kubemoot builds the crew around agents. A kagent agent
+joining a crew over A2A is an idea under consideration, not something that ships today.
 
 - **Overlap:** both declare agents as Kubernetes custom resources and manage them with
   `kubectl`. An agent in kagent is a system prompt, a set of tools and agents, and an
@@ -190,7 +197,10 @@ accelerator nodes.
 
 [agentgateway](https://github.com/agentgateway/agentgateway) is an open-source proxy for
 agentic AI, a Linux Foundation project. It provides an LLM gateway, an MCP gateway, and
-an agent-to-agent (A2A) gateway, and runs on Kubernetes with Gateway API support.
+an agent-to-agent (A2A) gateway, and runs on Kubernetes with Gateway API support. It was
+started by [Solo.io](https://www.solo.io/) and is hosted by the Agentic AI Foundation.
+One gateway carries LLM requests, MCP tool calls (with per-tool authorization), and A2A
+traffic.
 
 - **Overlap:** both put MCP tools behind a gateway. Kubemoot has its own `MCPGateway`
   and `MCPServer` resources (see the [MCPGateway guide](../../reference/mcpgateway-guide/)
@@ -199,6 +209,16 @@ an agent-to-agent (A2A) gateway, and runs on Kubernetes with Gateway API support
   framework can use. Kubemoot's gateway is built into the crew model and onboards tools
   for the crew's own agents. If you need a shared, security-focused proxy for many
   frameworks, agentgateway is the specialist.
+- **Direction:** Kubemoot is meant to run beside agentgateway. It is the first candidate
+  Kubemoot intends to evaluate behind its tool gateway, to keep credentials out of tool
+  processes. That is intent, not a shipped integration.
+
+### Solo.io
+
+Solo.io started both kagent and agentgateway, and also sells enterprise editions of
+them. It has shown kagent running on Agent Substrate (see
+[Agent Substrate](#agent-substrate)). Kubemoot focuses on crews of agents reaching
+consensus on shared accelerators, and treats these projects as neighbors to run beside.
 
 ## Evaluation frameworks
 

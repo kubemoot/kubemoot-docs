@@ -28,7 +28,9 @@ A **moot** is an assembly that settles a question by deliberation. Kubemoot runs
 crew of AI agents on Kubernetes that each bring their own expertise and reach
 **consensus** over a message bus, where any of them can agree, raise a concern,
 object, or stand aside. Capability is composed horizontally from many small models
-rather than concentrated in one frontier model.
+rather than concentrated in one frontier model. Kubemoot focuses on crews of agents
+reaching consensus on shared accelerators, and runs alongside projects such as kagent
+and agentgateway.
 {{% /blocks/lead %}}
 
 {{% blocks/section color="white" type="row" %}}
