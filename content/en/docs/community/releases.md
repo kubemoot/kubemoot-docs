@@ -52,8 +52,10 @@ Publishing is per repository:
 - `kubemoot` publishes the operator chart together with every image it pins, and the
   images crews use on their own (`code-sandbox`, `artifact-access`, `scheduling-mcp`,
   `test-runner`).
-- `crews` publishes each crew chart. A crew that pins an unreleased Kubemoot candidate
-  is refused until that Kubemoot release is published.
+- `crews` publishes each crew chart. A published crew chart pins final Kubemoot images
+  only. Publish Release maps each candidate pin to its final and checks, by image digest,
+  that the final is the same image the candidate ran. It refuses the release when the
+  digests differ or when the Kubemoot release is not published yet.
 - `kmctl` publishes the command-line binaries.
 - `kubemoot-docs` publishes this documentation site.
 - `vscode-crewforge` publishes the CrewForge extension.
@@ -119,8 +121,9 @@ Candidate tags add a suffix: `vX.Y.Z-rc.N`.
 Every repository follows the rule: `kmctl`, `vscode-crewforge`, `kubemoot-docs`, `crews`,
 and `kubemoot` stamp the version at build and commit nothing.
 
-- A crew chart also gets the Kubemoot images it uses from Kubemoot's latest final release
-  tags at build, and its final release keeps exactly the images its candidate ran.
+- A crew release candidate tracks Kubemoot's newest candidate images, so a crew is tested
+  against the Kubemoot build that is about to ship. Its final release pins final Kubemoot
+  images and keeps exactly the images its candidate ran.
 - `kubemoot` builds its operator chart after any component it pins releases, with every
   image version taken from that component's tags. The chart's version follows the same
   commit rules as the components, counting the commits that touch the chart's own files
