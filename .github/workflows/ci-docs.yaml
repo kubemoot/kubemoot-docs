@@ -75,10 +75,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: kubemoot/kubemoot
-          # KUBEMOOT_READ_TOKEN is used when the repo secret is set; fork pull
-          # requests get no secrets and read the public kubemoot repo with
-          # github.token.
-          token: ${{ secrets.KUBEMOOT_READ_TOKEN || github.token }}
           sparse-checkout: docs
           sparse-checkout-cone-mode: true
           path: kubemoot
