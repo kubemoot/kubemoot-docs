@@ -127,10 +127,8 @@ jobs:
       # the latest vX.Y.Z operator release), not from Kubemoot's main.
       - name: Find the latest Kubemoot release
         id: kubemoot
-        env:
-          TOKEN: ${{ secrets.KUBEMOOT_READ_TOKEN }}
         run: |
-          tags=$(git ls-remote --tags --refs "https://${TOKEN:+x-access-token:${TOKEN}@}github.com/kubemoot/kubemoot.git" \
+          tags=$(git ls-remote --tags --refs "https://github.com/kubemoot/kubemoot.git" \
             | awk '{sub("refs/tags/", "", $2); print $2}')
           ref=$(grep -E '^operator-chart-v[0-9]+\.[0-9]+\.[0-9]+$' <<<"$tags" | sort -V | tail -n 1 || true)
           [ -n "$ref" ] || ref=$(grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' <<<"$tags" | sort -V | tail -n 1 || true)
