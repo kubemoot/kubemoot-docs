@@ -208,6 +208,17 @@ to install exactly the bytes you verified, pin that digest
 (`ghcr.io/kubemoot/<image>@sha256:...`), which `crane digest ghcr.io/kubemoot/<image>:<version>`
 prints.
 
+## Upgrading
+
+Upgrade the operator chart with `helm upgrade`, as in
+[Installation](../../introduction/installation/). An existing install gets the coordinator
+log and resume on upgrade: a coordinator that restarts, rolls out, or loses its node
+resumes the discussions in progress. To keep the earlier behavior, set
+`coordinator.eventLog` and `coordinator.resume` to `false`. More than one coordinator
+replica with leases stays off until you set `coordinator.lease`. See
+[the coordinator log](../../concepts/signals-and-protocol/#the-coordinator-log) and the
+[KubemootConfig guide](../../reference/kubemootconfig-guide/#coordinator).
+
 ## API versions
 
 The Kubemoot API group is `kubemoot.ai/v1alpha1`. Software versions and the API
