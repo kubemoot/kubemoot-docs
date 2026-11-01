@@ -98,6 +98,19 @@ Not yet. The supported server types are `vllm` (the default engine) and `ollama`
 are not supported yet and the API server rejects them. Cloud and frontier models as crew members is on the
 [Roadmap](../roadmap/), with data handling and cost controls as its prerequisites.
 
+## What happens to a discussion when a coordinator restarts?
+
+A crew's coordinator writes each decision it makes about a discussion to a log on NATS
+JetStream before it acts. After a restart, a rollout, or a node reboot, the new
+coordinator rebuilds the discussions that were in progress from that log and carries on
+from the last decision, so the question is still answered. The log and resume are on by
+default. Running more than one coordinator replica, with leases so each replica owns the
+discussions it holds, is opt-in (`coordinator.lease`). The
+[coordinator chaos test](../../operating/coordinator-chaos-test/) kills or freezes a
+coordinator at chosen points of a discussion on your cluster and checks the result. See
+[the coordinator log](../../concepts/signals-and-protocol/#the-coordinator-log) and
+[Resume](../../concepts/signals-and-protocol/#resume).
+
 ## Is it production-ready?
 
 No. The API is `v1alpha1`, and Kubemoot is built and run on a homelab with
