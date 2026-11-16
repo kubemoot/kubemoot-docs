@@ -1,0 +1,6 @@
+{{- /*
+  Docsy's own renderer loads Mermaid from a CDN as an unpinned third-party script.
+  The site loads no unpinned third-party script, so a mermaid code block fails the build.
+  Draw diagrams as inline SVG, or as an image under static/.
+*/ -}}
+{{- errorf "%s: Mermaid code blocks are not supported. The site loads no unpinned third-party scripts; use an SVG diagram instead (see \"Diagrams\" in README.md)." .Page.Path -}}

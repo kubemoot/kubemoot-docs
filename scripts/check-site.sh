@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Checks a built site (default ./public) for the files and tags search engines and link
-# previews need, and that every link in llms.txt resolves to a built page.
+# previews need, that every third-party script is pinned with an integrity hash, and that
+# every link in llms.txt resolves to a built page.
 #   scripts/check-site.sh [PUBLIC_DIR]
 set -euo pipefail
 
@@ -32,6 +33,17 @@ for page in index.html docs/introduction/quickstart/index.html; do
     grep -qE -- "$tag" "$public/$page" 2>/dev/null || bad "$page lacks: $tag"
   done
 done
+
+# Third-party scripts must be pinned: an exact version in the URL and an integrity hash.
+# Docsy loads jQuery and lunr this way. An unpinned URL (@latest, a
+# bare package name) or a script without integrity fails.
+while read -r tag; do
+  [[ -n "$tag" ]] || continue
+  [[ "$tag" =~ integrity=\"?sha(256|384|512)- ]] || bad "a built page loads a script without an integrity hash: $tag"
+  [[ "$tag" =~ [@-][0-9]+\.[0-9]+\.[0-9]+ ]] || bad "a built page loads a script without an exact version: $tag"
+done < <(find "$public" -name '*.html' -print0 | xargs -0 cat 2>/dev/null |
+  tr '\n' ' ' | grep -oE '<script[^>]*src="?(https?:)?//[^" >]+[^>]*>' |
+  grep -vE 'src="?(https:)?//kubemoot\.org/' | sort -u)
 
 # Every llms.txt link maps to a built page or file.
 count=0

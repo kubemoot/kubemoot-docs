@@ -76,6 +76,19 @@ files, the description, Open Graph, Twitter card, and canonical tags, and that e
 `llms.txt` link resolves; `node --test worker/index.test.js` tests the redirect. The share
 image is `static/social/kubemoot.png`, a brand copy tracked in `brand.lock`.
 
+## Diagrams
+
+The site loads no unpinned third-party script. Docsy loads jQuery and the offline
+search's `lunr` from public CDNs, each at an exact version with a subresource-integrity
+hash, so a changed file fails to run.
+Draw diagrams as inline SVG in the page or as an image file next to it
+(`how-the-pieces-fit-together.md` uses an SVG). Docsy's Mermaid support is disabled
+on purpose, because its renderer loads Mermaid from a CDN as an unpinned `@latest`
+script, which would bypass the project's rule that dependencies are pinned. A page
+with a `mermaid` code block fails the build with a message that points here, and
+`scripts/check-site.sh` fails if any built page loads an external script without an
+exact version and an integrity hash.
+
 ## How aggregation works
 
 The `hugo.toml` `[module]` section mounts each component's `docs/` tree under
