@@ -74,12 +74,10 @@ CNCF Sandbox). It is pre-1.0. Because agents are idle most of the time, it multi
 agent "actors" onto a smaller set of worker pods, checkpointing an actor when it goes idle
 and restoring it in well under a second, with gVisor or microVM isolation.
 
-- **A future goal: waiting for public images and installs beyond GKE.** The core worked
-  in testing, and Kubemoot intends to run agents on Substrate once the project
-  progresses. Today it is packaged for GKE only and publishes no public images, and
-  Kubemoot pins every dependency by digest, so there is nothing to pin. Meanwhile Kubemoot
-  builds isolation, network policy, scale to zero, and identity on plain Deployments, so
-  moving later is an adapter, not a rewrite. See
+- **A project we watch.** It is packaged for GKE only and publishes no public images,
+  and Kubemoot pins every dependency by digest, so there is nothing to pin. Kubemoot does
+  not depend on it and makes no commitment to run agents on it. Kubemoot builds isolation,
+  network policy, scale to zero, and identity on plain Deployments. See
   [Agents on plain Deployments](../roadmap/#agents-on-plain-deployments).
 - **Background:** [Kubernetes Podcast episode 272, "Agent Substrate"](https://kubernetespodcast.com/episode/272-agent-substrate/).
 

@@ -58,14 +58,10 @@ picture.
 
 ## Agents on plain Deployments
 
-Kubemoot intends to run agents on [Agent Substrate](../related-projects/#agent-substrate),
-a promising project, once it progresses, and is waiting today. Its core worked in
-testing, with agents resuming in about 80 ms, state kept across suspend and resume, and
-egress policy enforced. But Substrate is packaged for GKE only: it documents installs for
-kind and GKE, has no GitOps install, needs installer patches on other distributions, and
-publishes no public images. Kubemoot pins every dependency by digest, and with no
-published images there is nothing to pin. Kubemoot users run many distributions, so
-Kubemoot does not depend on it yet.
+Kubemoot runs every agent on a plain Deployment and builds the protections around it.
+[Agent Substrate](../related-projects/#agent-substrate) is a project we watch: it is
+packaged for GKE only and publishes no public images, and Kubemoot pins every dependency by
+digest, so Kubemoot does not depend on it and has no plan to.
 
 **Today:** every agent runs as its own Deployment, and the only isolation is the pod.
 
@@ -81,11 +77,10 @@ existing project:
 - Scale to zero with KEDA, see [Scale to zero](#scale-to-zero).
 - A per-agent identity, through SPIFFE or projected ServiceAccount tokens.
 
-These are built so that moving to Substrate later is an adapter, not a rewrite: the
-operator owns how an agent runs, and agents keep their state outside the pod. Where agents
-run is a seam like the others: plain Deployments today, with
-[Agent Sandbox](../related-projects/#agent-sandbox) and Substrate under evaluation as the
-isolation and density options behind it.
+The operator owns how an agent runs, and agents keep their state outside the pod. Where
+agents run is a seam like the others: plain Deployments today, with
+[Agent Sandbox](../related-projects/#agent-sandbox) a candidate for isolating generated code
+(see [Isolation for code execution](#isolation-for-code-execution)).
 
 ## More model servers and leased accelerators
 
@@ -345,8 +340,6 @@ policy where the crew ships one (the reference crew charts do).
 agent pods, a stronger boundary than the shared host kernel. [Agent Sandbox](../related-projects/#agent-sandbox)
 (a Kubernetes SIG project, release 1.0 with `v1beta1` APIs) with a warm pool stays a
 candidate for the compute agent's disposable runs: claim a ready sandbox, run, delete.
-[Agent Substrate](../related-projects/#agent-substrate) is the density option, for running
-many idle agents on shared hosts (see [Agents on plain Deployments](#agents-on-plain-deployments)).
 This is a direction, not a commitment. Background:
 [Kubernetes Podcast episode 268, "Agent Sandbox and Lovable"](https://kubernetespodcast.com/episode/268-lovable/).
 
@@ -387,9 +380,6 @@ Deployment. The reasoning:
 - The cost is a cold start on the first discussion after an idle period (pod start and
   message-bus connect, not a model load when the model server is warm), and KEDA as a
   cluster dependency.
-
-Agent Substrate's suspend and resume could serve scale to zero as well as KEDA, once
-Kubemoot runs agents on it; until then KEDA is the plan.
 
 The coordinator's subcommittee selection already limits inference to the agents it
 convenes; this extends the saving to the pods themselves.
