@@ -21,6 +21,7 @@ on:
       - 'assets/**'
       - 'worker/**'
       - 'scripts/check-site.sh'
+      - 'scripts/check-scripts.sh'
       - 'package.json'
       - 'package-lock.json'
       - '.nvmrc'
