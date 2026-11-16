@@ -28,6 +28,8 @@ on:
       - 'charts/**'
       - 'brand.lock'
       - 'scripts/brand-sync*.sh'
+      - 'scripts/check-scripts.sh'
+      - 'scripts/check-site*.sh'
       - '.github/assets/**'
       - '.github/actions/build-site/**'
       - '.github/workflows/ci-docs.yaml'
@@ -63,6 +65,11 @@ jobs:
       - name: Check the brand copies against brand.lock
         working-directory: site
         run: scripts/brand-sync.sh check && scripts/brand-sync.test.sh
+
+      # The third-party script pinning check, against fixture pages.
+      - name: Test the script pinning check
+        working-directory: site
+        run: scripts/check-site.test.sh
 
       # Versions live only in git tags; a kubemoot docs change rebuilds without a commit.
       - name: Test the release rules
