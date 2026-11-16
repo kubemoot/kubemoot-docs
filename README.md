@@ -81,13 +81,16 @@ image is `static/social/kubemoot.png`, a brand copy tracked in `brand.lock`.
 The site loads no unpinned third-party script. Docsy loads jQuery and the offline
 search's `lunr` from public CDNs, each at an exact version with a subresource-integrity
 hash, so a changed file fails to run.
+
 Draw diagrams as inline SVG in the page or as an image file next to it
-(`how-the-pieces-fit-together.md` uses an SVG). Docsy's Mermaid support is disabled
-on purpose, because its renderer loads Mermaid from a CDN as an unpinned `@latest`
-script, which would bypass the project's rule that dependencies are pinned. A page
-with a `mermaid` code block fails the build with a message that points here, and
-`scripts/check-site.sh` fails if any built page loads an external script without an
-exact version and an integrity hash.
+(`how-the-pieces-fit-together.md` uses an SVG). Mermaid is rejected: Docsy's renderer
+loads it from a CDN as an unpinned `@latest` script, which would bypass the project's rule
+that dependencies are pinned, so a page with a `mermaid` code block fails the build with a
+message that points here. `scripts/check-site.sh` runs `scripts/check-scripts.sh`, which
+fails when a built page loads an external script without an exact version and an integrity
+hash, when an inline script imports a module from a CDN, or when it finds no script tags at
+all. It reads the HTML, so a script another script adds at run time is not seen.
+`scripts/check-site.test.sh` tests it against fixture pages.
 
 ## How aggregation works
 
