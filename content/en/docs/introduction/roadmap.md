@@ -82,7 +82,10 @@ existing project:
 - A per-agent identity, through SPIFFE or projected ServiceAccount tokens.
 
 These are built so that moving to Substrate later is an adapter, not a rewrite: the
-operator owns how an agent runs, and agents keep their state outside the pod.
+operator owns how an agent runs, and agents keep their state outside the pod. Where agents
+run is a seam like the others: plain Deployments today, with
+[Agent Sandbox](../related-projects/#agent-sandbox) and Substrate under evaluation as the
+isolation and density options behind it.
 
 ## More model servers and leased accelerators
 
@@ -100,11 +103,14 @@ and each engine has one adapter that fills it. Agents never name a model server 
 runs, so a crew does not change when the server beneath it does. See the
 [ModelServer reference](../../reference/models/).
 
-**Direction:** assess further model servers and inference serving platforms, such as
-llama.cpp and llm-d, in the interest of giving crews the best accelerator and model resources
-in the shortest time. Beyond the cluster, rented cloud accelerators reached as model
-servers, so a crew can borrow capacity it does not own. Adding an engine means writing one
-adapter, not reworking a crew.
+**Direction:** more than one model server behind one contract, so you choose the engine and
+the scheduler and the crews stay as they are. vLLM and Ollama already fill the contract; the
+direction is further engines and inference serving platforms, such as llama.cpp and llm-d,
+assessed against the adoption test (see
+[The Table and the Harnesses](../../concepts/the-table-and-the-harnesses/#what-kubemoot-builds-adopts-and-convenes)),
+in the interest of giving crews the best accelerator and model resources in the shortest time.
+Beyond the cluster, rented cloud accelerators reached as model servers, so a crew can borrow
+capacity it does not own. Adding an engine means writing one adapter, not reworking a crew.
 
 ## MCP sources from public and private registries
 
@@ -201,7 +207,9 @@ runs an agent's turn. An Agent can instead run a harness of your own behind the
 [Moot Mesh](../../architecture/moot-mesh/) sidecar, which gives the harness the bus, the
 model door, and the tools door through three loopback addresses.
 
-**Direction:** the moot is Kubemoot's differentiator: the coordinator convenes a
+**Direction:** the moot is what Kubemoot builds; the agent's harness is a seam with
+adopted projects behind it, and the native agent stays the minimal reference agent that does
+not grow a harness of its own. The moot is Kubemoot's differentiator: the coordinator convenes a
 subcommittee, agents deliberate by signal, the coordinator synthesizes. What runs one
 agent's turn (call a model, call a tool, produce a signal) is a separate concern that
 capable runtimes already handle well. The moot should talk to an agent through a thin,
@@ -213,8 +221,11 @@ server. The principle is the same one applied to tools: build natively against o
 standards, adopt open standards such as MCP directly, and keep any specific product
 swappable behind a contract rather than load-bearing. The core must run with no
 dependency on a proprietary agent product, and an external backend stays optional and
-never bundled. The Moot Mesh turn door is that contract for harnesses that run beside a sidecar; the
-open parts are listed in [What is not built yet](../../architecture/moot-mesh/#what-is-not-built-yet),
+never bundled. The Moot Mesh turn door is that contract for harnesses that run beside a sidecar. The
+next steps make the seam easier to fill: a published, versioned bus schema that the gateway,
+operator, and dashboard generate from, a default harness image per Crew beside the per-Agent
+image, and documented, tested harnesses beyond goose. These are directions, not built
+behavior. The open parts of the sidecar are listed in [What is not built yet](../../architecture/moot-mesh/#what-is-not-built-yet),
 and backends reached without a sidecar, such as a raw model behind a model server, remain
 a direction.
 
@@ -334,6 +345,8 @@ policy where the crew ships one (the reference crew charts do).
 agent pods, a stronger boundary than the shared host kernel. [Agent Sandbox](../related-projects/#agent-sandbox)
 (a Kubernetes SIG project, release 1.0 with `v1beta1` APIs) with a warm pool stays a
 candidate for the compute agent's disposable runs: claim a ready sandbox, run, delete.
+[Agent Substrate](../related-projects/#agent-substrate) is the density option, for running
+many idle agents on shared hosts (see [Agents on plain Deployments](#agents-on-plain-deployments)).
 This is a direction, not a commitment. Background:
 [Kubernetes Podcast episode 268, "Agent Sandbox and Lovable"](https://kubernetespodcast.com/episode/268-lovable/).
 
@@ -374,6 +387,9 @@ Deployment. The reasoning:
 - The cost is a cold start on the first discussion after an idle period (pod start and
   message-bus connect, not a model load when the model server is warm), and KEDA as a
   cluster dependency.
+
+Agent Substrate's suspend and resume could serve scale to zero as well as KEDA, once
+Kubemoot runs agents on it; until then KEDA is the plan.
 
 The coordinator's subcommittee selection already limits inference to the agents it
 convenes; this extends the saving to the pods themselves.

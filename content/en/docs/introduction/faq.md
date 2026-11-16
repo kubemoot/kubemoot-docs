@@ -31,7 +31,11 @@ with `kubectl apply` as the interface. See
 
 Use them when an in-process library fits: one application, a notebook, a prototype.
 Kubemoot is for crews that run as shared platform services with tenancy, GitOps, and
-accelerators to schedule. Different job; see [Why Kubemoot](../why-kubemoot/).
+accelerators to schedule. Different job; see [Why Kubemoot](../why-kubemoot/). They are
+also harnesses a moot can convene: Kubemoot builds the moot and adopts the rest behind
+swappable seams, so an agent built with one of them is a candidate for a seat at the table
+(see [The Table and the Harnesses](../../concepts/the-table-and-the-harnesses/)). That is a
+direction, not a shipped integration.
 
 ## How is Kubemoot different from kagent?
 

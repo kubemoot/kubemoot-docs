@@ -33,7 +33,7 @@ joining a crew over A2A is an idea under consideration, not something that ships
 - **Differences:** kagent lists OpenAI, Azure OpenAI, Anthropic, Google Vertex AI, and
   Ollama as model servers and ships MCP tool servers for Kubernetes, Istio, Helm,
   Argo, Prometheus, Grafana, and Cilium, and reports OpenTelemetry tracing. Kubemoot's
-  hosted-model servers are not yet implemented (Ollama is the model server today) and
+  hosted-model servers are not yet implemented (vLLM and Ollama are the model servers today) and
   it does not emit OpenTelemetry traces yet, so kagent is the better fit if you want
   agents backed by hosted models, standard tracing, or a ready set of
   cluster-operations tools.
@@ -107,6 +107,10 @@ fine-grained control.
 - **Differences:** CrewAI's crew is Python objects in a process that you deploy
   yourself. A Kubemoot `Crew` is a Kubernetes resource that the operator reconciles,
   with agents that deliberate to consensus rather than pass tasks along.
+- **Direction:** CrewAI is a harness Kubemoot can convene, not only an alternative. An
+  agent written with CrewAI could sit at the table as one voice through the
+  [Moot Mesh](../../architecture/moot-mesh/) sidecar, with the crew's own tools. That is
+  an idea under consideration; no CrewAI integration ships today.
 
 ### LangGraph
 
