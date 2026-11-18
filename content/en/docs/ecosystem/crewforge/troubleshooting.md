@@ -55,7 +55,10 @@ The context is reachable but shows no crews. Check in this order:
 
 1. The status bar's context is the one you mean.
 2. The Kubemoot operator is installed on that cluster (`kubectl get crds | grep kubemoot`).
-3. `crewforge.namespaces` is empty, or includes the namespace you are looking for.
+3. The namespace you are looking for is read. With `crewforge.namespaces` empty,
+   CrewForge reads the context's namespace, and every namespace only when the context
+   sets none or that namespace holds no crews. Add the namespace to
+   `crewforge.namespaces`, or set it to `*`.
 4. Your account may `list` `crews.kubemoot.ai` there.
 
 ## Crew Sources is empty
