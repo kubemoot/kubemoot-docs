@@ -129,6 +129,27 @@ Site then builds a new release candidate from this repo's unchanged `main` (the 
 `org.kubemoot.docs.kubemoot-revision` and in the candidate tag's message. To republish by
 hand, run Release Docs Site with `force_release`.
 
+## Terminal recordings
+
+`tapes/` holds [VHS](https://github.com/charmbracelet/vhs) scripts that record the
+terminal flows the docs show: `kmctl.tape` (check the cluster, scaffold a crew, install
+it, ask it) and `quickstart.tape` (an empty kind cluster to an answer). A tape is the
+source; the GIF and WebM are rendered from it, never recorded by hand, so a CLI change
+re-renders the recording. `tapes/settings.tape` holds the shared look (1200 px wide, 12
+fps).
+
+```bash
+make validate-tapes     # parse every tape, no cluster needed
+make recordings         # render static/recordings/*.gif and *.webm
+```
+
+Rendering runs the commands for real, so it needs `vhs`, `ttyd`, and `ffmpeg` on your
+`PATH`, plus a cluster: the kmctl tape uses the cluster your `kubectl` points at, with
+the Kubemoot operator installed and a tool-capable model in its catalog; the quickstart
+tape creates its own kind cluster from a `kubemoot` checkout at the latest release
+(`KUBEMOOT_CHECKOUT=/path/to/kubemoot make recordings`). The quickstart tape plays back
+at six times the speed it ran.
+
 ## Container image
 
 CI builds the site on a GitHub-hosted runner with the Hugo version in `.hugo-version`
