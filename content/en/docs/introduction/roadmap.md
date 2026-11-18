@@ -269,6 +269,20 @@ an agent's context.
 an index loaded cheaply and detail fetched on relevance, so a crew improves with use
 without its prompts growing.
 
+**Interoperability today:** a crew's memory exports in the interchange format of the
+Open Memory Protocol Initiative (OMPI), a draft specification for how agent memory is
+exchanged between systems. The export reads a crew's facts, changes nothing, and writes
+them as files another system or person can read; `kmctl memory export` produces it from
+your terminal. The export tracks the newest OMPI working spec, and it is validated
+against schemas derived from that draft. Importing is not supported.
+
+**Direction:** crew memory exchanged in the OMPI format in both directions, with
+Kubemoot as an implementer that brings the multi-agent case: many agents writing one
+shared memory, crew scope, and provenance for each fact. Where the format does not
+cover that case, Kubemoot reports the gap to the OMPI project. See
+[OMPI](../related-projects/#open-memory-protocol-initiative-ompi) and
+[Agent Context](../../concepts/agent-context/#memory).
+
 ## Generated work that outlives the discussion
 
 **Today:** artifacts a crew passes between its agents live in the

@@ -1,7 +1,7 @@
 ---
 title: "Related Projects"
 weight: 75
-description: "How Kubemoot relates to nearby projects: Kubernetes-native agent platforms, agent frameworks, model serving, tool gateways, and evaluation tools."
+description: "How Kubemoot relates to nearby projects: Kubernetes-native agent platforms, agent frameworks, model serving, tool gateways, memory interchange, and evaluation tools."
 ---
 
 A common first question is "how is this different from X?" This page answers it for
@@ -221,6 +221,27 @@ Solo.io started both kagent and agentgateway, and also sells enterprise editions
 them. It has shown kagent running on Agent Substrate (see
 [Agent Substrate](#agent-substrate)). Kubemoot focuses on crews of agents reaching
 consensus on shared accelerators, and treats these projects as neighbors to run beside.
+
+## Memory interchange
+
+### Open Memory Protocol Initiative (OMPI)
+
+The [Open Memory Protocol Initiative](https://ai-disclosures.org/ompi) (OMPI) is an
+open effort, hosted by the AI Disclosures Project, to define how agent memory is stored,
+scoped, and exchanged between tools. Its Open Memory Protocol specification is a draft
+in development, written first for single-user coding agents.
+
+- **Overlap:** both treat memory as something an agent keeps across sessions, with
+  scope, provenance, and a lifecycle.
+- **Differences:** OMPI specifies the memory format and its operations, not the agents
+  or how they work together. Kubemoot's memory is shared by many agents in a crew, which
+  the first OMPI use cases do not center on.
+- **Today:** Kubemoot exports a crew's memory in the OMPI interchange format with
+  `kmctl memory export`, and checks the export against schemas derived from the draft.
+  Importing is not supported, and OMPI has not certified the export.
+- **Direction:** Kubemoot is meant to be an implementer of the protocol for crews, and to
+  report to OMPI what the format does not yet cover. See
+  [Durable crew memory](../roadmap/#durable-crew-memory) on the Roadmap.
 
 ## Evaluation frameworks
 
