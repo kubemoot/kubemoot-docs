@@ -93,12 +93,12 @@ jobs:
           echo "Kubemoot docs @ ${sha}"
           echo "sha=${sha}" >> "$GITHUB_OUTPUT"
 
-      # Pull requests build for kubemoot.org; the image is the private preview.
+      # The image and pull requests build for kubemoot.org.
       - name: Build the site
         uses: ./site/.github/actions/build-site
         with:
           site-dir: site
-          site-url: ${{ github.event_name != 'pull_request' && vars.PREVIEW_SITE_URL || 'https://kubemoot.org/' }}
+          site-url: https://kubemoot.org/
 
       - name: Test the nginx check
         run: site/scripts/check-nginx.test.sh

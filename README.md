@@ -54,8 +54,22 @@ Without `../kubemoot/docs`, Hugo still exits 0 and builds a site with only the s
 no component docs, and no error. If the page count is far below 100, check the mount
 path first.
 
-For a live preview, run `hugo server` from this directory instead of the last command
-and open http://localhost:1313. Node must be on your `PATH` for the Docsy PostCSS step.
+## Preview
+
+**Contributors:** run `hugo server` from this directory instead of the last command
+and open http://localhost:1313. Pages reload as you edit. Node must be on your `PATH`
+for the Docsy PostCSS step.
+
+**Release candidate on a cluster:** every merge to `main` builds a candidate image and
+chart. With `gateway.enabled: false` the chart installs only a Deployment and a
+Service (`kubemoot-docs`, port 80) and exposes no hostname. To read a deployed
+candidate, forward the Service and open http://localhost:8080:
+
+```bash
+kubectl -n <namespace> port-forward svc/kubemoot-docs 8080:80
+```
+
+kubemoot.org changes only through Publish Release.
 
 ## kubemoot.org (CI build and deploy)
 
@@ -123,12 +137,13 @@ kubemoot.org), and checks that nginx serves it with `nginx.conf`
 (`scripts/check-nginx.sh`). The Paketo nginx buildpack then packages `public/` and
 `nginx.conf` into the image in the cluster. nginx listens on 8080 as a non-root user
 and writes only under `/tmp`, so the pod runs with a read-only root filesystem. The
-image's site is built for the preview URL (`PREVIEW_SITE_URL`) and serves at its host
-root.
+image's site is built for `https://kubemoot.org/` and serves at its host root. Internal
+links are relative, so the image works at any address, including a port-forward.
 
 ## Helm chart
 
-`charts/kubemoot-docs/` - Deployment + Service + HTTPRoute (Gateway API),
+`charts/kubemoot-docs/` - Deployment + Service + an optional HTTPRoute (Gateway API,
+`gateway.enabled`),
 mirroring the `kubemoot-dashboard` chart conventions. See the chart's
 `values.yaml` for the image, pull-secret, and gateway settings.
 
