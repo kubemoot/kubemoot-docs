@@ -1,7 +1,7 @@
 # Publish Release: publish the tested docs release candidate to kubemoot.org.
 #
 # Every push to main builds a docs release candidate (docs-vX.Y.Z-rc.N) into Harbor,
-# and the private preview runs it. A maintainer runs this workflow (Actions tab, Run
+# and the cluster runs it as the release candidate. A maintainer runs this workflow (Actions tab, Run
 # workflow; dispatch needs write access) to publish the candidate's image and chart to
 # Harbor as the final X.Y.Z (the homelab moves to it), tag the candidate's commit
 # docs-vX.Y.Z, build the public site from that commit with the Kubemoot docs of the latest

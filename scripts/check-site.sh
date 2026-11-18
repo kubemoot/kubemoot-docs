@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Checks a built site (default ./public) for the files and tags search engines and link
-# previews need, that third-party scripts are pinned (scripts/check-scripts.sh), and that
+# Checks a built site (default ./public) for the files and tags search engines and social
+# link cards need, that third-party scripts are pinned (scripts/check-scripts.sh), and that
 # every link in llms.txt resolves to a built page.
 #   scripts/check-site.sh [PUBLIC_DIR]
 set -euo pipefail
