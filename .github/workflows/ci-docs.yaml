@@ -30,6 +30,10 @@ on:
       - 'scripts/brand-sync*.sh'
       - 'scripts/check-scripts.sh'
       - 'scripts/check-site*.sh'
+      - 'scripts/check-tapes.sh'
+      - 'scripts/install-tape-tools.sh'
+      - 'tapes/**'
+      - 'Makefile'
       - '.github/assets/**'
       - '.github/actions/build-site/**'
       - '.github/workflows/ci-docs.yaml'
@@ -70,6 +74,14 @@ jobs:
       - name: Test the script pinning check
         working-directory: site
         run: scripts/check-site.test.sh
+
+      # The terminal recording tapes parse with the pinned vhs and ttyd (checksum-verified
+      # release downloads); nothing is rendered or run.
+      - name: Validate the terminal recording tapes
+        working-directory: site
+        run: |
+          scripts/install-tape-tools.sh "$RUNNER_TEMP/tape-bin"
+          PATH="$RUNNER_TEMP/tape-bin:$PATH" scripts/check-tapes.sh --validate
 
       # Versions live only in git tags; a kubemoot docs change rebuilds without a commit.
       - name: Test the release rules

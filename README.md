@@ -134,21 +134,31 @@ hand, run Release Docs Site with `force_release`.
 `tapes/` holds [VHS](https://github.com/charmbracelet/vhs) scripts that record the
 terminal flows the docs show: `kmctl.tape` (check the cluster, scaffold a crew, install
 it, ask it) and `quickstart.tape` (an empty kind cluster to an answer). A tape is the
-source; the GIF and WebM are rendered from it, never recorded by hand, so a CLI change
+source. The GIF and WebM are generated from it into `static/recordings/`, which is
+gitignored: they are never recorded by hand and never committed, so a CLI change
 re-renders the recording. `tapes/settings.tape` holds the shared look (1200 px wide, 12
 fps).
 
+The tools are pinned in `tapes/tool-versions`. `scripts/install-tape-tools.sh` installs
+vhs and ttyd from their release tags and fails unless each download matches its pinned
+sha256; ffmpeg comes from your package manager and is checked by major version.
+
 ```bash
-make validate-tapes     # parse every tape, no cluster needed
+scripts/install-tape-tools.sh           # vhs and ttyd into ./.tools/bin
+export PATH="$PWD/.tools/bin:$PATH"
+make validate-tapes     # check the tool versions and parse every tape; no cluster
 make recordings         # render static/recordings/*.gif and *.webm
 ```
 
-Rendering runs the commands for real, so it needs `vhs`, `ttyd`, and `ffmpeg` on your
-`PATH`, plus a cluster: the kmctl tape uses the cluster your `kubectl` points at, with
-the Kubemoot operator installed and a tool-capable model in its catalog; the quickstart
-tape creates its own kind cluster from a `kubemoot` checkout at the latest release
-(`KUBEMOOT_CHECKOUT=/path/to/kubemoot make recordings`). The quickstart tape plays back
-at six times the speed it ran.
+CI runs the `make validate-tapes` checks on every pull request that touches `tapes/`.
+
+Rendering runs the commands for real, so render only against a throwaway kind cluster,
+never a cluster whose names would show in a public recording. The kmctl tape uses the
+cluster your `kubectl` points at, so point it at a kind cluster that has the Kubemoot
+operator installed and a tool-capable model in its catalog. The quickstart tape creates
+its own kind cluster from a `kubemoot` checkout at the latest release
+(`KUBEMOOT_CHECKOUT=/path/to/kubemoot make recordings`) and plays back at six times the
+speed it ran. Each tape waits for its last command by a marker prompt (`READY> `).
 
 ## Container image
 
