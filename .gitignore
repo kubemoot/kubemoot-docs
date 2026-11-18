@@ -4,3 +4,7 @@
 .hugo_build.lock
 # Component docs checked out by CI (and by local setup script) - never committed
 /_docs/
+# Rendered terminal recordings are generated from tapes/, never committed
+/static/recordings/
+# Recording tools installed by scripts/install-tape-tools.sh
+/.tools/

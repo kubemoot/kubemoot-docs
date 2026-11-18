@@ -6,7 +6,7 @@ Output static/recordings/kmctl.webm
 Source tapes/settings.tape
 
 Hide
-Type "export PS1='$ ' && cd $(mktemp -d) && clear"
+Type "export PS1='READY> ' && cd $(mktemp -d) && clear"
 Enter
 Show
 
@@ -35,5 +35,5 @@ Sleep 2s
 
 Type 'kmctl conversation ask hello "List the pods in this namespace and their status." -n crew-hello'
 Enter
-Wait+Screen@10m /\$ $/
+Wait+Screen@10m /READY>\s*$/
 Sleep 6s

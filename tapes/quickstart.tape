@@ -9,7 +9,7 @@ Source tapes/settings.tape
 Set PlaybackSpeed 6
 
 Hide
-Type "export PS1='$ ' && cd ${KUBEMOOT_CHECKOUT:?set KUBEMOOT_CHECKOUT} && clear"
+Type "export PS1='READY> ' && cd ${KUBEMOOT_CHECKOUT:?set KUBEMOOT_CHECKOUT} && clear"
 Enter
 Show
 
@@ -20,5 +20,5 @@ Sleep 1s
 
 Type "./quickstart/quickstart.sh"
 Enter
-Wait+Screen@45m /\$ $/
+Wait+Screen@45m /READY>\s*$/
 Sleep 8s

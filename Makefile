@@ -3,14 +3,20 @@
 TAPES := $(wildcard tapes/*.tape)
 RECORDINGS := $(filter-out tapes/settings.tape,$(TAPES))
 
-.PHONY: recordings validate-tapes
+.PHONY: recordings validate-tapes check-tools
 
+# The pinned tool versions are in tapes/tool-versions; scripts/install-tape-tools.sh
+# installs vhs and ttyd from their release tags with a checksum check.
 # Records against the cluster your kubectl points at. The quickstart tape also
 # needs KUBEMOOT_CHECKOUT, the path of a kubemoot checkout at the latest release.
-recordings:
+recordings: check-tools
 	@mkdir -p static/recordings
 	@for t in $(RECORDINGS); do echo "vhs $$t"; vhs "$$t" || exit 1; done
 
-# Parses every tape without running it, so a syntax error fails fast.
+# Fails when vhs, ttyd or ffmpeg differ from tapes/tool-versions.
+check-tools:
+	@scripts/check-tapes.sh --tools
+
+# Checks vhs and ttyd, then parses every tape without running it.
 validate-tapes:
-	@for t in $(RECORDINGS); do echo "validate $$t"; vhs validate "$$t" || exit 1; done
+	@scripts/check-tapes.sh --validate
