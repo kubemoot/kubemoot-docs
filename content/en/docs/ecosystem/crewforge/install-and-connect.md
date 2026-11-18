@@ -65,8 +65,10 @@ another.
 - **CrewForge: Select Kubernetes Context** (the server icon on the Deployed Crews view,
   or the connection item in the status bar) switches cluster.
 
-If your account may read only some namespaces, set `crewforge.namespaces` so CrewForge
-asks only for those. See [Settings and permissions](../settings-and-permissions/).
+By default CrewForge reads the namespace your kubeconfig context sets, and every
+namespace when the context sets none or that namespace holds no crews. To choose the
+namespaces yourself, set `crewforge.namespaces` to a list, or to `*` for every namespace.
+See [Settings and permissions](../settings-and-permissions/).
 
 ### What you are connected to
 
@@ -107,7 +109,8 @@ way.
 
 If a crew list is empty and no message appears, the context is reachable but shows no
 crews. The view offers **Select kubeconfig** and **Select context**. Also check
-`crewforge.namespaces` and your account's permissions.
+`crewforge.namespaces`, the namespace of your kubeconfig context, and your account's
+permissions.
 
 ## Next
 

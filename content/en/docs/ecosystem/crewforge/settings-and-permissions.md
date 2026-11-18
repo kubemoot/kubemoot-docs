@@ -12,7 +12,7 @@ Open **Settings** in VS Code and search for `crewforge`.
 |---|---|---|
 | `crewforge.kubeconfig` | empty | Path to a kubeconfig file. Empty uses `KUBECONFIG`, then `~/.kube/config`. |
 | `crewforge.context` | empty | Kubernetes context to use. Empty uses the kubeconfig's current context. |
-| `crewforge.namespaces` | `[]` | Show crews only in these namespaces. Set it when your account may read only some namespaces. Empty shows every namespace you can read. |
+| `crewforge.namespaces` | `[]` | Show crews only in these namespaces. Empty reads the namespace of the kubeconfig context, and falls back to every namespace when the context sets none or that namespace holds no crews. A list you set wins, and `*` shows every namespace you can read. |
 | `crewforge.streamTimeoutSeconds` | `600` | Longest a single turn may stream before CrewForge gives up on it. The minimum is 60. |
 | `crewforge.dashboardService` | empty | The Kubemoot dashboard's Service as `namespace/name:port`. CrewForge reads it through the Kubernetes service proxy, read-only, for thread counts, discussion failures, fitness scores, and archived iterations. Empty finds the Service labelled `app.kubernetes.io/part-of=kubemoot` whose `app.kubernetes.io/name` is `dashboard` (the operator chart's subchart) or `kubemoot-dashboard` (a standalone install). Add an optional base path, `namespace/name:port/base`, when the dashboard serves under a path such as `/dashboard`. |
 | `crewforge.yamlFormat` | `yaml` | How Show Live YAML, Show Source YAML, and Compare with Live write an object. `yaml` is block YAML. `kyaml` is KYAML, the strict YAML subset `kubectl get -o kyaml` prints: every string quoted, maps in `{ }`, lists in `[ ]`. KYAML is still valid YAML. |
@@ -29,8 +29,9 @@ cannot be read says so instead of failing the whole view.
 
 **Browse crews and chat**
 
-- `list` on `crews.kubemoot.ai`, cluster-wide or in each namespace of
-  `crewforge.namespaces`.
+- `list` on `crews.kubemoot.ai`, in the context's namespace, in each namespace of
+  `crewforge.namespaces`, or cluster-wide when the setting is `*` or the fallback to every
+  namespace applies.
 - `get` and `create` on `services/proxy` in the crew's namespace, to ask and to stream
   the answer.
 - `get` on `endpoints` in that namespace, to tell whether the crew's discussion gateway
