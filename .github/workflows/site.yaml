@@ -4,8 +4,8 @@
 #
 # A push to main (or a dispatch) only builds and checks the site. Publish Release calls
 # this workflow with the released commit, the Kubemoot release whose docs it carries,
-# and deploy: true; the deploy then runs once SITE_DEPLOY is "true". The private
-# preview (release-docs.yaml) keeps tracking main.
+# and deploy: true; the deploy then runs once SITE_DEPLOY is "true". The release
+# candidate (release-docs.yaml) keeps tracking main.
 name: Site
 
 on:

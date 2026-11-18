@@ -137,8 +137,9 @@ kubemoot.org), and checks that nginx serves it with `nginx.conf`
 (`scripts/check-nginx.sh`). The Paketo nginx buildpack then packages `public/` and
 `nginx.conf` into the image in the cluster. nginx listens on 8080 as a non-root user
 and writes only under `/tmp`, so the pod runs with a read-only root filesystem. The
-image's site is built for `https://kubemoot.org/` and serves at its host root. Internal
-links are relative, so the image works at any address, including a port-forward.
+image's site is built for `https://kubemoot.org/` and serves at its host root. Page links
+are root-relative, and the 404 and robots pages use absolute URLs built from the base URL,
+so the image serves its pages at any address, including a port-forward.
 
 ## Helm chart
 
