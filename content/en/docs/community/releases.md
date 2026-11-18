@@ -240,17 +240,22 @@ they are removed. Make these changes in your crews and scripts:
    `images.artifactAccess`) is `workspaceAccess`.
 4. **Image.** The `artifact-access` image is `workspace-access`. Change any crew value
    that names it.
-5. **Environment.** Variables that start with `ARTIFACT_` start with `WORKSPACE_`
+5. **Crew names.** In a crew chart, the MCPServer `artifact-readops-mcp` is
+   `workspace-mcp`, the egress key `artifact-readops-mcp` is `workspace-mcp`, and the
+   values `mcpServers.artifactReadOps` and `mcpServers.artifactAccess` are
+   `mcpServers.workspace`. The old values still render for one release.
+6. **Environment.** Variables that start with `ARTIFACT_` start with `WORKSPACE_`
    (for example `ARTIFACT_BUCKET` is `WORKSPACE_BUCKET`).
-6. **Mount.** The `/artifacts` directory is `/workspace` in prompts and sandbox code.
-   The old path works for one release through a symlink.
-7. **Storage.** The NATS bucket `kubemoot_discussion_artifacts` is now
+7. **Mount.** The `/artifacts` directory is `/workspace` in prompts and sandbox code.
+   The old path works for one release because the same volume is also mounted at
+   `/artifacts`.
+8. **Storage.** The NATS bucket `kubemoot_discussion_artifacts` is now
    `kubemoot_workspace`. Data in the old bucket is temporary and expires within 48
    hours, so nothing needs copying. Start the upgrade with no discussion running.
-8. **CLI and API.** `kmctl conversation artifact` is `kmctl conversation workspace`
+9. **CLI and API.** `kmctl conversation artifact` is `kmctl conversation workspace`
    (the old command warns), and the dashboard and gateway routes end in `/workspace`.
-   JSON output from `kmctl` carries `workspace` keys.
-9. **Clients.** Update kmctl and CrewForge together with Kubemoot, because the published
+   JSON output from `kmctl` gains `workspace` keys, and the old `artifact` keys stay for one release.
+10. **Clients.** Update kmctl and CrewForge together with Kubemoot, because the published
    clients of the older API stop matching the new names.
 
 ## API versions
