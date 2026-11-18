@@ -55,7 +55,7 @@ pre-warmed sandboxes. Isolation comes from gVisor or Kata Containers through a
 Kubernetes `RuntimeClass`. It ships Go and Python SDKs and an optional Sandbox Router.
 
 - **Overlap:** Kubemoot's compute agent runs the code it writes in a pod-level
-  [code sandbox](../../concepts/discussion-artifact-store/), the `code-sandbox` MCP
+  [code sandbox](../../concepts/workspace/), the `code-sandbox` MCP
   server. Agent Sandbox addresses the same need, a safe place to run untrusted,
   model-written code, with stronger isolation and a standard resource.
 - **Differences:** Agent Sandbox is a workload primitive. It does not define agents,
