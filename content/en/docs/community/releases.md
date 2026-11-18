@@ -50,7 +50,7 @@ before any tag.
 Publishing is per repository:
 
 - `kubemoot` publishes the operator chart together with every image it pins, and the
-  images crews use on their own (`code-sandbox`, `artifact-access`, `scheduling-mcp`,
+  images crews use on their own (`code-sandbox`, `workspace-access`, `scheduling-mcp`,
   `test-runner`).
 - `crews` publishes each crew chart. A published crew chart pins final Kubemoot images
   only. Publish Release maps each candidate pin to its final and checks, by image digest,
@@ -218,6 +218,40 @@ resumes the discussions in progress. To keep the earlier behavior, set
 replica with leases stays off until you set `coordinator.lease`. See
 [the coordinator log](../../concepts/signals-and-protocol/#the-coordinator-log) and the
 [KubemootConfig guide](../../reference/kubemootconfig-guide/#coordinator).
+
+### Breaking: discussion artifacts are now the workspace
+
+What Kubemoot called discussion artifacts is now the discussion's
+[workspace](../../concepts/workspace/): the scratch data agents share during one
+discussion. "Artifact" now means only generated work delivered to you, so the fitness
+results workbook keeps its name. Old names keep working for one release and warn, then
+they are removed. Make these changes in your crews and scripts:
+
+1. **Tools.** `artifact_head`, `artifact_tail` and `artifact_grep` are
+   `workspace_head`, `workspace_tail` and `workspace_grep`. `artifact_count`,
+   `artifact_rows`, `artifact_select` and `artifact_jq` are replaced by
+   `workspace_query` (SQL). Update `enabledTools` and prompts.
+2. **Access.** Declare `workspace.access` on an Agent (`none`, `read`, `write` or
+   `readWrite`), or `workspace.defaultAccess` on a Crew to set the default for its agents.
+   A crew that declares nothing behaves as before.
+3. **Configuration.** `spec.artifacts.queryEngine` in KubemootConfig and the chart value
+   `artifacts.queryEngine` are `workspace.queryEngine`. `kubemootImage: artifactAccess` in an
+   MCPServer is `workspaceAccess`, and `spec.images.artifactAccess` (chart value
+   `images.artifactAccess`) is `workspaceAccess`.
+4. **Image.** The `artifact-access` image is `workspace-access`. Change any crew value
+   that names it.
+5. **Environment.** Variables that start with `ARTIFACT_` start with `WORKSPACE_`
+   (for example `ARTIFACT_BUCKET` is `WORKSPACE_BUCKET`).
+6. **Mount.** The `/artifacts` directory is `/workspace` in prompts and sandbox code.
+   The old path works for one release through a symlink.
+7. **Storage.** The NATS bucket `kubemoot_discussion_artifacts` is now
+   `kubemoot_workspace`. Data in the old bucket is temporary and expires within 48
+   hours, so nothing needs copying. Start the upgrade with no discussion running.
+8. **CLI and API.** `kmctl conversation artifact` is `kmctl conversation workspace`
+   (the old command warns), and the dashboard and gateway routes end in `/workspace`.
+   JSON output from `kmctl` carries `workspace` keys.
+9. **Clients.** Update kmctl and CrewForge together with Kubemoot, because the published
+   clients of the older API stop matching the new names.
 
 ## API versions
 

@@ -285,8 +285,8 @@ cover that case, Kubemoot reports the gap to the OMPI project. See
 
 ## Generated work that outlives the discussion
 
-**Today:** artifacts a crew passes between its agents live in the
-[discussion artifact store](../../concepts/discussion-artifact-store/) and are deleted
+**Today:** the data a crew passes between its agents live in the
+[discussion workspace](../../concepts/workspace/) and are deleted
 with their discussion. What a crew generates for you, a quiz, a report, a design,
 arrives in its answer, and keeping it is up to the client that asked.
 
@@ -337,7 +337,7 @@ instructions that the coordinator selects on demand and injects just in time, be
 the agent's PromptModules and MCP tools.
 
 Code as action exists in its first form too: a compute agent writes short programs and
-runs them in the crew's code sandbox for deterministic work over shared artifacts.
+runs them in the crew's code sandbox for deterministic work over the shared workspace.
 
 **Direction:** the rest of the convention, in the spirit of Claude Code skills: bundled
 files a skill carries, and a bundled script a skill may run in the sandbox, so any
