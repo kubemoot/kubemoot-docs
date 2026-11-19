@@ -8,8 +8,9 @@ description: "Kubemoot runs a crew of AI agents on Kubernetes that deliberate to
   <h1 class="kubemoot-hero-title">{{< lockup >}}</h1>
   <p class="h4 mb-3">Every voice, one answer.</p>
   <p class="lead mt-3">
-    A committee of AI agents that deliberate to an answer, instead of trusting one
-    large model. Multi-agent consensus, Kubernetes-native.
+    Declare a crew of AI agents on Kubernetes. Kubemoot convenes them, schedules their
+    models on the accelerators you choose, governs what they say, and lets them
+    deliberate to one answer you can measure.
   </p>
   <a class="btn btn-lg btn-drop me-3 mb-4" href="/docs/introduction/installation/">
     Install <i class="fas fa-arrow-alt-circle-right ms-2"></i>
@@ -56,9 +57,30 @@ Executable fitness functions score a crew against ground truth - reference-groun
 fabrication-aware - so crew quality is something you track, not guess.
 {{% /blocks/feature %}}
 
+{{% blocks/feature icon="fas fa-puzzle-piece" title="Built on open source, swappable" %}}
+Tools through MCP, the bus on NATS, models on vLLM or Ollama: each sits behind a seam
+you can swap. Kubemoot builds the moot and convenes the rest.
+{{% /blocks/feature %}}
+
 {{% /blocks/section %}}
 
 {{% blocks/section color="light" %}}
+## What Kubemoot stands on
+
+You declare the crew and how it decides; Kubemoot runs the discussion. Each of these
+sits behind a swappable seam:
+
+- Tools through MCP.
+- The message bus on NATS.
+- Model servers: vLLM by default, and Ollama, through the Model Server Protocol.
+- Isolation: Kubernetes RBAC and network policies, with code run in a sandboxed pod.
+- Other harnesses at the table: goose already holds a seat.
+- Crew memory exported in the Open Memory Protocol (OMPI) format.
+
+See [What it builds, what it convenes](/docs/introduction/why-kubemoot/#what-it-builds-what-it-convenes).
+{{% /blocks/section %}}
+
+{{% blocks/section color="white" %}}
 ## Five-minute start
 
 A CPU trial you can run on a laptop, no accelerator required: one script takes an empty

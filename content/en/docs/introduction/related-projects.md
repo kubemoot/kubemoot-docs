@@ -10,6 +10,15 @@ overlaps with Kubemoot, and where the two differ. Several of these are the bette
 choice for some jobs, and the entries say so. Descriptions of other projects are
 summaries of their own documentation; read their sites for the current picture.
 
+Other projects run an agent, serve a model, or sandbox code on Kubernetes. Kubemoot
+convenes them into a crew that decides together, so most of these entries are as much
+about what Kubemoot builds on or can convene beside as about how it differs. Kubemoot
+builds the moot, the scheduling across accelerators, governance as code, and fitness
+evidence. It stands on MCP for tools, NATS for the message bus, and vLLM and Ollama for
+model serving, each behind a swappable seam. Other harnesses can sit at the table: goose
+already holds a seat, and kagent agents or agents built with a framework are directions,
+not shipped integrations.
+
 For Kubemoot's own position, see [Why Kubemoot](../why-kubemoot/) and the
 [Questions](../faq/) page.
 
