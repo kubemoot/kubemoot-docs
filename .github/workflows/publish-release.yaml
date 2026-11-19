@@ -54,7 +54,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up the release helpers
-        uses: kubemoot/release-actions/setup@7accfbc33966d895bab2fc17a2a6c7f2520aaf76 # v0.11.1
+        uses: kubemoot/release-actions/setup@46be10555367466d5add34c0f37dc2ae86c40af6 # v0.12.0
 
       - name: Install crane
         run: |
@@ -62,7 +62,7 @@ jobs:
           sudo mv crane /usr/local/bin/
 
       - name: Install Helm
-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
         with:
           version: 'v3.14.0'
 
