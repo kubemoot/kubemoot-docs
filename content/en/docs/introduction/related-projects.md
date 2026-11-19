@@ -227,11 +227,11 @@ consensus on shared accelerators, and treats these projects as neighbors to run 
 ### Open Memory Protocol Initiative (OMPI)
 
 The [Open Memory Protocol Initiative](https://ai-disclosures.org/ompi) (OMPI) is an
-open effort, hosted by the AI Disclosures Project with Mozilla and IBM, to define how
-agent memory is stored, scoped, and exchanged between tools. Its Open Memory Protocol
-specification is in development, written first for single-user coding agents. Letta and
-Block's [goose](https://github.com/block/goose) take part as implementers; Kubemoot
-already runs goose as an agent harness at the table.
+open effort, hosted at the AI Disclosures Project and co-convened with IBM and Mozilla,
+to define how agent memory is stored, scoped, and exchanged between tools. Its Open Memory
+Protocol specification is in development, written first for single-user coding agents.
+Kubemoot runs [goose](https://github.com/block/goose) as an agent harness, and goose is
+named among the project's participants.
 
 - **Overlap:** both treat memory as something an agent keeps across sessions, with
   scope, provenance, and a lifecycle.
