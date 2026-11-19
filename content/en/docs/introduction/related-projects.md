@@ -227,9 +227,11 @@ consensus on shared accelerators, and treats these projects as neighbors to run 
 ### Open Memory Protocol Initiative (OMPI)
 
 The [Open Memory Protocol Initiative](https://ai-disclosures.org/ompi) (OMPI) is an
-open effort, hosted by the AI Disclosures Project, to define how agent memory is stored,
-scoped, and exchanged between tools. Its Open Memory Protocol specification is a draft
-in development, written first for single-user coding agents.
+open effort, hosted by the AI Disclosures Project with Mozilla and IBM, to define how
+agent memory is stored, scoped, and exchanged between tools. Its Open Memory Protocol
+specification is in development, written first for single-user coding agents. Letta and
+Block's [goose](https://github.com/block/goose) take part as implementers; Kubemoot
+already runs goose as an agent harness at the table.
 
 - **Overlap:** both treat memory as something an agent keeps across sessions, with
   scope, provenance, and a lifecycle.
@@ -237,8 +239,9 @@ in development, written first for single-user coding agents.
   or how they work together. Kubemoot's memory is shared by many agents in a crew, which
   the first OMPI use cases do not center on.
 - **Today:** Kubemoot exports a crew's memory in the OMPI interchange format with
-  `kmctl memory export`, and checks the export against schemas derived from the draft.
-  Importing is not supported, and OMPI has not certified the export.
+  `kmctl memory export`, follows the newest OMPI working spec, leaves out any fact that
+  holds a credential, and checks the export against OMPI's own checker. Importing is not
+  supported, and OMPI has not certified the export.
 - **Direction:** Kubemoot is meant to be an implementer of the protocol for crews, and to
   report to OMPI what the format does not yet cover. See
   [Durable crew memory](../roadmap/#durable-crew-memory) on the Roadmap.

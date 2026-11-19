@@ -270,16 +270,20 @@ an index loaded cheaply and detail fetched on relevance, so a crew improves with
 without its prompts growing.
 
 **Interoperability today:** a crew's memory exports in the interchange format of the
-Open Memory Protocol Initiative (OMPI), a draft specification for how agent memory is
-exchanged between systems. The export reads a crew's facts, changes nothing, and writes
-them as files another system or person can read; `kmctl memory export` produces it from
-your terminal. The export tracks the newest OMPI working spec, and it is validated
-against schemas derived from that draft. Importing is not supported.
+Open Memory Protocol Initiative (OMPI), an open specification in development for how
+agent memory is exchanged between systems. The export reads a crew's facts, changes
+nothing, and writes them as files another system or person can read; `kmctl memory
+export` produces it from your terminal. Each fact carries its author, its scope, and the
+time it was learned, and a fact that holds a credential is left out of the export. The
+export follows the newest OMPI working spec, and it is validated against OMPI's own
+checker. Importing is not supported.
 
-**Direction:** crew memory exchanged in the OMPI format in both directions, with
-Kubemoot as an implementer that brings the multi-agent case: many agents writing one
-shared memory, crew scope, and provenance for each fact. Where the format does not
-cover that case, Kubemoot reports the gap to the OMPI project. See
+**Direction:** crew memory exchanged in the OMPI format in both directions, so a crew
+can take memory from another OMPI implementation and give its own to one. Kubemoot is
+an implementer that brings the multi-agent case: many agents writing one shared memory,
+crew scope, and provenance for each fact. This is direction, not a commitment: import,
+and any change to how a crew stores its facts, wait on what the format settles. Where
+the format does not cover the case, Kubemoot reports the gap to the OMPI project. See
 [OMPI](../related-projects/#open-memory-protocol-initiative-ompi) and
 [Agent Context](../../concepts/agent-context/#memory).
 
