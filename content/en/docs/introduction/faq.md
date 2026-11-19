@@ -27,7 +27,7 @@ agents, models, and rules first-class resources that reconcile to a declared sta
 with `kubectl apply` as the interface. See
 [The Orchestration Gap](../orchestration-gap/).
 
-## Why not CrewAI, LangGraph, or AutoGen, or use them at the table?
+## Why not CrewAI, LangGraph, or AutoGen? Can they sit at the table?
 
 Use them when an in-process library fits: one application, a notebook, a prototype.
 Kubemoot is for crews that run as shared platform services with tenancy, GitOps, and
