@@ -29,8 +29,14 @@ sets another, with the ServiceAccount token mounted. The model itself never sees
 Secret value in the prompt path, but the boundary that keeps one tool's credential away
 from another crew author is not enforced by default. An admission check that requires the
 `use` verb on every Secret and ServiceAccount an MCPServer or Agent names is built and
-ships in the next release, off by default; until it is turned on, nothing checks. Until
-then, treat every namespace as one trust domain and follow the guidance in [Secrets and tools](../../concepts/secrets-and-tools/).
+released, and it is off by default. Turn it on with the chart value
+`security.secretUseGrants.enabled: true` (it needs Kubernetes 1.30 or later). The chart then
+installs two ValidatingAdmissionPolicies, one for MCPServer and one for Agent, that reject a
+create or update unless the requester holds `use` on every Secret and ServiceAccount the
+resource references. To see what would be rejected before enforcing, install first with
+`security.secretUseGrants.validationActions: ["Audit", "Warn"]`. Until the check is on,
+nothing checks: treat every namespace as one trust domain and follow the guidance in
+[Secrets and tools](../../concepts/secrets-and-tools/#the-admission-check).
 
 **Direction:** the principle is that the model never holds a secret. Today only the tool
 process does; the aim is that not even the tool process does. The design uses Kubernetes mechanisms and invents nothing new:
@@ -59,19 +65,29 @@ picture.
 ## Agents on plain Deployments
 
 Kubemoot runs every agent on a plain Deployment and builds the protections around it.
-[Agent Substrate](../related-projects/#agent-substrate) is a project we watch: it is
-packaged for GKE only and publishes no public images, and Kubemoot pins every dependency by
-digest, so Kubemoot does not depend on it and has no plan to.
+[Agent Substrate](../related-projects/#agent-substrate) is a project we watch, and Kubemoot
+does not depend on it today. It has a 1.0 release with public images and has joined the CNCF
+Sandbox. A Helm chart install is arriving in its next release, but installing it off GKE is
+still maturing. A suspended agent loses its open connections, so every Kubemoot agent would
+reconnect to the message bus and its tool sessions on each resume. And an agent resumes only
+on an incoming request, while Kubemoot agents wake on message-bus messages. We recheck at
+each release.
 
-**Today:** every agent runs as its own Deployment, and the only isolation is the pod.
+**Today:** every agent runs as its own Deployment, and the operator builds protections
+around it:
 
-**Direction:** build the same protections on plain Deployments, each by adopting an
+- NetworkPolicies the operator generates (`security.networkPolicies`), off by default.
+  They default-deny ingress in each crew namespace, admit only the crew's gateway to each
+  tool server, and, with `egress.mode: Declared`, restrict the outbound traffic of each
+  MCPServer and Agent that declares `spec.egress`, including the outbound traffic of an MCP
+  gateway that fronts external servers. See [Network policies](../../concepts/network-policies/).
+- Agents under a sandboxing RuntimeClass such as gVisor: set `spec.deployment.runtimeClassName`
+  on an Agent, or `defaults.agentRuntimeClassName` in `KubemootConfig` for every Agent. See
+  [Isolation](../../concepts/isolation/).
+
+**Direction:** build the rest of the protections on plain Deployments, each by adopting an
 existing project:
 
-- Isolation with a gVisor RuntimeClass, see
-  [Isolation for code execution](#isolation-for-code-execution).
-- NetworkPolicies the operator generates for each MCP server, so a tool reaches only what
-  it needs.
 - Keys kept out of tool processes, injected at a gateway, see
   [Credentials for tools](#credentials-for-tools-granted-per-tool).
 - Scale to zero with KEDA, see [Scale to zero](#scale-to-zero).
@@ -150,13 +166,16 @@ coordination and synthesis on a 32 GB accelerator. Kubemoot itself is model-agno
 declares a capability, and the scheduler matches it to a Model resource, so no agent
 spec names a model, and changing models is a change to Model resources, not to crews.
 Any model a ModelServer serves with tool calling can be used. Qwen was chosen for the
-reference crews for strong tool calling at sizes that fit 24 GB and 32 GB consumer
-GPUs, and its Apache 2.0 license.
+reference crews for strong tool calling at sizes that fit 24 GB and 32 GB
+accelerators, and its Apache 2.0 license. Qwen3.8 27B was measured on the crews' fitness
+suite in November 2026 and did worse than qwen3:32b on the same references with the current
+sampling settings: 28 of 32 runs passed against 29, at about twice the time per scenario. The
+reference crews keep qwen3:32b.
 
-**Direction:** the reference crews are moving to newer Qwen generations: Qwen3.5 9B for
-specialists, Qwen3.8 27B for coordination. Each candidate is compared on the crews' own
-fitness suite against the current reference, not chosen from leaderboards. The same
-comparison runs for permissively licensed alternatives:
+**Direction:** a fair retry of the newer Qwen generations waits for models that declare
+their recommended sampling. Each candidate is compared on the crews' own fitness suite
+against the current reference, not chosen from leaderboards. The same comparison runs for
+permissively licensed alternatives:
 
 - Gemma 4 (Google, Apache 2.0)
 - Muse Glimmer 30B (Meta, Apache 2.0)
@@ -237,9 +256,11 @@ accounting, and a circuit breaker the prerequisites, not afterthoughts.
 ## Consensus archetypes declared, not coded
 
 **Today:** the `MootArchetype` CRD ([reference](../../reference/mootarchetype/)) declares the
-scheduling phases and signals that `CrewSchedulingPolicy` rules use to pick a model per phase, and the consensus archetype (`consent-3`) ships with the operator. How the coordinator
-convenes, who may speak in which phase, when a discussion settles, and the rules of
-engagement between agents are still fixed in code and in prompts.
+scheduling phases and signals that `CrewSchedulingPolicy` rules use to pick a model per phase, and the consensus archetype (`consent-3`) ships with the operator. The archetype also
+declares who reviews: `review.convene` is `all` or `domain`, and `fallback` says what happens
+when no analyst matches. Agents declare the subject areas they work in with `spec.domains`
+([Agent reference](../../reference/agent/#specdomains)). Turn order, objection handling, and
+when a discussion settles are still fixed in code and in prompts.
 
 **Direction:** the whole orchestration declared in the archetype manifest associated
 with a crew: convening rules, turn order, objection handling, settlement criteria, and
@@ -263,7 +284,8 @@ authoring time.
 
 **Today:** a crew keeps working memory, facts it learns at runtime such as label and
 topology mappings, in NATS KV, with caps on storage and on how much is injected into
-an agent's context.
+an agent's context. This memory is data an installation keeps in NATS, and what to keep
+and how is the installer's decision.
 
 **Direction:** long-lived, curated memory across discussions with progressive recall,
 an index loaded cheaply and detail fetched on relevance, so a crew improves with use
@@ -297,7 +319,9 @@ arrives in its answer, and keeping it is up to the client that asked.
 **Direction:** generated work retained as a first-class result: stored with its
 provenance (the question, the agents that contributed, the sources they used),
 versioned when a crew revises it, kept under a retention policy set per crew, and
-retrievable later through the liaison, kmctl, or CrewForge.
+retrievable later through the liaison, kmctl, or CrewForge. Keeping generated work is the
+installer's opt-in, with their own storage, retention, and encryption. Kubemoot keeps
+nothing by default.
 
 ## Knowing who is asking
 
@@ -366,11 +390,15 @@ functions.
 
 **Today:** the compute agent runs the code it writes in Kubemoot's own `code-sandbox`
 MCP server, where the pod is the sandbox: no credentials, network limited by a network
-policy where the crew ships one (the reference crew charts do).
+policy where the crew ships one (the reference crew charts do). The `code-sandbox` is an
+MCPServer, so it takes the optional `spec.runtimeClassName` field, for example `gvisor`, and
+runs under that RuntimeClass when you set it. Agent pods take the same setting. Kubemoot
+installs no runtime: the cluster owner installs it and creates the `RuntimeClass`. Unset, the
+pod runs under the node's default runtime. Under gVisor the sandbox needs `transport: http`.
+See [Code sandbox](../../concepts/code-sandbox/) and [Isolation](../../concepts/isolation/).
 
-**Direction:** a gVisor RuntimeClass first, for the pods that run generated code and for
-agent pods, a stronger boundary than the shared host kernel. [Agent Sandbox](../related-projects/#agent-sandbox)
-(a Kubernetes SIG project, release 1.0 with `v1beta1` APIs) with a warm pool stays a
+**Direction:** [Agent Sandbox](../related-projects/#agent-sandbox)
+(a Kubernetes SIG project, release 1.0 with `v1beta1` APIs) with a warm pool is a
 candidate for the compute agent's disposable runs: claim a ready sandbox, run, delete.
 This is a direction, not a commitment. Background:
 [Kubernetes Podcast episode 268, "Agent Sandbox and Lovable"](https://kubernetespodcast.com/episode/268-lovable/).
