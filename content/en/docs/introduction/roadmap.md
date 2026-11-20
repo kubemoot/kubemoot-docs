@@ -299,6 +299,20 @@ provenance (the question, the agents that contributed, the sources they used),
 versioned when a crew revises it, kept under a retention policy set per crew, and
 retrievable later through the liaison, kmctl, or CrewForge.
 
+## Knowing who is asking
+
+**Today:** administrators reach Kubemoot with their Kubernetes identity. A crew does not
+know which person is asking it a question.
+
+**Direction:** this is a direction, not a commitment.
+
+- People who use a service built on a crew sign in with the provider they already use,
+  through OIDC and single sign-on. Administrators keep using their Kubernetes identity.
+- Conversations belong to the person asking. Session continuity comes from the harness or
+  client they use, such as Claude Code or goose, not from Kubemoot managing sessions.
+- Kubemoot keeps no one's data by default. Whatever an installation chooses to keep is the
+  installer's decision, and it can be encrypted at rest.
+
 ## Crews talking to crews
 
 **Today:** crews are isolated by namespace and do not exchange messages; the message
