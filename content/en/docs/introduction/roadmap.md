@@ -301,8 +301,8 @@ retrievable later through the liaison, kmctl, or CrewForge.
 
 ## Knowing who is asking
 
-**Today:** administrators reach Kubemoot with their Kubernetes identity. A crew does not
-know which person is asking it a question.
+**Today:** a crew does not know who is asking. Every question reaches the same shared
+crew, and Kubemoot's gateway checks no one's identity.
 
 **Direction:** this is a direction, not a commitment.
 
