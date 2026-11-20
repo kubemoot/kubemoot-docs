@@ -30,7 +30,7 @@ Secret value in the prompt path, but the boundary that keeps one tool's credenti
 from another crew author is not enforced by default. An admission check that requires the
 `use` verb on every Secret and ServiceAccount an MCPServer or Agent names is built and
 released, and it is off by default. Turn it on with the chart value
-`security.secretUseGrants.enabled: true` (it needs Kubernetes 1.30 or later). The chart then
+`security.secretUseGrants.enabled: true` (it needs a cluster that serves ValidatingAdmissionPolicy). The chart then
 installs two ValidatingAdmissionPolicies, one for MCPServer and one for Agent, that reject a
 create or update unless the requester holds `use` on every Secret and ServiceAccount the
 resource references. To see what would be rejected before enforcing, install first with
@@ -318,7 +318,7 @@ arrives in its answer, and keeping it is up to the client that asked.
 
 **Direction:** generated work retained as a first-class result: stored with its
 provenance (the question, the agents that contributed, the sources they used),
-versioned when a crew revises it, kept under a retention policy set per crew, and
+versioned when a crew revises it, kept for as long as the installer chooses, and
 retrievable later through the liaison, kmctl, or CrewForge. Keeping generated work is the
 installer's opt-in, with their own storage, retention, and encryption. Kubemoot keeps
 nothing by default.
