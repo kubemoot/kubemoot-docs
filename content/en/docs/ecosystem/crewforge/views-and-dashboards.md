@@ -343,6 +343,27 @@ menu button.
   not changed), copy the whole conversation as Markdown, and save it as Markdown.
   **CrewForge: Continue a Conversation** reopens a saved one, and **CrewForge: Open
   Conversations Folder** shows where they are kept.
+- **Stop, Pause, Resume and Delete from the crew.** Once the crew has answered, the chat
+  header and each saved conversation in the list (on hover or keyboard focus) offer four
+  buttons that act on the crew itself, through the same gateway connection and token as
+  **Ask**. **Stop**, **Pause** and **Resume** control the conversation's running
+  discussion; a conversation with nothing running is refused, and the chat says so.
+  **Delete from the crew** asks first, removes the conversation from every place the crew
+  keeps it, and shows what it removed in each store and what it cannot remove (logs and
+  backups). A conversation that is still running offers **Stop and delete**. A delete
+  that could not clear every store says which; repeat it to remove what is left. The copy
+  on your computer stays until you delete it from this computer. Acting on another
+  caller's conversation needs the `kubemoot-conversation-controller` role and a reason;
+  CrewForge asks for the reason when the gateway says it is needed. See
+  [Settings and permissions](../settings-and-permissions/#acting-on-conversations).
+- **Live updates.** An open chat listens to the crew's conversation events, once per
+  crew. When a conversation has something new, such as a late answer, a scheduled
+  reminder that fired, or a follow-up, CrewForge marks it in the list with a dot, reads
+  the conversation again from your saved copy, and says so under the chat. The dot clears
+  when you open the conversation or ask in it. A dropped connection reopens and continues
+  after the last event received, so no news is lost or repeated. A crew sends events only
+  for conversations you own. See
+  [the event stream](../../../concepts/conversations-turns-and-threads/#hearing-that-a-conversation-has-something-new).
 - **Export Conversation as Markdown.** With a chat panel open, run **CrewForge: Export
   Conversation as Markdown** from the Command Palette. A save dialog offers a file named
   for the crew and the conversation title, and the file holds the whole conversation as
@@ -431,6 +452,8 @@ port-forward permissions and the token settings. The same export is available as
 | **Add / Rename / Delete Fitness Scenario** | Grow or tidy a crew's scenarios | Local files in the fitness folder only. Delete moves a file to the trash after a confirmation. |
 | **Pause** / **Resume** / **Stop** (fitness dashboard) | Hold or end a running suite | Sets `spec.suspend` or `spec.cancel` on the suite. See [Fitness from the editor](../fitness/). |
 | **Next Steps...** | Unsure what comes next for a crew source | Nothing itself. It lists the actions that fit the crew's state, and runs the one you pick. |
+| **Stop** / **Pause** / **Resume** (chat) | Hold or end a running discussion | Sends the control to the crew's discussion gateway. Nothing on the cluster's objects changes. |
+| **Delete from the crew** (chat) | Erase a conversation, for example on an erasure request | The crew erases the conversation from every store that holds it, after a confirmation, and CrewForge shows the report. It cannot be undone. Your saved copy stays. |
 | **Export Conversation as Markdown** | Keep or share a chat | A Markdown file at the place you choose. The conversation and the crew do not change. |
 | **Open Dashboard** / **Open Crews Overview** / **Open Fitness Dashboard** | See a crew, every crew, or a crew's fitness at a glance | Nothing. |
 | **Select Kubernetes Context** / **Select Kubeconfig File** / **Show Connection Info** | Choose or check the cluster | Nothing on the cluster. |
