@@ -47,6 +47,14 @@ cannot be read says so instead of failing the whole view.
   `crewschedulingpolicies`. A kind you may not read shows as a warning under the crew.
 - `delete` on those kinds and on `crews`, to undeploy a crew whose source is not open.
 
+**Stop, pause, resume and delete a conversation**
+
+- The same `get` on `services`, `list` on `pods`, and `create` on `pods/portforward` as
+  chat. The owner of a conversation needs nothing more.
+- For another caller's conversation, `update` (stop, pause, resume) or `delete` on
+  `crews/conversations` in the crew's namespace, which the ClusterRole
+  `kubemoot-conversation-controller` grants. Nobody is bound to it by default.
+
 **Crew memory**
 
 - `get` on the Crew, which the operator's report service checks for your token.
@@ -85,7 +93,28 @@ audit log records who minted the token. A refusal says which part is missing: th
 requires a token (401), your identity may not use the crew (403), or the conversation is
 not yours (404).
 
+## Acting on conversations
+
+The owner of a conversation stops, pauses, resumes or deletes it without a reason. An
+operator acting on someone else's conversation needs the
+`kubemoot-conversation-controller` role, and CrewForge asks for a reason (1 to 200
+characters) when the gateway says it is needed. The reason goes to the crew as the
+`Kubemoot-Access-Reason` header, and the crew records the use in its audit log. A refusal
+says which part is missing: no token (401), an identity that may not use the crew (403),
+a conversation that is not yours or not there (404), nothing running or still running
+(409), or a store that failed (500). The endpoints and the owner rule are in
+[Conversations, turns, and threads](../../../concepts/conversations-turns-and-threads/#stopping-pausing-resuming-and-deleting-a-conversation).
+
+## Live updates
+
+The chat's live updates need no permission beyond chat's. CrewForge reads the crew's
+conversation event stream through the same port-forward and token; the crew sends a
+caller events only for the conversations that caller owns, and no client reads NATS.
+
 ## The boundary CrewForge keeps
+
+Deleting a conversation is a request to the crew's discussion gateway, not a write by
+CrewForge: the crew erases its own stores.
 
 CrewForge's own writes to the API server are Kubemoot custom resources only: the
 annotations on a Crew, the fitness runs it starts, and deleting a crew's Kubemoot objects
