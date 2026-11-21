@@ -128,6 +128,10 @@ cannot take a question yet:
 
 - **The crew is not ready: phase X.** Wait for the crew, or open its dashboard to see
   which agent is not ready.
+- **Waiting for an accelerator: ...** The crew is reconciled, but no model in the cluster's
+  catalog can run its agents right now. The line carries the scheduler's reason. Nothing needs
+  to be deployed again: the crew answers once a model is available. Check the catalog with
+  `kmctl model list`, and watch the crew with `kmctl crew wait NAME -n NAMESPACE`.
 - **Can't reach the crew's discussion gateway.** The crew's `<crew>-discussion` Service
   has no ready address. Check the crew's pods. CrewForge reads the crew again every 15
   seconds while the chat is visible and after each turn.
