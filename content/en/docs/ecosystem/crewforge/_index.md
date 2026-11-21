@@ -11,8 +11,9 @@ Helm, ask it questions, run its fitness scenarios, and see how the running crew 
 from your source.
 
 It works through your kubeconfig, the same way [`kmctl`](../kmctl/) does: the chat
-reaches a crew's discussion gateway through the Kubernetes API server's service proxy,
-so no crew needs a public address and no extra credential is involved. CrewForge writes
+reaches a crew's discussion gateway through a port-forward to its pod, with your
+kubeconfig's bearer token, so no crew needs a public address and no extra credential is
+involved. CrewForge writes
 only Kubemoot resources and Helm releases of them. The operator owns cleanup.
 
 ## A 60-second tour
