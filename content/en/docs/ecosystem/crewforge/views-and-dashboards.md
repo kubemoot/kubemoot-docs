@@ -25,7 +25,11 @@ Click the Kubemoot mark in the activity bar. Two views share the side bar.
 ### Deployed Crews
 
 The crews running on the cluster. The first items say what CrewForge is connected to and
-open the **Crews Overview**; that row stays first. A green mark means ready.
+open the **Crews Overview**; that row stays first. A green mark means the crew can
+answer: it is reconciled as declared, in phase `Ready`, and has an accelerator model to run
+on. A reconciled crew whose models are away shows a warning instead, and its tooltip gives
+the model catalog's reason, "waiting for an accelerator: ...". The crew answers once a model
+returns; nothing needs to be deployed again.
 
 By default the view is a flat list: one row per crew, sorted by namespace and then name.
 A row is labeled with the crew's display name and reads
@@ -239,7 +243,10 @@ not apply is disabled, with the reason in its tooltip. Four tabs sit under the b
   deployed, else from the source. Click a group to select it in the tree;
 - the **agents**, counted by role, with the capabilities each declares and whether each is
   ready, followed by the Models the source declares;
-- the Crew's **phase**, message, and status conditions;
+- the Crew's **phase**, message, and status conditions, with whether it is reconciled, whether
+  it **can answer** (and if not, why, as "waiting for an accelerator: ..."), its **capacity**,
+  the generation Kubemoot observed out of the generation declared, and the last retention
+  cleanup with any invalid retention setting;
 - your **conversations** with it on this computer: conversations, turns, the turn
   answering now, and the newest problems saved with a turn;
 - from the Kubemoot dashboard, the number of discussion threads and agent failures.
@@ -316,9 +323,10 @@ menu button.
 
 - **Sending.** The send button shows once there is text to send and the crew can take it.
   While the crew answers, **Stop** takes its place; Enter never stops a turn. When the
-  crew is not ready, in an error state, or out of reach (the cluster, or its discussion
-  gateway), sending waits and the reason shows above the input, such as "The crew is not
-  ready: phase Pending".
+  crew is not ready, waiting for an accelerator, in an error state, or out of reach (the
+  cluster, or its discussion gateway), sending waits and the reason shows above the input,
+  such as "The crew is not ready: phase Pending" or "waiting for an accelerator: ..." with
+  the model catalog's message.
 - **Progress.** Each agent has a card while a turn runs. A card turns red when its agent
   failed or could not run.
 - **Answers.** The crew's answer is rendered as Markdown, with its time and how long the
