@@ -14,6 +14,9 @@ Open **Settings** in VS Code and search for `crewforge`.
 | `crewforge.context` | empty | Kubernetes context to use. Empty uses the kubeconfig's current context. |
 | `crewforge.namespaces` | `[]` | Show crews only in these namespaces. Empty reads the namespace of the kubeconfig context, and falls back to every namespace when the context sets none or that namespace holds no crews. A list you set wins, and `*` shows every namespace you can read. |
 | `crewforge.streamTimeoutSeconds` | `600` | Longest a single turn may stream before CrewForge gives up on it. The minimum is 60. |
+| `crewforge.operatorNamespace` | `kubemoot` | Namespace of the Kubemoot operator, whose report service `kubemoot-operator-report` serves a crew's memory export to the memory view. |
+| `crewforge.tokenServiceAccount` | empty | `NAMESPACE/NAME` of a ServiceAccount to mint a ten-minute token for when you ask a crew or open its memory, for a kubeconfig that signs in with a client certificate and so has no bearer token. You need `create` on `serviceaccounts/token` for it; the crew then sees that ServiceAccount as the caller. Empty sends the kubeconfig's own token. Only a crew that sets `spec.discussion.access` uses it. |
+| `crewforge.tokenAudiences` | `[]` | Audiences the minted token is bound to, for a crew that lists `tokenAudiences` in `spec.discussion.access`. Used only with `crewforge.tokenServiceAccount`. |
 | `crewforge.dashboardService` | empty | The Kubemoot dashboard's Service as `namespace/name:port`. CrewForge reads it through the Kubernetes service proxy, read-only, for thread counts, discussion failures, fitness scores, and archived iterations. Empty finds the Service labelled `app.kubernetes.io/part-of=kubemoot` whose `app.kubernetes.io/name` is `dashboard` (the operator chart's subchart) or `kubemoot-dashboard` (a standalone install). Add an optional base path, `namespace/name:port/base`, when the dashboard serves under a path such as `/dashboard`. |
 | `crewforge.yamlFormat` | `yaml` | How Show Live YAML, Show Source YAML, and Compare with Live write an object. `yaml` is block YAML. `kyaml` is KYAML, the strict YAML subset `kubectl get -o kyaml` prints: every string quoted, maps in `{ }`, lists in `[ ]`. KYAML is still valid YAML. |
 | `crewforge.dashboardUrl` | empty | The address of the [Kubemoot dashboard](../../../operating/dashboard/) for this cluster. **Powered by Kubemoot** in a chat opens it, and **Open this turn in the Kubemoot dashboard** appears under an answer only when this is set. Behind a `kubectl port-forward`, use the local address. Empty makes **Powered by Kubemoot** open this setting. |
@@ -32,8 +35,9 @@ cannot be read says so instead of failing the whole view.
 - `list` on `crews.kubemoot.ai`, in the context's namespace, in each namespace of
   `crewforge.namespaces`, or cluster-wide when the setting is `*` or the fallback to every
   namespace applies.
-- `get` and `create` on `services/proxy` in the crew's namespace, to ask and to stream
-  the answer.
+- `get` on `services`, `list` on `pods`, and `create` on `pods/portforward` in the crew's
+  namespace, to ask and to stream the answer. CrewForge reaches the crew's discussion
+  gateway through a port-forward and sends your kubeconfig's bearer token with each request.
 - `get` on `endpoints` in that namespace, to tell whether the crew's discussion gateway
   is running.
 
@@ -42,6 +46,12 @@ cannot be read says so instead of failing the whole view.
 - `get` and `list` on `agents`, `promptmodules`, `skills`, `mcpservers`, and
   `crewschedulingpolicies`. A kind you may not read shows as a warning under the crew.
 - `delete` on those kinds and on `crews`, to undeploy a crew whose source is not open.
+
+**Crew memory**
+
+- `get` on the Crew, which the operator's report service checks for your token.
+- `get` on `services`, `list` on `pods`, and `create` on `pods/portforward` in the
+  operator's namespace (`crewforge.operatorNamespace`), to reach the report service.
 
 **Develop crews**
 
@@ -60,6 +70,20 @@ cannot be read says so instead of failing the whole view.
 - `list` on `deployments`, or `get` on the Crew CRD, to find the operator's version.
 - `patch` on `crewfitnesssuites`, and `delete` on `crewfitnesses`, for Pause, Resume,
   and Stop.
+
+## Who the crew sees
+
+CrewForge sends your kubeconfig's bearer token to the crew. A crew that sets
+`spec.discussion.access` uses it to know who is asking and keeps each conversation for the
+caller that started it; a crew that sets nothing stays open and ignores it. CrewForge
+never shows or logs the token. See [Who is asking](../../../concepts/who-is-asking/).
+
+A kubeconfig that signs in with a client certificate has no bearer token. When the crew
+requires one, set `crewforge.tokenServiceAccount` to a ServiceAccount you may mint tokens
+for, and `crewforge.tokenAudiences` when the crew lists `tokenAudiences`. The Kubernetes
+audit log records who minted the token. A refusal says which part is missing: the crew
+requires a token (401), your identity may not use the crew (403), or the conversation is
+not yours (404).
 
 ## The boundary CrewForge keeps
 

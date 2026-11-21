@@ -116,7 +116,7 @@ Click any item for its live YAML in a read-only editor. The title bar has **Crea
 **Open Crews Overview**, **Refresh Deployed Crews**, **Continue a Conversation**, and
 **Select Kubernetes Context**.
 
-A crew's row has an **Ask** button, and its menu holds **Open Dashboard**, **Open Fitness
+A crew's row has an **Ask** button, and its menu holds **Open Crew Memory**, **Open Dashboard**, **Open Fitness
 Dashboard**, **Show Live YAML**, **Show Bundle YAML** (the Crew with its Agents,
 PromptModules, and Skills in one document), **Show Live YAML (raw)**, **Redeploy**, **Deploy a Git Revision**, **Run
 Fitness**, **Follow Flux Rollout** (for Flux), and **Undeploy**. CrewForge finds a crew's
@@ -382,6 +382,23 @@ menu button.
 - **Explorer.** **New Kubemoot Crew Here** and **View in CrewForge**.
 - **Editor context menu.** **Ask a Crew about the Selection**.
 
+## Crew memory
+
+**Open Crew Memory**, on a deployed crew, shows what the crew has learned, read-only. The
+facts are grouped by topic. Each shows its value, the role that learned it, when, and the
+thread it was learned in when the export records one. Entries the export left out (a fact
+that holds a credential is never exported as memory) show as counts with the reason, never
+their text. **Refresh** reads again. **Export to Folder...** saves the crew's OMPI export as
+`<crew>-memory-ompi.zip` in a folder you pick.
+
+CrewForge reads the export from the Kubemoot operator's report service through a
+port-forward to the operator's pod, with your kubeconfig's bearer token, so Kubernetes RBAC
+decides: you need `get` on the Crew. See
+[Settings and permissions](../settings-and-permissions/#what-your-account-needs) for the
+port-forward permissions and the token settings. The same export is available as
+[`kmctl memory export`](../../../reference/kmctl/#kmctl-memory) and described in
+[Data ownership](../../../operating/data-ownership/).
+
 ## Action reference
 
 | Action | When to use it | What it changes |
@@ -406,6 +423,7 @@ menu button.
 | **Add Crew-Local Model (Advanced)...** | Give a crew a model of its own, after a warning | A new Model file in the source. Once deployed, the crew uses only its own Models instead of the cluster's model catalog. |
 | **Remove from Source...** | Take a part out of a crew's source | Its file moves to the trash, or its document leaves a file that holds others, after a confirmation. Nothing on the cluster until you deploy. |
 | **Show Tool Details** | See where a tool comes from and what it takes | Nothing. A read-only page. |
+| **Open Crew Memory** | See what a crew has learned | Nothing. **Export to Folder...** writes a zip to the folder you pick. |
 | **Ask** | Try a deployed crew | Nothing on the cluster. The chat is a discussion turn. |
 | **Run Fitness** | Measure a deployed crew | Creates a fitness run (a Kubemoot object) in the crew's namespace. On a live crew it runs the deployed scenarios when it carries any, else the source's definitions. |
 | **Run All Deployed Scenarios** / **Run Scenarios...** / **Run Selected Scenarios as One Batch** | Measure a deployed crew's scenarios as one batch | One CrewFitnessSuite in the crew's namespace, named `<crew>-all-<timestamp>` or `<crew>-batch-<n>-<timestamp>`. |
