@@ -57,9 +57,11 @@ process does; the aim is that not even the tool process does. The design uses Ku
 - Keys kept outside the tool process: a gateway injects the credential into the outgoing
   request, so the tool never holds the key and cannot leak it.
 
-Later steps add a secret store such as OpenBao with External Secrets Operator for
-rotation, short-lived credentials, and audit, and per-user OAuth for assistants that act
-for one person. See [Secrets and tools](../../concepts/secrets-and-tools/) for the full
+A tool can already call an outside service with the asking person's own credential
+instead of a shared one: the MCPServer's `callerCredential` setting, with the crew
+liaison signing the person in to that service (see
+[Signing in](../../integrations/signing-in/)). Later steps add a secret store such as
+OpenBao with External Secrets Operator for rotation, short-lived credentials, and audit. See [Secrets and tools](../../concepts/secrets-and-tools/) for the full
 picture.
 
 ## Agents on plain Deployments
@@ -259,14 +261,18 @@ accounting, and a circuit breaker the prerequisites, not afterthoughts.
 scheduling phases and signals that `CrewSchedulingPolicy` rules use to pick a model per phase, and the consensus archetype (`consent-3`) ships with the operator. The archetype also
 declares who reviews: `review.convene` is `all` or `domain`, and `fallback` says what happens
 when no analyst matches. Agents declare the subject areas they work in with `spec.domains`
-([Agent reference](../../reference/agent/#specdomains)). Turn order, objection handling, and
-when a discussion settles are still fixed in code and in prompts.
+([Agent reference](../../reference/agent/#specdomains)). An archetype can also have the moot
+review the draft answer before it is released (`spec.ratify`, experimental and off by
+default). Turn order, objection handling, and when a discussion settles are still fixed in
+code and in prompts.
 
 **Direction:** the whole orchestration declared in the archetype manifest associated
 with a crew: convening rules, turn order, objection handling, settlement criteria, and
 the coordination pattern (consent, debate, expert panel, an orchestrator with workers
 and a planning phase). Changing how a crew deliberates becomes a manifest edit, the
-way changing what an agent believes is already a `PromptModule` edit.
+way changing what an agent believes is already a `PromptModule` edit. Within any of these
+patterns, agents at the table trust each other's findings but verify them: a finding that
+does not match the evidence it cites is challenged before it reaches the answer.
 
 ## Crews that evolve
 
@@ -325,13 +331,18 @@ nothing by default.
 
 ## Knowing who is asking
 
-**Today:** a crew does not know who is asking. Every question reaches the same shared
-crew, and Kubemoot's gateway checks no one's identity.
+**Today:** a person who signs in to the dashboard with their Kubernetes token asks,
+follows up on, and deletes conversations as themselves, under their own RBAC. A crew's
+tools can call an outside service with the asking person's own credential, after the crew
+liaison signs them in to it (see [Signing in](../../integrations/signing-in/)). Agents
+themselves do not yet know who is asking, and a conversation is not owned by the person
+who started it.
 
 **Direction:** this is a direction, not a commitment.
 
-- People who use a service built on a crew sign in with the provider they already use,
-  through OIDC and single sign-on. Administrators keep using their Kubernetes identity.
+- People without a Kubernetes account who use a service built on a crew sign in with the
+  provider they already use, through OIDC and single sign-on. Administrators keep using
+  their Kubernetes identity.
 - Conversations belong to the person asking. Session continuity comes from the harness or
   client they use, such as Claude Code or goose, not from Kubemoot managing sessions.
 - Kubemoot keeps no one's data by default. Whatever an installation chooses to keep is the
@@ -406,9 +417,13 @@ This is a direction, not a commitment. Background:
 ## The liaison for every agent harness
 
 **Today:** any MCP client can use a crew as one agent through the crew liaison; the
-documented paths are Claude Code and Claude Desktop, and the answer arrives by ticket.
+documented paths are Claude Code and Claude Desktop, and the answer arrives by ticket. The
+liaison can sign a person in to the outside services a crew's tools use, so the crew acts
+with that person's own access.
 
-**Direction:** documented, tested connections for other agent harnesses (Codex,
+**Direction:** one reference chat app, chosen by walking a newcomer's first question
+through each candidate, documented first and tested end to end; documented, tested
+connections for other agent harnesses (Codex,
 OpenHands, Strands, Pi, and the ones that come next), native MCP Tasks once clients
 implement them so a long deliberation needs no polling, and an agent card per crew for
 protocols that speak agent to agent.
@@ -446,12 +461,14 @@ convenes; this extends the saving to the pods themselves.
 
 ## Tracing and logs
 
-**Today:** the dashboard infers discussion spans from signal timestamps; logs are per
-pod.
+**Today:** agents and the coordinator export an OpenTelemetry trace per discussion when a
+collector endpoint is set, with each model call a span carrying the GenAI semantic
+conventions and message content off by default (see
+[Observability](../../operating/observability/)). Logs are per pod.
 
-**Direction:** an OpenTelemetry trace per discussion, with each agent step and tool
-call a real span carrying the GenAI semantic conventions, exported to any OTel
-backend, and centrally aggregated logs correlated to those traces.
+**Direction:** every tool call and gateway hop a span in the same trace, centrally
+aggregated logs correlated to those traces, and token cost per useful contribution read
+from the spans.
 
 ## Images built with Cloud Native Buildpacks
 
